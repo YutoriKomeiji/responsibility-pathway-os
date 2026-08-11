@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "migration/rpos-public-export-0.1.0a1.zip"
+      - ".github/workflows/materialize-private-export.yml"
 
 permissions:
   contents: write
@@ -20,6 +20,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Download frozen export artifact through short-lived transfer URL
+        env:
+          ARTIFACT_URL: "https://sdmntprjapaneast.oaiusercontent.com/files/00000000-6fbc-8209-8b93-7827b8807df5/raw?se=2026-08-11T23%3A54%3A33Z&sp=r&sv=2026-02-06&sr=b&scid=944bb489-5926-5710-a16f-adadfebdc1b4&skoid=0b778285-7b0b-4cdc-ac3b-fb93e8c3686f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-08-11T05%3A43%3A42Z&ske=2026-08-12T05%3A43%3A42Z&sks=b&skv=2026-02-06&sig=eE3%2BC7cPEQbFfLxvw4oHIHMms3ECwxsZjhhu8GX3GPY%3D"
+        run: |
+          curl --fail --location --silent --show-error "$ARTIFACT_URL" -o "$RUNNER_TEMP/rpos-public-export-0.1.0a1.zip"
       - name: Verify artifact digest and materialize exact 81-file product boundary
         env:
           EXPECTED_ZIP_SHA256: "12b5d0b46981d534902d0574e752824bd2e937b6958b0e41a056c5624963bde4"
@@ -34,7 +39,7 @@ jobs:
           from pathlib import Path
 
           root = Path.cwd()
-          archive = root / "migration" / "rpos-public-export-0.1.0a1.zip"
+          archive = Path(os.environ["RUNNER_TEMP"]) / "rpos-public-export-0.1.0a1.zip"
           digest = hashlib.sha256(archive.read_bytes()).hexdigest()
           expected = os.environ["EXPECTED_ZIP_SHA256"]
           if digest != expected:
@@ -86,13 +91,11 @@ jobs:
           init = root / ".migration-init"
           if init.exists():
               init.unlink()
-          shutil.rmtree(root / "migration", ignore_errors=True)
           materializer = root / ".github" / "workflows" / "materialize-private-export.yml"
           if materializer.exists():
               materializer.unlink()
           shutil.rmtree(tmp, ignore_errors=True)
 
-          # Ensure private development roots were not materialized.
           for forbidden in sorted(forbidden_roots):
               if (root / forbidden).exists():
                   raise SystemExit(f"private root unexpectedly present after materialization: {forbidden}")
