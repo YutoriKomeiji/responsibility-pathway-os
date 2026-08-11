@@ -1,0 +1,73 @@
+name: RPOS standalone verification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "examples/**"
+      - "templates/**"
+      - "formal/**"
+      - "docs/**"
+      - "specs/**"
+      - "provenance/**"
+      - "README.md"
+      - "README.ja.md"
+      - "pyproject.toml"
+      - ".github/workflows/standalone-verify.yml"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-standalone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install verification tooling
+        run: python -m pip install --upgrade pip build pytest
+      - name: Run standalone tests
+        run: python -m pytest -q tests
+      - name: Run source examples
+        run: |
+          for f in examples/*.py; do
+            echo "==> $f"
+            PYTHONPATH=src python "$f"
+          done
+      - name: Build wheel and sdist
+        run: python -m build
+      - name: Clean-install wheel
+        run: |
+          python -m venv "$RUNNER_TEMP/rpos-venv"
+          "$RUNNER_TEMP/rpos-venv/bin/python" -m pip install --upgrade pip
+          "$RUNNER_TEMP/rpos-venv/bin/python" -m pip install dist/*.whl
+          "$RUNNER_TEMP/rpos-venv/bin/rpos" --help
+          (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-venv/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
+
+  lean-standalone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4 through elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain leanprover/lean4:stable
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Record Lean version
+        run: lean --version
+      - name: Compile bounded RPOS formal model
+        working-directory: formal/lean
+        env:
+          LEAN_PATH: .
+        run: |
+          lean -o RPOSState.olean RPOSState.lean
+          lean RPOSReachability.lean
+          lean RPOSEvidenceBoundary.lean
+          lean RPOSPacketBoundary.lean
