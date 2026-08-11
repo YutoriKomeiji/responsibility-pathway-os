@@ -1,0 +1,54 @@
+{
+  "schema_version": "rpos.migration_provenance_snapshot.v0.1",
+  "status": "pre_migration_candidate",
+  "product": "RPOS — Responsibility Pathway Operating System",
+  "candidate_version": "0.1.0a1",
+  "standalone_repository": {
+    "repository": "YutoriKomeiji/responsibility-pathway-os",
+    "created_at_utc": "2026-08-11T16:32:41Z",
+    "created_private": true,
+    "public_transition_at_utc": null,
+    "public_transition_authorized": false
+  },
+  "lineage": [
+    {"layer": "RPD", "role": "Responsibility Pathway design lineage", "reference": "YutoriKomeiji/responsibility-pathway-design"},
+    {"layer": "RPE", "role": "machine-readable Responsibility Pathway engineering lineage", "reference": "RPE upstream program records"},
+    {"layer": "RPR", "role": "runtime and proven standalone-export procedure lineage", "reference": "YutoriKomeiji/responsibility-pathway-runtime"},
+    {"layer": "RPOS", "role": "operating-system product implementation under pre-migration hardening", "reference": "responsibility-pathway-program#191"}
+  ],
+  "engineering_evidence": [
+    {"kind": "cycle_evidence", "reference": "responsibility-pathway-program#183", "note": "Cycle 001 implementation and verification evidence"},
+    {"kind": "defensive_provenance_schema", "reference": "commit:7966ef99fed4e0ef88ed572af69d48ac50d9bb60"},
+    {"kind": "defensive_provenance_merge", "reference": "commit:f08c8c08a8a901755898e02f28e665909b944251"},
+    {"kind": "public_claim_review_readiness", "reference": "commit:5f660050438b573862c3e8dab5022f7f3c54d"},
+    {"kind": "pre_migration_gate", "reference": "responsibility-pathway-program#180"},
+    {"kind": "pre_migration_hardening", "reference": "responsibility-pathway-program#191"}
+  ],
+  "independent_design_boundary": {
+    "private_third_party_research_exported": false,
+    "third_party_claims_used_as_normative_feature_rationale": false,
+    "legal_conclusions_in_snapshot": false,
+    "notes": "Private comparison research may inform defensive review but is not part of the standalone public product evidence surface."
+  },
+  "naming_review": {
+    "product_name": "RPOS — Responsibility Pathway Operating System",
+    "repository_name": "responsibility-pathway-os",
+    "distribution_candidate": "responsibility-pathway-os",
+    "import_and_cli": "rpos",
+    "legal_status_claim": "none"
+  },
+  "freeze_state": {
+    "exact_rpp_source_sha": null,
+    "export_manifest_hash": null,
+    "final_freeze_complete": false,
+    "next_human_return_point": "Set exact immutable RPP source SHA and export-manifest hash only after #191 verification is complete and before private standalone migration."
+  },
+  "not_proven": [
+    "patent non-infringement",
+    "freedom to operate",
+    "patent invalidity",
+    "claim scope",
+    "legal or regulatory compliance",
+    "production readiness"
+  ]
+}

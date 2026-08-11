@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "responsibility-pathway-os"
+version = "0.1.0a1"
+description = "Responsibility Pathway Operating System for authority, effect verification, recovery, and explicit resumption"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Akihisa Ono" }]
+dependencies = []
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/YutoriKomeiji/responsibility-pathway-os"
+Repository = "https://github.com/YutoriKomeiji/responsibility-pathway-os"
+Issues = "https://github.com/YutoriKomeiji/responsibility-pathway-os/issues"
+
+[project.scripts]
+rpos = "rpos.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["rpos*"]

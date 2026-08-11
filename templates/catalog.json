@@ -1,0 +1,111 @@
+{
+  "schema_version": "rpos.packet-template-catalog.v0.1",
+  "authority_effect": "none",
+  "templates": [
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "operation_proposal",
+      "authority_effect": "none",
+      "payload": {
+        "operation_id": "replace-me",
+        "action_name": "replace-me",
+        "requested_by": "requester",
+        "execution_actor": "executor",
+        "approval_authority": "human_authority",
+        "residual_owner": "operator",
+        "human_return_point": "human-authority-review",
+        "verification_required": true
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "human_gate_decision",
+      "authority_effect": "none",
+      "payload": {
+        "operation_id": "replace-me",
+        "decision": "approve-or-deny",
+        "decision_actor": "human_authority",
+        "decision_reason": "replace-me"
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "verification_contract",
+      "authority_effect": "none",
+      "payload": {
+        "contract_id": "replace-me",
+        "operation_id": "replace-me",
+        "effect_description": "replace-me",
+        "observer_role": "operator",
+        "evidence_required": ["replace-me"],
+        "unresolved_classification": "effect_unknown"
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "repair_plan",
+      "authority_effect": "none",
+      "payload": {
+        "operation_id": "replace-me",
+        "repair_owner": "operator",
+        "failure_or_uncertainty": "replace-me",
+        "repair_action": "replace-me",
+        "readiness_evidence": ["replace-me"],
+        "human_return_point": "human-authority-review"
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "resume_authorization",
+      "authority_effect": "none",
+      "payload": {
+        "operation_id": "replace-me",
+        "resume_authority": "human_authority",
+        "authorization_reason": "replace-me",
+        "fresh_attempt_required": true,
+        "human_return_point": "human-authority-review"
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "dependency_evidence",
+      "authority_effect": "none",
+      "payload": {
+        "evidence_id": "replace-me",
+        "component_name": "replace-me",
+        "component_version": "replace-me",
+        "source_reference": "replace-me",
+        "source_revision": "replace-me",
+        "dependency_owner": "dependency_owner",
+        "verification_method": "replace-me"
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "external_evaluation_evidence",
+      "authority_effect": "none",
+      "payload": {
+        "evidence_id": "replace-me",
+        "evaluation_class": "safety_evaluation-or-capability_evaluation",
+        "source_reference": "replace-me",
+        "source_revision": "replace-me",
+        "evidence_producer": "evidence_producer",
+        "verification_method": "replace-me"
+      }
+    },
+    {
+      "schema_version": "rpos.packet.v0.1",
+      "template_kind": "human_return_packet",
+      "authority_effect": "none",
+      "payload": {
+        "operation_id": "replace-me",
+        "current_state": "replace-me",
+        "residual_owner": "operator",
+        "human_return_point": "human-authority-review",
+        "known_facts": ["replace-me"],
+        "unresolved_questions": ["replace-me"],
+        "requested_human_decision": "replace-me"
+      }
+    }
+  ]
+}
