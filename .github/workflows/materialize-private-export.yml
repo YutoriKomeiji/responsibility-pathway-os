@@ -1,0 +1,108 @@
+name: Materialize frozen private RPOS export
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "migration/rpos-public-export-0.1.0a1.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify artifact digest and materialize exact 81-file product boundary
+        env:
+          EXPECTED_ZIP_SHA256: "12b5d0b46981d534902d0574e752824bd2e937b6958b0e41a056c5624963bde4"
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib
+          import json
+          import os
+          import shutil
+          import zipfile
+          from pathlib import Path
+
+          root = Path.cwd()
+          archive = root / "migration" / "rpos-public-export-0.1.0a1.zip"
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          expected = os.environ["EXPECTED_ZIP_SHA256"]
+          if digest != expected:
+              raise SystemExit(f"artifact digest mismatch: {digest} != {expected}")
+
+          tmp = root / ".materialize-rpos-export"
+          if tmp.exists():
+              shutil.rmtree(tmp)
+          tmp.mkdir()
+          with zipfile.ZipFile(archive) as zf:
+              zf.extractall(tmp)
+
+          evidence = json.loads((tmp / "PUBLIC-EXPORT-EVIDENCE.json").read_text(encoding="utf-8"))
+          if evidence.get("schema_version") != "rpos.public-export.evidence.v0.1":
+              raise SystemExit("unexpected export evidence schema")
+          if evidence.get("release_candidate") != "0.1.0a1":
+              raise SystemExit("unexpected release candidate")
+          if evidence.get("target_repository") != "YutoriKomeiji/responsibility-pathway-os":
+              raise SystemExit("unexpected target repository")
+          files = evidence.get("files", [])
+          if evidence.get("file_count") != 81 or len(files) != 81:
+              raise SystemExit(f"expected 81 product files, got {len(files)}")
+
+          paths = [item["path"] for item in files]
+          if len(paths) != len(set(paths)):
+              raise SystemExit("duplicate product paths in export evidence")
+          forbidden_roots = set(evidence.get("excluded_roots", []))
+          for item in files:
+              rel = Path(item["path"])
+              if rel.parts and rel.parts[0] in forbidden_roots:
+                  raise SystemExit(f"forbidden root in product set: {rel}")
+              source = tmp / rel
+              if not source.is_file():
+                  raise SystemExit(f"missing exported file: {rel}")
+              content = source.read_bytes()
+              actual = hashlib.sha256(content).hexdigest()
+              if actual != item["sha256"]:
+                  raise SystemExit(f"hash mismatch for {rel}: {actual} != {item['sha256']}")
+              if len(content) != item["bytes"]:
+                  raise SystemExit(f"size mismatch for {rel}")
+
+          for item in files:
+              rel = Path(item["path"])
+              dest = root / rel
+              dest.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(tmp / rel, dest)
+
+          # Migration-only surfaces are deliberately removed from the resulting product commit.
+          init = root / ".migration-init"
+          if init.exists():
+              init.unlink()
+          shutil.rmtree(root / "migration", ignore_errors=True)
+          materializer = root / ".github" / "workflows" / "materialize-private-export.yml"
+          if materializer.exists():
+              materializer.unlink()
+          shutil.rmtree(tmp, ignore_errors=True)
+
+          # Ensure private development roots were not materialized.
+          for forbidden in sorted(forbidden_roots):
+              if (root / forbidden).exists():
+                  raise SystemExit(f"private root unexpectedly present after materialization: {forbidden}")
+          PY
+      - name: Commit materialized standalone product
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --stat
+          git diff --cached --quiet && { echo "No materialization changes"; exit 1; }
+          git commit -m "Materialize frozen RPOS 0.1.0a1 standalone export"
+          git push origin HEAD:main
