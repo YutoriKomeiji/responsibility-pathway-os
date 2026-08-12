@@ -1,1 +1,546 @@
-{"excluded_relative_paths":["specs/gennai-exapp-adapter-detailed-design-v0.1.md","specs/ghostdrift-public-surface-audit-v0.1.md","specs/ip-avoidance-boundary-v0.1.md","specs/private-alpha-packaging-boundary-v0.1.md","specs/rapid-development-operating-model.md"],"excluded_roots":["decisions","patent","research","review"],"file_count":103,"files":[{"bytes":1068,"path":"LICENSE","sha256":"2cea2b64632f651ad8289effa45c8d99fbcecf41b10151c35ff4bf977c31b8f3"},{"bytes":9970,"path":"README.ja.md","sha256":"4b1d99c642159bb69f334be45ac3d7a4efe8f1dd9b6c0d4b1271836ea096ca62"},{"bytes":9205,"path":"README.md","sha256":"99c94fe28578a1af48b98ffc30fc9105fdcebff3e8b56338938f797b7a493b96"},{"bytes":2679,"path":"SECURITY.ja.md","sha256":"eb1d2f90f7ae18a647531f1976b7432c055a6282e8160756568b2f966784e056"},{"bytes":2507,"path":"SECURITY.md","sha256":"a6793c2238fbf82d2093e692adfbd4a3793e4819579c53ba12d094c72109e90d"},{"bytes":3751,"path":"docs/en/backward-compatibility-policy.md","sha256":"aecc5acb3cbdb7b068bf0df426e22e9a982bf4ec8407926635a894d9166a172c"},{"bytes":4694,"path":"docs/en/current-scope-and-extension-surface.md","sha256":"17cc3f3a3361351fab1b503298a140a48a3aa4141c98c19cf1df3cb6f1530033"},{"bytes":4331,"path":"docs/en/defensive-provenance-and-design-around-readiness.md","sha256":"528fa060edfd3688473e91daf60c4ebc0c1a7496fc65cdf311fd412c4801aa17"},{"bytes":6123,"path":"docs/en/development-and-document-sync-policy.md","sha256":"a59e6f3d6dcd92e9ad1e8b7d361429875f11a935d30e99cd9526368d19dd0749"},{"bytes":3930,"path":"docs/en/evidence-supersession-and-safe-degradation.md","sha256":"7f8063b7c831dbae0254df0a21034c8d423562cf56112a2900e1f97d63d279ad"},{"bytes":4183,"path":"docs/en/formal-evidence-crosswalk.md","sha256":"4e9a0b522134fbf46080911c906299329dc92687feb5e28fe46951768d57f044"},{"bytes":6606,"path":"docs/en/operational-product-experience.md","sha256":"2b57cec06f9dc9787dc7343328e4f685ba02fa7505e553c9962894bf00f160d5"},{"bytes":4905,"path":"docs/en/os-quality-readiness.md","sha256":"4117941830d0c5fc46f3082e4ad3cd41bc57358f0f1495d18f4584d413d01d19"},{"bytes":5531,"path":"docs/en/public-claim-evidence-crosswalk.md","sha256":"a459514ce76aa331eb9e158a523cc2fe1c0b0fde63953b67f2e4893a0aa4652c"},{"bytes":1951,"path":"docs/en/public-claim-review-readiness.md","sha256":"58e45652582f98f78e9b97fd592c80303262a4bb27f39c6e031e8781206ea48e"},{"bytes":3334,"path":"docs/en/responsibility-packet-templates.md","sha256":"27ab14320141c755adf1aaf9e516c30ab3e2bb97a5b6b6d49157e25e64149238"},{"bytes":7896,"path":"docs/en/responsibility-security-primitives.md","sha256":"b494030b925d527a46f3c55e29c2e35bc3ce07ccf7c84337fbd324872944e8f6"},{"bytes":6220,"path":"docs/en/rpr-derived-migration-procedure.md","sha256":"6fb65277dd3f3daead607b700f9b72ab7c571c88534d17b58adb8910293f00b6"},{"bytes":5702,"path":"docs/en/security-model-and-threat-boundaries.md","sha256":"777b5d8ac2a6bd74c14e6c46dcaad6916e19835fd359ef2c632d3a4936e61a7d"},{"bytes":3507,"path":"docs/ja/backward-compatibility-policy.md","sha256":"dc28e35593cc3f764287f135f6e4b89e1e1b19b5e17d223d16e6eeef5b2cec70"},{"bytes":4780,"path":"docs/ja/current-scope-and-extension-surface.md","sha256":"44f7da0a5bacfb892d875c55056dd3a421882598a0bfe1d4ebf4d679b35a7049"},{"bytes":4633,"path":"docs/ja/defensive-provenance-and-design-around-readiness.md","sha256":"2d6f9e99ac8f17e1bdbd8a95c93ff7fdce77c99a9277fdc130c09a5d70af5132"},{"bytes":6076,"path":"docs/ja/development-and-document-sync-policy.md","sha256":"f869566e9b2c2abde37890a45aa9eaacb173cde179b411da2f58da9aee513b0c"},{"bytes":4316,"path":"docs/ja/evidence-supersession-and-safe-degradation.md","sha256":"ed8e3232e032cf5ce89d488663cfd38ae21fe0584148589b268b836709d48669"},{"bytes":4257,"path":"docs/ja/formal-evidence-crosswalk.md","sha256":"e4e6e83c626b0eeb3acdffd1fd052f809a09c1676b7e5a92b1127e0c1ce676d0"},{"bytes":7275,"path":"docs/ja/operational-product-experience.md","sha256":"7f270602bcb03b3bc117bb325804d03c2fb3600d3f244f5823215573e36be479"},{"bytes":5027,"path":"docs/ja/os-quality-readiness.md","sha256":"de49b680ff6de5d9e516519b2c58a16a6047ead32dad2fc508c5587d9c0ea674"},{"bytes":5645,"path":"docs/ja/public-claim-evidence-crosswalk.md","sha256":"b6be4d7522eafbf3e1aed9d5478d739d4b1a90af1efbfd03c7f1e2ddf4ae166b"},{"bytes":2105,"path":"docs/ja/public-claim-review-readiness.md","sha256":"4550230e20aabec54d6f541fd3b6423374db4fc2fd6af05e1751e958d8f5cb64"},{"bytes":3427,"path":"docs/ja/responsibility-packet-templates.md","sha256":"edc58befabf0ac7680b2eb911cc70a66d93dbbc67332a4b228288e2361ba48e2"},{"bytes":8308,"path":"docs/ja/responsibility-security-primitives.md","sha256":"53f06095b6db76f52442cb6a8a93858133f2d4654f3ce10149b3ee0a3b67ff1e"},{"bytes":6336,"path":"docs/ja/rpr-derived-migration-procedure.md","sha256":"dea4cca280d40ebf61f1319ef618bdeea716b0097ca43b372b9b24c2c067fb4b"},{"bytes":6042,"path":"docs/ja/security-model-and-threat-boundaries.md","sha256":"c3a0d269f216996fc509dd560ad76ab1633d73b934298efe49c58b67205c179d"},{"bytes":2133,"path":"examples/effect_unknown_restart_reconcile.py","sha256":"fd1db9879344be6949673e4d8c6fb2db67a53aa85a490a6aed0fda7b45e059cd"},{"bytes":1641,"path":"examples/happy_path_verified.py","sha256":"facba8bdaa9ce46f44ab53385acae1fc668afba9be57e979b18487754946487e"},{"bytes":1152,"path":"examples/human_gate_denied.py","sha256":"f801452160f576541d330ca57d41b1800b2b88b6881d6eb2fb54ff9a561c8937"},{"bytes":3501,"path":"examples/quick_start_end_to_end.py","sha256":"2e3bb34a4d10c350bd97b5785a7e65466a7341032dab9f8f6c3d45485f2eb109"},{"bytes":6549,"path":"formal/lean/README.ja.md","sha256":"9c6d7bfbf5533d18f64095fbd04286d587949a6bebf773248b55111e2e75d530"},{"bytes":6235,"path":"formal/lean/README.md","sha256":"a48eaf4aa4d98cac811df076c2988b9d34c424fb0094773bd372cd93adffebca"},{"bytes":2363,"path":"formal/lean/RPOSEvidenceBoundary.lean","sha256":"af18b53511a1dfee53a964b91e316d35f59c2dd4bfdff2cba6ac0a13cc43246d"},{"bytes":2779,"path":"formal/lean/RPOSOperationalBoundary.lean","sha256":"b3b0966d97756a5f1921cfc15ed3365bc3023d403b68fbab03b1f60eedc4dcea"},{"bytes":1163,"path":"formal/lean/RPOSPacketBoundary.lean","sha256":"c6ee8b994818f656b97393bc366680254d41d0a1f30a02f1c5c0837120b19741"},{"bytes":2228,"path":"formal/lean/RPOSReachability.lean","sha256":"1cd6c1d0bf1813f4065a62ac80a6af28b1f5d23b96928b81482763ae3e873e0c"},{"bytes":2578,"path":"formal/lean/RPOSState.lean","sha256":"0fca62054f3ee37782accfbbb8e36a4cd7b43689d4098880e2c4899b7af331c1"},{"bytes":2835,"path":"provenance/migration-provenance-snapshot-0.1.0a1.json","sha256":"2e072e71fadbbf0526dc5caf343a316ec7aaf66552ea0c989680bb9a43440a08"},{"bytes":5676,"path":"provenance/security-quality-readiness-0.1.0a1.json","sha256":"f2eadd1c26d3bc179bf4c029dc27c006cce597560a0918b402fad9546d47a83d"},{"bytes":987,"path":"pyproject.toml","sha256":"5c6661160f183c89d90bc7734bd450db355b9231b8e5a3533542839cb8d343d8"},{"bytes":2242,"path":"specs/cli-control-surface-detailed-design-v0.1.md","sha256":"6df03b3753c622d46dc67f850a94198458ddf4890af71fabcdeea3d9612b5c37"},{"bytes":3166,"path":"specs/evaluation-evidence-import-v0.1.md","sha256":"c768a8663a979e53825d099161690d77fbed9ea7f4e72e9135f3a09eaa71d0d8"},{"bytes":8030,"path":"specs/first-executable-slice-detailed-design-v0.1.md","sha256":"894a02aa54e20925c352b2c2772cb8fee9b9d19b5a402bc733fbe0a4e1109d7e"},{"bytes":3931,"path":"specs/japan-ai-guideline-evidence-mapping-v0.1.md","sha256":"c5ccb9e8d53edeba02a04e05cc0e679fe0ff68cef44e9af9900708e95ba1537f"},{"bytes":3556,"path":"specs/japan-audit-evidence-package-v0.1.md","sha256":"d40d1562437a85f02e6defb3f06966b13beae8de87dea309a4dea8bf2d17bf7c"},{"bytes":3310,"path":"specs/japan-cyber-supply-chain-evidence-v0.1.md","sha256":"e07f175f5fffe3c607a4b37e2fc147047ace3546a5008f23b179262917912e30"},{"bytes":8104,"path":"specs/japan-first-optimization-and-publication-strategy-v0.1.md","sha256":"387fe1703e773daed2a512ba4171fcb8de7581aa1d597331240b2befaff31952"},{"bytes":5856,"path":"specs/japan-reference-integration-matrix-v0.1.md","sha256":"0a21ed5d70a20677e9cc8246184efca8793661e11a2304f24ef41e7cd07b87fc"},{"bytes":4575,"path":"specs/normative-transition-model-v0.1.md","sha256":"dd2c9f5e34df9fd80723e0fe97c2efc474c4c165854a9ee6eb93f76c95f4cc69"},{"bytes":2958,"path":"specs/reconciliation-slice-detailed-design-v0.1.md","sha256":"b3702f0ab1824fd4c88e3a423cf7ffba29b0cee3918c73a9493b35bf40a10b32"},{"bytes":3696,"path":"specs/repair-resume-slice-detailed-design-v0.1.md","sha256":"0e2eb717def0e388076501bcf9d51241fedaf72eed5d5fdbaf83cb613fc57fb0"},{"bytes":1772,"path":"specs/role-only-artifact-boundary-v0.1.md","sha256":"b9e6e62fb7574811cad0ae8e3efc64c118b83400ad8cde2a93424e5ad9da9ca6"},{"bytes":9245,"path":"specs/system-architecture-v0.1.md","sha256":"b49b4ed8eed37e757d1ef6944511295e0fab25813d50b9e140e99610b8c9a925"},{"bytes":3362,"path":"src/rpos/__init__.py","sha256":"98ceeae3d27de60164e63f0c81ab6d21111e18e241fe4e9b8b91b0b266355b10"},{"bytes":126,"path":"src/rpos/__main__.py","sha256":"eab2a445d0b1998b617bf1f15f5cc0d1d541be5f8e136a9ca04348f09ed867f4"},{"bytes":5030,"path":"src/rpos/adapters.py","sha256":"4e891bc89e85b929ce625ce48a2d3c0d2e5de3c2b796d5ecc5a0fb142d4939fc"},{"bytes":3483,"path":"src/rpos/audit.py","sha256":"8f2017b6e61010749f4956249b046eb277514d5b23bc49ba53b97f5b55124e4b"},{"bytes":5813,"path":"src/rpos/cli.py","sha256":"12bf585cb8fe1326932afb7b9de61f61e05233b4048bea27cc38249205703c97"},{"bytes":3620,"path":"src/rpos/dependency.py","sha256":"48fb5d0dbc0ffa527cc977784b3056cdb877c1fd20d5cf6c316bfca9784c65c8"},{"bytes":2994,"path":"src/rpos/evidence.py","sha256":"e5ba18acb6decb3680043bd603b1f141c8881953a76e3760dbacc3eb91b64a84"},{"bytes":3643,"path":"src/rpos/guideline.py","sha256":"02d7695916b1df6cb07c29d59d31226f6806852b887ba0c41d8e130499ac289a"},{"bytes":1813,"path":"src/rpos/hash_bundle.py","sha256":"5201adadd364d3dfff53254febdbb699ec53d97aa0482d55cb030f1fafdb16a3"},{"bytes":3954,"path":"src/rpos/models.py","sha256":"4a35541760650dac3da83b91ab92e0e52bd3d2aa26e8b9cba4d312d7991df7f5"},{"bytes":2962,"path":"src/rpos/observatory.py","sha256":"6ba5d8e5f74e6ec24cf44aabb2e810fddf4fc240ad10eae2ca94af9908b8c683"},{"bytes":5764,"path":"src/rpos/provenance.py","sha256":"056b4a8347bd3231db82ad97430b057a60e51757b9afc3f88886b1dc1669be82"},{"bytes":4592,"path":"src/rpos/provenance_review.py","sha256":"a37ed47da6dba415545cbe4e52344c4e5feaf2b3197a93fe847c3b55bd59978c"},{"bytes":2770,"path":"src/rpos/sbom.py","sha256":"40ebfd09fb2739e375ecf6b5c72de11a1a73e44aa7879dfe598b241561b68ffc"},{"bytes":8412,"path":"src/rpos/security.py","sha256":"abd7adc1461590ad7b534312b851ae453dc26fe78599005496361609ac86d71f"},{"bytes":6091,"path":"src/rpos/security_policy.py","sha256":"578d6274c98da2300f06d5e8408f30e9e52c099ecaccfdf41f6a2e92bd34df7d"},{"bytes":15162,"path":"src/rpos/service.py","sha256":"36109f9e830bf3c5f509b94b70ef0c1366c1d24b2be251bdb28c00944ab1464a"},{"bytes":7545,"path":"src/rpos/storage.py","sha256":"0e6340d81fabed22472a2a2292365246d5f41ce9ebee1a852e2589bc5300c57f"},{"bytes":5426,"path":"src/rpos/template_packets.py","sha256":"045f08fa7691be863df86fd1e17a083a4f1dc5076aed881cb59a300e697e04aa"},{"bytes":3553,"path":"templates/catalog.json","sha256":"96608c2d95f28f0b68967c476cc065caeb4656b639e6ab337a9747e4415765ae"},{"bytes":3990,"path":"tests/test_audit_evidence_package.py","sha256":"36ee8a3bdf355c256e553fb5afdbb4960d08f47c131f7ce5dc85d45411650d45"},{"bytes":3900,"path":"tests/test_backward_compatibility.py","sha256":"cf106b679c9c999b60e076e1fc6789d541e659ae987e6b0f835b3e02b2d209cd"},{"bytes":4262,"path":"tests/test_bounded_file_adapter.py","sha256":"43a3437841056c29ec6c2618ceb8805145c14b98ae9e58106ef994154ce44bd0"},{"bytes":3761,"path":"tests/test_cli.py","sha256":"a76a568cd3f07e107fd90d469483db6a25982c6f77bf48c90c7123983cc25292"},{"bytes":2756,"path":"tests/test_defensive_provenance.py","sha256":"a83ac477f77ccff47f2e8ab0c73344934cc43873ff54876b085a1cbcff76c3ab"},{"bytes":3337,"path":"tests/test_dependency_evidence.py","sha256":"bbf7d50cd02ed80caedcf6dcd8e6eafbe65c801a83b4461670232909fb0041db"},{"bytes":4007,"path":"tests/test_evaluation_evidence_import.py","sha256":"fd0ee8b73ae0310a4ed1a6ab50f5b84cfcaa1e6b74f7ddca56e21e60c04b38f8"},{"bytes":2895,"path":"tests/test_event_chain_checkpoint.py","sha256":"5ff45c3538e132bed9aa002224c007166e3a7a6e8b76141e23710ffcef0c1152"},{"bytes":3528,"path":"tests/test_external_evaluation_evidence.py","sha256":"8c4a99bb9e64d6467bc504016fdaa98ba460e29d2788d182543b3bfe87f643ae"},{"bytes":5088,"path":"tests/test_first_slice.py","sha256":"bb4e39f702737763b16f128a2ce9d92e7e69c694183e54e1022a32cb32a60a6f"},{"bytes":2893,"path":"tests/test_guideline_evidence_matrix.py","sha256":"a61688cdc64680e55635cbbf8931621c82883ec6810ddf5566690ef15676515a"},{"bytes":1816,"path":"tests/test_migration_provenance_snapshot.py","sha256":"facd81b17fad1b614c6881a7f37b0c53af0a2b84002315e961063137e6bd89b2"},{"bytes":1062,"path":"tests/test_provenance_report_read_only.py","sha256":"422ac10804d72b7f67d142bdc7cd93c774520003fe53e02bf6bbd1a1b546b9cb"},{"bytes":3133,"path":"tests/test_provenance_review.py","sha256":"de5683af826f79ccea65f1ba5f32ba6561e14cb9f292da634a909ae25de53909"},{"bytes":4980,"path":"tests/test_reconciliation_slice.py","sha256":"22300ab4a6430e1168bae43430c87dac97853d88dfd69de61739d7a3effb0651"},{"bytes":1925,"path":"tests/test_release_artifacts.py","sha256":"e066bb96b01aa276d29305009c1245d6f7fb64e6e18ad316db2a532e5e147359"},{"bytes":5077,"path":"tests/test_repair_resume.py","sha256":"cc1f4c66d63a951ac46af7d1ef9fcd20828ae4295dc9eaebc149ef6250759ebf"},{"bytes":6561,"path":"tests/test_responsibility_observatory.py","sha256":"1a5caa16aee8ccc1eddcaff30e11bf6e3813eea3696f339b83c0776a213d51e3"},{"bytes":2352,"path":"tests/test_role_only_artifact_boundary.py","sha256":"a1cee51c735493675ed1f0d46e47bea09c63c8017af66427ec84299862d1ecea"},{"bytes":4989,"path":"tests/test_security_policy.py","sha256":"a7c469856c06dd62f68676d52d44df8c11ea0bc83e9a0643b50bcc496817eab4"},{"bytes":4233,"path":"tests/test_security_primitives.py","sha256":"562e4d8afe840867556a4b42cd4ab123e39e37215f96104a12e48369c5b7578d"},{"bytes":2123,"path":"tests/test_security_quality_readiness.py","sha256":"ce791cd5526d4d438c184c7b81144cfbd8296b001c550366d045a6a3a10316"},{"bytes":2850,"path":"tests/test_template_packets.py","sha256":"7c1dd9a9b95dbb44deba9f8cb770ebc6cf3690c577f85f08b4c832936d6cde9b"}],"publication_non_claims":["production_readiness","legal_or_regulatory_compliance","certification_or_official_conformity","universal_ai_safety","patent_non_infringement","patent_invalidity","freedom_to_operate","blanket_formal_verification"],"release_candidate":"0.1.0a1","schema_version":"rpos.public-export.evidence.v0.1","target_repository":"YutoriKomeiji/responsibility-pathway-os"}
+{
+  "excluded_relative_paths": [
+    "specs/gennai-exapp-adapter-detailed-design-v0.1.md",
+    "specs/ghostdrift-public-surface-audit-v0.1.md",
+    "specs/ip-avoidance-boundary-v0.1.md",
+    "specs/private-alpha-packaging-boundary-v0.1.md",
+    "specs/rapid-development-operating-model.md"
+  ],
+  "excluded_roots": [
+    "decisions",
+    "patent",
+    "research",
+    "review"
+  ],
+  "file_count": 103,
+  "files": [
+    {
+      "bytes": 1068,
+      "path": "LICENSE",
+      "sha256": "2cea2b64632f651ad8289effa45c8d99fbcecf41b10151c35ff4bf977c31b8f3"
+    },
+    {
+      "bytes": 9970,
+      "path": "README.ja.md",
+      "sha256": "4b1d99c642159bb69f334be45ac3d7a4efe8f1dd9b6c0d4b1271836ea096ca62"
+    },
+    {
+      "bytes": 9205,
+      "path": "README.md",
+      "sha256": "99c94fe28578a1af48b98ffc30fc9105fdcebff3e8b56338938f797b7a493b96"
+    },
+    {
+      "bytes": 2679,
+      "path": "SECURITY.ja.md",
+      "sha256": "eb1d2f90f7ae18a647531f1976b7432c055a6282e8160756568b2f966784e056"
+    },
+    {
+      "bytes": 2507,
+      "path": "SECURITY.md",
+      "sha256": "a6793c2238fbf82d2093e692adfbd4a3793e4819579c53ba12d094c72109e90d"
+    },
+    {
+      "bytes": 3751,
+      "path": "docs/en/backward-compatibility-policy.md",
+      "sha256": "aecc5acb3cbdb7b068bf0df426e22e9a982bf4ec8407926635a894d9166a172c"
+    },
+    {
+      "bytes": 4694,
+      "path": "docs/en/current-scope-and-extension-surface.md",
+      "sha256": "17cc3f3a3361351fab1b503298a140a48a3aa4141c98c19cf1df3cb6f1530033"
+    },
+    {
+      "bytes": 4331,
+      "path": "docs/en/defensive-provenance-and-design-around-readiness.md",
+      "sha256": "528fa060edfd3688473e91daf60c4ebc0c1a7496fc65cdf311fd412c4801aa17"
+    },
+    {
+      "bytes": 6123,
+      "path": "docs/en/development-and-document-sync-policy.md",
+      "sha256": "a59e6f3d6dcd92e9ad1e8b7d361429875f11a935d30e99cd9526368d19dd0749"
+    },
+    {
+      "bytes": 3930,
+      "path": "docs/en/evidence-supersession-and-safe-degradation.md",
+      "sha256": "7f8063b7c831dbae0254df0a21034c8d423562cf56112a2900e1f97d63d279ad"
+    },
+    {
+      "bytes": 4183,
+      "path": "docs/en/formal-evidence-crosswalk.md",
+      "sha256": "4e9a0b522134fbf46080911c906299329dc92687feb5e28fe46951768d57f044"
+    },
+    {
+      "bytes": 6606,
+      "path": "docs/en/operational-product-experience.md",
+      "sha256": "2b57cec06f9dc9787dc7343328e4f685ba02fa7505e553c9962894bf00f160d5"
+    },
+    {
+      "bytes": 4905,
+      "path": "docs/en/os-quality-readiness.md",
+      "sha256": "4117941830d0c5fc46f3082e4ad3cd41bc57358f0f1495d18f4584d413d01d19"
+    },
+    {
+      "bytes": 5531,
+      "path": "docs/en/public-claim-evidence-crosswalk.md",
+      "sha256": "a459514ce76aa331eb9e158a523cc2fe1c0b0fde63953b67f2e4893a0aa4652c"
+    },
+    {
+      "bytes": 1951,
+      "path": "docs/en/public-claim-review-readiness.md",
+      "sha256": "58e45652582f98f78e9b97fd592c80303262a4bb27f39c6e031e8781206ea48e"
+    },
+    {
+      "bytes": 3334,
+      "path": "docs/en/responsibility-packet-templates.md",
+      "sha256": "27ab14320141c755adf1aaf9e516c30ab3e2bb97a5b6b6d49157e25e64149238"
+    },
+    {
+      "bytes": 7896,
+      "path": "docs/en/responsibility-security-primitives.md",
+      "sha256": "b494030b925d527a46f3c55e29c2e35bc3ce07ccf7c84337fbd324872944e8f6"
+    },
+    {
+      "bytes": 6220,
+      "path": "docs/en/rpr-derived-migration-procedure.md",
+      "sha256": "6fb65277dd3f3daead607b700f9b72ab7c571c88534d17b58adb8910293f00b6"
+    },
+    {
+      "bytes": 5702,
+      "path": "docs/en/security-model-and-threat-boundaries.md",
+      "sha256": "777b5d8ac2a6bd74c14e6c46dcaad6916e19835fd359ef2c632d3a4936e61a7d"
+    },
+    {
+      "bytes": 3507,
+      "path": "docs/ja/backward-compatibility-policy.md",
+      "sha256": "dc28e35593cc3f764287f135f6e4b89e1e1b19b5e17d223d16e6eeef5b2cec70"
+    },
+    {
+      "bytes": 4780,
+      "path": "docs/ja/current-scope-and-extension-surface.md",
+      "sha256": "44f7da0a5bacfb892d875c55056dd3a421882598a0bfe1d4ebf4d679b35a7049"
+    },
+    {
+      "bytes": 4633,
+      "path": "docs/ja/defensive-provenance-and-design-around-readiness.md",
+      "sha256": "2d6f9e99ac8f17e1bdbd8a95c93ff7fdce77c99a9277fdc130c09a5d70af5132"
+    },
+    {
+      "bytes": 6076,
+      "path": "docs/ja/development-and-document-sync-policy.md",
+      "sha256": "f869566e9b2c2abde37890a45aa9eaacb173cde179b411da2f58da9aee513b0c"
+    },
+    {
+      "bytes": 4316,
+      "path": "docs/ja/evidence-supersession-and-safe-degradation.md",
+      "sha256": "ed8e3232e032cf5ce89d488663cfd38ae21fe0584148589b268b836709d48669"
+    },
+    {
+      "bytes": 4257,
+      "path": "docs/ja/formal-evidence-crosswalk.md",
+      "sha256": "e4e6e83c626b0eeb3acdffd1fd052f809a09c1676b7e5a92b1127e0c1ce676d0"
+    },
+    {
+      "bytes": 7275,
+      "path": "docs/ja/operational-product-experience.md",
+      "sha256": "7f270602bcb03b3bc117bb325804d03c2fb3600d3f244f5823215573e36be479"
+    },
+    {
+      "bytes": 5027,
+      "path": "docs/ja/os-quality-readiness.md",
+      "sha256": "de49b680ff6de5d9e516519b2c58a16a6047ead32dad2fc508c5587d9c0ea674"
+    },
+    {
+      "bytes": 5645,
+      "path": "docs/ja/public-claim-evidence-crosswalk.md",
+      "sha256": "b6be4d7522eafbf3e1aed9d5478d739d4b1a90af1efbfd03c7f1e2ddf4ae166b"
+    },
+    {
+      "bytes": 2105,
+      "path": "docs/ja/public-claim-review-readiness.md",
+      "sha256": "4550230e20aabec54d6f541fd3b6423374db4fc2fd6af05e1751e958d8f5cb64"
+    },
+    {
+      "bytes": 3427,
+      "path": "docs/ja/responsibility-packet-templates.md",
+      "sha256": "edc58befabf0ac7680b2eb911cc70a66d93dbbc67332a4b228288e2361ba48e2"
+    },
+    {
+      "bytes": 8308,
+      "path": "docs/ja/responsibility-security-primitives.md",
+      "sha256": "53f06095b6db76f52442cb6a8a93858133f2d4654f3ce10149b3ee0a3b67ff1e"
+    },
+    {
+      "bytes": 6336,
+      "path": "docs/ja/rpr-derived-migration-procedure.md",
+      "sha256": "dea4cca280d40ebf61f1319ef618bdeea716b0097ca43b372b9b24c2c067fb4b"
+    },
+    {
+      "bytes": 6042,
+      "path": "docs/ja/security-model-and-threat-boundaries.md",
+      "sha256": "c3a0d269f216996fc509dd560ad76ab1633d73b934298efe49c58b67205c179d"
+    },
+    {
+      "bytes": 2133,
+      "path": "examples/effect_unknown_restart_reconcile.py",
+      "sha256": "fd1db9879344be6949673e4d8c6fb2db67a53aa85a490a6aed0fda7b45e059cd"
+    },
+    {
+      "bytes": 1641,
+      "path": "examples/happy_path_verified.py",
+      "sha256": "facba8bdaa9ce46f44ab53385acae1fc668afba9be57e979b18487754946487e"
+    },
+    {
+      "bytes": 1152,
+      "path": "examples/human_gate_denied.py",
+      "sha256": "f801452160f576541d330ca57d41b1800b2b88b6881d6eb2fb54ff9a561c8937"
+    },
+    {
+      "bytes": 3501,
+      "path": "examples/quick_start_end_to_end.py",
+      "sha256": "2e3bb34a4d10c350bd97b5785a7e65466a7341032dab9f8f6c3d45485f2eb109"
+    },
+    {
+      "bytes": 6549,
+      "path": "formal/lean/README.ja.md",
+      "sha256": "9c6d7bfbf5533d18f64095fbd04286d587949a6bebf773248b55111e2e75d530"
+    },
+    {
+      "bytes": 6235,
+      "path": "formal/lean/README.md",
+      "sha256": "a48eaf4aa4d98cac811df076c2988b9d34c424fb0094773bd372cd93adffebca"
+    },
+    {
+      "bytes": 2363,
+      "path": "formal/lean/RPOSEvidenceBoundary.lean",
+      "sha256": "af18b53511a1dfee53a964b91e316d35f59c2dd4bfdff2cba6ac0a13cc43246d"
+    },
+    {
+      "bytes": 2779,
+      "path": "formal/lean/RPOSOperationalBoundary.lean",
+      "sha256": "b3b0966d97756a5f1921cfc15ed3365bc3023d403b68fbab03b1f60eedc4dcea"
+    },
+    {
+      "bytes": 1163,
+      "path": "formal/lean/RPOSPacketBoundary.lean",
+      "sha256": "c6ee8b994818f656b97393bc366680254d41d0a1f30a02f1c5c0837120b19741"
+    },
+    {
+      "bytes": 2228,
+      "path": "formal/lean/RPOSReachability.lean",
+      "sha256": "1cd6c1d0bf1813f4065a62ac80a6af28b1f5d23b96928b81482763ae3e873e0c"
+    },
+    {
+      "bytes": 2578,
+      "path": "formal/lean/RPOSState.lean",
+      "sha256": "0fca62054f3ee37782accfbbb8e36a4cd7b43689d4098880e2c4899b7af331c1"
+    },
+    {
+      "bytes": 2835,
+      "path": "provenance/migration-provenance-snapshot-0.1.0a1.json",
+      "sha256": "2e072e71fadbbf0526dc5caf343a316ec7aaf66552ea0c989680bb9a43440a08"
+    },
+    {
+      "bytes": 5676,
+      "path": "provenance/security-quality-readiness-0.1.0a1.json",
+      "sha256": "f2eadd1c26d3bc179bf4c029dc27c006cce597560a0918b402fad9546d47a83d"
+    },
+    {
+      "bytes": 987,
+      "path": "pyproject.toml",
+      "sha256": "5c6661160f183c89d90bc7734bd450db355b9231b8e5a3533542839cb8d343d8"
+    },
+    {
+      "bytes": 2242,
+      "path": "specs/cli-control-surface-detailed-design-v0.1.md",
+      "sha256": "6df03b3753c622d46dc67f850a94198458ddf4890af71fabcdeea3d9612b5c37"
+    },
+    {
+      "bytes": 3166,
+      "path": "specs/evaluation-evidence-import-v0.1.md",
+      "sha256": "c768a8663a979e53825d099161690d77fbed9ea7f4e72e9135f3a09eaa71d0d8"
+    },
+    {
+      "bytes": 8030,
+      "path": "specs/first-executable-slice-detailed-design-v0.1.md",
+      "sha256": "894a02aa54e20925c352b2c2772cb8fee9b9d19b5a402bc733fbe0a4e1109d7e"
+    },
+    {
+      "bytes": 3931,
+      "path": "specs/japan-ai-guideline-evidence-mapping-v0.1.md",
+      "sha256": "c5ccb9e8d53edeba02a04e05cc0e679fe0ff68cef44e9af9900708e95ba1537f"
+    },
+    {
+      "bytes": 3556,
+      "path": "specs/japan-audit-evidence-package-v0.1.md",
+      "sha256": "d40d1562437a85f02e6defb3f06966b13beae8de87dea309a4dea8bf2d17bf7c"
+    },
+    {
+      "bytes": 3310,
+      "path": "specs/japan-cyber-supply-chain-evidence-v0.1.md",
+      "sha256": "e07f175f5fffe3c607a4b37e2fc147047ace3546a5008f23b179262917912e30"
+    },
+    {
+      "bytes": 8104,
+      "path": "specs/japan-first-optimization-and-publication-strategy-v0.1.md",
+      "sha256": "387fe1703e773daed2a512ba4171fcb8de7581aa1d597331240b2befaff31952"
+    },
+    {
+      "bytes": 5856,
+      "path": "specs/japan-reference-integration-matrix-v0.1.md",
+      "sha256": "0a21ed5d70a20677e9cc8246184efca8793661e11a2304f24ef41e7cd07b87fc"
+    },
+    {
+      "bytes": 4575,
+      "path": "specs/normative-transition-model-v0.1.md",
+      "sha256": "dd2c9f5e34df9fd80723e0fe97c2efc474c4c165854a9ee6eb93f76c95f4cc69"
+    },
+    {
+      "bytes": 2958,
+      "path": "specs/reconciliation-slice-detailed-design-v0.1.md",
+      "sha256": "b3702f0ab1824fd4c88e3a423cf7ffba29b0cee3918c73a9493b35bf40a10b32"
+    },
+    {
+      "bytes": 3696,
+      "path": "specs/repair-resume-slice-detailed-design-v0.1.md",
+      "sha256": "0e2eb717def0e388076501bcf9d51241fedaf72eed5d5fdbaf83cb613fc57fb0"
+    },
+    {
+      "bytes": 1772,
+      "path": "specs/role-only-artifact-boundary-v0.1.md",
+      "sha256": "b9e6e62fb7574811cad0ae8e3efc64c118b83400ad8cde2a93424e5ad9da9ca6"
+    },
+    {
+      "bytes": 9245,
+      "path": "specs/system-architecture-v0.1.md",
+      "sha256": "b49b4ed8eed37e757d1ef6944511295e0fab25813d50b9e140e99610b8c9a925"
+    },
+    {
+      "bytes": 3362,
+      "path": "src/rpos/__init__.py",
+      "sha256": "98ceeae3d27de60164e63f0c81ab6d21111e18e241fe4e9b8b91b0b266355b10"
+    },
+    {
+      "bytes": 126,
+      "path": "src/rpos/__main__.py",
+      "sha256": "eab2a445d0b1998b617bf1f15f5cc0d1d541be5f8e136a9ca04348f09ed867f4"
+    },
+    {
+      "bytes": 5030,
+      "path": "src/rpos/adapters.py",
+      "sha256": "4e891bc89e85b929ce625ce48a2d3c0d2e5de3c2b796d5ecc5a0fb142d4939fc"
+    },
+    {
+      "bytes": 3483,
+      "path": "src/rpos/audit.py",
+      "sha256": "8f2017b6e61010749f4956249b046eb277514d5b23bc49ba53b97f5b55124e4b"
+    },
+    {
+      "bytes": 5813,
+      "path": "src/rpos/cli.py",
+      "sha256": "12bf585cb8fe1326932afb7b9de61f61e05233b4048bea27cc38249205703c97"
+    },
+    {
+      "bytes": 3620,
+      "path": "src/rpos/dependency.py",
+      "sha256": "48fb5d0dbc0ffa527cc977784b3056cdb877c1fd20d5cf6c316bfca9784c65c8"
+    },
+    {
+      "bytes": 2994,
+      "path": "src/rpos/evidence.py",
+      "sha256": "e5ba18acb6decb3680043bd603b1f141c8881953a76e3760dbacc3eb91b64a84"
+    },
+    {
+      "bytes": 3643,
+      "path": "src/rpos/guideline.py",
+      "sha256": "02d7695916b1df6cb07c29d59d31226f6806852b887ba0c41d8e130499ac289a"
+    },
+    {
+      "bytes": 1813,
+      "path": "src/rpos/hash_bundle.py",
+      "sha256": "5201adadd364d3dfff53254febdbb699ec53d97aa0482d55cb030f1fafdb16a3"
+    },
+    {
+      "bytes": 3954,
+      "path": "src/rpos/models.py",
+      "sha256": "4a35541760650dac3da83b91ab92e0e52bd3d2aa26e8b9cba4d312d7991df7f5"
+    },
+    {
+      "bytes": 2962,
+      "path": "src/rpos/observatory.py",
+      "sha256": "6ba5d8e5f74e6ec24cf44aabb2e810fddf4fc240ad10eae2ca94af9908b8c683"
+    },
+    {
+      "bytes": 5764,
+      "path": "src/rpos/provenance.py",
+      "sha256": "056b4a8347bd3231db82ad97430b057a60e51757b9afc3f88886b1dc1669be82"
+    },
+    {
+      "bytes": 4592,
+      "path": "src/rpos/provenance_review.py",
+      "sha256": "a37ed47da6dba415545cbe4e52344c4e5feaf2b3197a93fe847c3b55bd59978c"
+    },
+    {
+      "bytes": 2770,
+      "path": "src/rpos/sbom.py",
+      "sha256": "40ebfd09fb2739e375ecf6b5c72de11a1a73e44aa7879dfe598b241561b68ffc"
+    },
+    {
+      "bytes": 8412,
+      "path": "src/rpos/security.py",
+      "sha256": "abd7adc1461590ad7b534312b851ae453dc26fe78599005496361609ac86d71f"
+    },
+    {
+      "bytes": 6091,
+      "path": "src/rpos/security_policy.py",
+      "sha256": "578d6274c98da2300f06d5e8408f30e9e52c099ecaccfdf41f6a2e92bd34df7d"
+    },
+    {
+      "bytes": 15162,
+      "path": "src/rpos/service.py",
+      "sha256": "36109f9e830bf3c5f509b94b70ef0c1366c1d24b2be251bdb28c00944ab1464a"
+    },
+    {
+      "bytes": 7545,
+      "path": "src/rpos/storage.py",
+      "sha256": "0e6340d81fabed22472a2a2292365246d5f41ce9ebee1a852e2589bc5300c57f"
+    },
+    {
+      "bytes": 5426,
+      "path": "src/rpos/template_packets.py",
+      "sha256": "045f08fa7691be863df86fd1e17a083a4f1dc5076aed881cb59a300e697e04aa"
+    },
+    {
+      "bytes": 3553,
+      "path": "templates/catalog.json",
+      "sha256": "96608c2d95f28f0b68967c476cc065caeb4656b639e6ab337a9747e4415765ae"
+    },
+    {
+      "bytes": 3990,
+      "path": "tests/test_audit_evidence_package.py",
+      "sha256": "36ee8a3bdf355c256e553fb5afdbb4960d08f47c131f7ce5dc85d45411650d45"
+    },
+    {
+      "bytes": 3900,
+      "path": "tests/test_backward_compatibility.py",
+      "sha256": "cf106b679c9c999b60e076e1fc6789d541e659ae987e6b0f835b3e02b2d209cd"
+    },
+    {
+      "bytes": 4262,
+      "path": "tests/test_bounded_file_adapter.py",
+      "sha256": "43a3437841056c29ec6c2618ceb8805145c14b98ae9e58106ef994154ce44bd0"
+    },
+    {
+      "bytes": 3761,
+      "path": "tests/test_cli.py",
+      "sha256": "a76a568cd3f07e107fd90d469483db6a25982c6f77bf48c90c7123983cc25292"
+    },
+    {
+      "bytes": 2756,
+      "path": "tests/test_defensive_provenance.py",
+      "sha256": "a83ac477f77ccff47f2e8ab0c73344934cc43873ff54876b085a1cbcff76c3ab"
+    },
+    {
+      "bytes": 3337,
+      "path": "tests/test_dependency_evidence.py",
+      "sha256": "bbf7d50cd02ed80caedcf6dcd8e6eafbe65c801a83b4461670232909fb0041db"
+    },
+    {
+      "bytes": 4007,
+      "path": "tests/test_evaluation_evidence_import.py",
+      "sha256": "fd0ee8b73ae0310a4ed1a6ab50f5b84cfcaa1e6b74f7ddca56e21e60c04b38f8"
+    },
+    {
+      "bytes": 2895,
+      "path": "tests/test_event_chain_checkpoint.py",
+      "sha256": "5ff45c3538e132bed9aa002224c007166e3a7a6e8b76141e23710ffcef0c1152"
+    },
+    {
+      "bytes": 3528,
+      "path": "tests/test_external_evaluation_evidence.py",
+      "sha256": "8c4a99bb9e64d6467bc504016fdaa98ba460e29d2788d182543b3bfe87f643ae"
+    },
+    {
+      "bytes": 5088,
+      "path": "tests/test_first_slice.py",
+      "sha256": "bb4e39f702737763b16f128a2ce9d92e7e69c694183e54e1022a32cb32a60a6f"
+    },
+    {
+      "bytes": 2893,
+      "path": "tests/test_guideline_evidence_matrix.py",
+      "sha256": "a61688cdc64680e55635cbbf8931621c82883ec6810ddf5566690ef15676515a"
+    },
+    {
+      "bytes": 1816,
+      "path": "tests/test_migration_provenance_snapshot.py",
+      "sha256": "facd81b17fad1b614c6881a7f37b0c53af0a2b84002315e961063137e6bd89b2"
+    },
+    {
+      "bytes": 1062,
+      "path": "tests/test_provenance_report_read_only.py",
+      "sha256": "422ac10804d72b7f67d142bdc7cd93c774520003fe53e02bf6bbd1a1b546b9cb"
+    },
+    {
+      "bytes": 3133,
+      "path": "tests/test_provenance_review.py",
+      "sha256": "de5683af826f79ccea65f1ba5f32ba6561e14cb9f292da634a909ae25de53909"
+    },
+    {
+      "bytes": 4980,
+      "path": "tests/test_reconciliation_slice.py",
+      "sha256": "22300ab4a6430e1168bae43430c87dac97853d88dfd69de61739d7a3effb0651"
+    },
+    {
+      "bytes": 1925,
+      "path": "tests/test_release_artifacts.py",
+      "sha256": "e066bb96b01aa276d29305009c1245d6f7fb64e6e18ad316db2a532e5e147359"
+    },
+    {
+      "bytes": 5077,
+      "path": "tests/test_repair_resume.py",
+      "sha256": "cc1f4c66d63a951ac46af7d1ef9fcd20828ae4295dc9eaebc149ef6250759ebf"
+    },
+    {
+      "bytes": 6561,
+      "path": "tests/test_responsibility_observatory.py",
+      "sha256": "1a5caa16aee8ccc1eddcaff30e11bf6e3813eea3696f339b83c0776a213d51e3"
+    },
+    {
+      "bytes": 2352,
+      "path": "tests/test_role_only_artifact_boundary.py",
+      "sha256": "a1cee51c735493675ed1f0d46e47bea09c63c8017af66427ec84299862d1ecea"
+    },
+    {
+      "bytes": 4989,
+      "path": "tests/test_security_policy.py",
+      "sha256": "a7c469856c06dd62f68676d52d44df8c11ea0bc83e9a0643b50bcc496817eab4"
+    },
+    {
+      "bytes": 4233,
+      "path": "tests/test_security_primitives.py",
+      "sha256": "562e4d8afe840867556a4b42cd4ab123e39e37215f96104a12e48369c5b7578d"
+    },
+    {
+      "bytes": 2123,
+      "path": "tests/test_security_quality_readiness.py",
+      "sha256": "ce791cd5526d4b7d438c184c7b81144cfbd8296b001c550366d045a6a3a10316"
+    },
+    {
+      "bytes": 2850,
+      "path": "tests/test_template_packets.py",
+      "sha256": "7c1dd9a9b95dbb44deba9f8cb770ebc6cf3690c577f85f08b4c832936d6cde9b"
+    }
+  ],
+  "publication_non_claims": [
+    "production_readiness",
+    "legal_or_regulatory_compliance",
+    "certification_or_official_conformity",
+    "universal_ai_safety",
+    "patent_non_infringement",
+    "patent_invalidity",
+    "freedom_to_operate",
+    "blanket_formal_verification"
+  ],
+  "release_candidate": "0.1.0a1",
+  "schema_version": "rpos.public-export.evidence.v0.1",
+  "target_repository": "YutoriKomeiji/responsibility-pathway-os"
+}
