@@ -19,6 +19,8 @@ Status: machine-checked bounded formal model / Lean 4 CI verified
 - `RPOSState.lean` — normative responsibility state、direct transition relation、local transition invariant
 - `RPOSReachability.lean` — uncertainty、repair、resumption、completionに関する限定されたreflexive/transitive reachability witnessとdirect shortcut禁止
 - `RPOSEvidenceBoundary.lean` — authorization-relevant evidence、effect-verification evidence、receipt、evaluation、dependency/software-supply-chain evidenceの限定的分離
+- `RPOSPacketBoundary.lean` — responsibility/evidence packetの限定的な分離性質
+- `RPOSOperationalBoundary.lean` — product-facingなmodel independence境界。model proposalはauthorityでもeffect verificationでもなく、receiptはverified effectではなく、bounded command modelでObservatory readはstateを変更しない
 
 ## Direct-transition invariants
 
@@ -58,6 +60,21 @@ positive reachability theoremは**path existence witness**であり、liveness c
 - dependency evidenceはexternal-effect-verification evidenceではない
 
 またauthority-admissionとrecovery/resume evidenceをauthorization-relevant classとして表現しますが、**evidenceを持つこと自体がauthority付与になるわけではありません**。
+
+## Operational product boundary properties
+
+`RPOSOperationalBoundary.lean`は、product riskとtheoremの対応を読みやすく保つため、意図的に小さなteaching modelを使います。
+
+| Product risk | Lean theorem |
+|---|---|
+| model proposalをOperational Authorityと誤認する | `RPOS.model_proposal_is_not_authority` |
+| model proposalをverified external effectと誤認する | `RPOS.model_proposal_is_not_effect_verification` |
+| transport receiptをverified external effectと誤認する | `RPOS.receipt_is_not_effect_verification` |
+| read-only Observatory actionがOperational Stateを変更する | `RPOS.observatory_is_read_only` |
+
+同moduleのpositive witnessは、explicit human authorizationをauthorization-relevant、external observationをeffect-verification-relevantとして分類します。ただし任意のEvidenceがすべてのdeploymentで真実・十分・正当であるとは主張しません。
+
+このmoduleは意図的に初心者にも読めるようにしてあり、advancedなproof techniqueを学ぶ前にOperationalな意味を理解できるLean 4の最初の実例として使えます。
 
 ## Evidence layers
 
