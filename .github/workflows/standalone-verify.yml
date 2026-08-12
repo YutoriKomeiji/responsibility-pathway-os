@@ -26,7 +26,7 @@ jobs:
           root = Path('.')
           evidence = json.loads((root / 'PUBLIC-EXPORT-EVIDENCE.json').read_text(encoding='utf-8'))
           expected = {item['path']: item['sha256'] for item in evidence['files']}
-          assert len(expected) == evidence['file_count'] == 98, (len(expected), evidence['file_count'])
+          assert len(expected) == evidence['file_count'] == 101, (len(expected), evidence['file_count'])
           bad = []
           for rel, want in expected.items():
               path = root / rel
@@ -155,3 +155,4 @@ jobs:
           lean RPOSReachability.lean
           lean RPOSEvidenceBoundary.lean
           lean RPOSPacketBoundary.lean
+          lean RPOSOperationalBoundary.lean
