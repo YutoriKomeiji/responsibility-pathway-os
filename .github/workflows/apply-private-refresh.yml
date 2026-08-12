@@ -28,7 +28,7 @@ jobs:
           echo "53ca5475c708d0472eadef6b5fd2b260d75336a3946e5e23fd7d4d4e5eb7c2c8  $RUNNER_TEMP/rpos-refresh-payload.tar.gz" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/payload"
           tar -xzf "$RUNNER_TEMP/rpos-refresh-payload.tar.gz" -C "$RUNNER_TEMP/payload"
-      - name: Verify payload lineage and apply only declared changes
+      - name: Verify payload lineage and apply only declared product changes
         run: |
           python - <<'PY'
           import hashlib, json, shutil
@@ -52,10 +52,6 @@ jobs:
               shutil.copy2(src, dst)
 
           shutil.copy2(payload / 'PUBLIC-EXPORT-EVIDENCE.json', repo / 'PUBLIC-EXPORT-EVIDENCE.json')
-          strict = payload / '.github/workflows/standalone-verify.yml'
-          dst = repo / '.github/workflows/standalone-verify.yml'
-          dst.parent.mkdir(parents=True, exist_ok=True)
-          shutil.copy2(strict, dst)
 
           evidence = json.loads((repo / 'PUBLIC-EXPORT-EVIDENCE.json').read_text(encoding='utf-8'))
           expected = {item['path']: item['sha256'] for item in evidence['files']}
@@ -90,13 +86,30 @@ jobs:
           assert hasattr(rpos, 'validate_packet')
           print('preferred and backward-compatible API names present')
           PY
-      - name: Remove transfer-only material and commit candidate
+      - name: Clean verification workspace and validate staged boundary
         run: |
+          rm -rf build dist
+          find . -type d -name '__pycache__' -prune -exec rm -rf {} +
+          find . -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete
+          find src -maxdepth 1 -type d -name '*.egg-info' -prune -exec rm -rf {} +
           rm -rf .migration
-          rm -f .github/workflows/apply-private-refresh.yml
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
+
+          if git diff --cached --name-only | grep -E '(^|/)(build|dist|__pycache__)(/|$)|\.egg-info(/|$)|\.(pyc|pyo)$'; then
+            echo 'generated verification artifact reached staged candidate' >&2
+            exit 1
+          fi
+          if git diff --cached --name-only | grep -E '^\.github/workflows/'; then
+            echo 'workflow change reached Actions self-push boundary' >&2
+            exit 1
+          fi
           git diff --cached --check
+          echo 'staged candidate:'
+          git diff --cached --name-status
+      - name: Commit clean private standalone candidate
+        run: |
           git commit -m "Refresh private standalone from verified RPP candidate"
           git push origin HEAD:migration/refresh-0.1.0a1-20260812
