@@ -26,7 +26,7 @@ jobs:
           root = Path('.')
           evidence = json.loads((root / 'PUBLIC-EXPORT-EVIDENCE.json').read_text(encoding='utf-8'))
           expected = {item['path']: item['sha256'] for item in evidence['files']}
-          assert len(expected) == evidence['file_count'] == 101, (len(expected), evidence['file_count'])
+          assert len(expected) == evidence['file_count'] == 103, (len(expected), evidence['file_count'])
           bad = []
           for rel, want in expected.items():
               path = root / rel
@@ -68,6 +68,8 @@ jobs:
           assert hasattr(rpos, 'validate_envelope')
           assert hasattr(rpos, 'ResponsibilityPacket')
           assert hasattr(rpos, 'validate_packet')
+          assert hasattr(rpos, 'ResponsibilityObservation')
+          assert hasattr(rpos, 'ResponsibilityObservatory')
           new = {
               'schema_version': 'rpos.responsibility-state-envelope.v0.1',
               'template_kind': 'human_gate_decision',
@@ -80,7 +82,7 @@ jobs:
           b = rpos.validate_packet(legacy)
           assert a.template_kind == b.template_kind
           assert a.authority_effect == b.authority_effect == 'none'
-          print('new and legacy envelope APIs verified from installed wheel')
+          print('new/legacy envelope and Observatory APIs verified from installed wheel')
           PY
           (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-wheel/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
       - name: Clean-install sdist and verify installed API boundary
@@ -95,7 +97,9 @@ jobs:
           assert hasattr(rpos, 'validate_envelope')
           assert hasattr(rpos, 'ResponsibilityPacket')
           assert hasattr(rpos, 'validate_packet')
-          print('new and legacy envelope APIs import from installed sdist')
+          assert hasattr(rpos, 'ResponsibilityObservation')
+          assert hasattr(rpos, 'ResponsibilityObservatory')
+          print('new/legacy envelope and Observatory APIs import from installed sdist')
           PY
           (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-sdist/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
       - name: Generate and validate standalone SBOM
