@@ -15,6 +15,7 @@ from .models import (
     ReconciliationResult,
     ReconciliationStatus,
 )
+from .observatory import ResponsibilityObservation, ResponsibilityObservatory
 from .provenance import (
     DefensiveProvenanceRecord,
     DesignAroundReadiness,
@@ -87,6 +88,8 @@ __all__ = [
     "ResponsibilityDependencyStatus",
     "ResponsibilityEventChainCheckpoint",
     "ResponsibilityIntegritySnapshot",
+    "ResponsibilityObservation",
+    "ResponsibilityObservatory",
     "ResponsibilityStateEnvelope",
     "ResponsibilityPacket",
     "RposService",
