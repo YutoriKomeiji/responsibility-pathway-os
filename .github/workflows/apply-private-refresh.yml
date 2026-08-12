@@ -5,7 +5,7 @@ on:
     branches:
       - migration/refresh-0.1.0a1-20260812
     paths:
-      - .migration/rpos-refresh-payload.b64
+      - .migration/payload.part*
       - .github/workflows/apply-private-refresh.yml
   workflow_dispatch:
 
@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
       - name: Decode and verify transfer payload
         run: |
-          base64 -d .migration/rpos-refresh-payload.b64 > "$RUNNER_TEMP/rpos-refresh-payload.tar.gz"
+          cat .migration/payload.part00 .migration/payload.part01 .migration/payload.part02 .migration/payload.part03 .migration/payload.part04 .migration/payload.part05 .migration/payload.part06 .migration/payload.part07 .migration/payload.part08 | base64 -d > "$RUNNER_TEMP/rpos-refresh-payload.tar.gz"
           echo "53ca5475c708d0472eadef6b5fd2b260d75336a3946e5e23fd7d4d4e5eb7c2c8  $RUNNER_TEMP/rpos-refresh-payload.tar.gz" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/payload"
           tar -xzf "$RUNNER_TEMP/rpos-refresh-payload.tar.gz" -C "$RUNNER_TEMP/payload"
@@ -33,9 +33,10 @@ jobs:
           python - <<'PY'
           import hashlib, json, shutil
           from pathlib import Path
+          import os
 
           repo = Path('.')
-          payload = Path(__import__('os').environ['RUNNER_TEMP']) / 'payload'
+          payload = Path(os.environ['RUNNER_TEMP']) / 'payload'
           meta = json.loads((payload / 'MIGRATION-PAYLOAD-META.json').read_text(encoding='utf-8'))
           assert meta['schema'] == 'rpos.private-refresh-payload.v0.1'
           assert meta['source_rpp_commit'] == '738635b74b4171e87bbdf437513362fcf3110515'
