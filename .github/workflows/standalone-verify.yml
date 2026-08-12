@@ -100,7 +100,8 @@ jobs:
           (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-sdist/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
       - name: Generate and validate standalone SBOM
         run: |
-          python -m rpos.sbom --pyproject pyproject.toml --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/rpos-sbom.json"
+          python -m rpos.sbom --help
+          python -m rpos.sbom pyproject.toml --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/rpos-sbom.json"
           python - <<'PY'
           import json, os
           from pathlib import Path
