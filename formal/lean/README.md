@@ -19,6 +19,8 @@ This evidence means that the theorem sources listed below are accepted by the co
 - `RPOSState.lean` — normative responsibility states, direct transition relation, and local transition invariants.
 - `RPOSReachability.lean` — bounded reflexive/transitive reachability witnesses and no-direct-shortcut properties for uncertainty, repair, resumption, and completion.
 - `RPOSEvidenceBoundary.lean` — bounded separation between authorization-relevant evidence, effect-verification evidence, receipts, evaluations, and dependency/supply-chain evidence.
+- `RPOSPacketBoundary.lean` — bounded separation properties for responsibility/evidence packets.
+- `RPOSOperationalBoundary.lean` — product-facing model-independence boundary: model proposals are not authority or effect verification, receipts are not verified effects, and Observatory reads are non-mutating in the bounded command model.
 
 ## Direct-transition invariants
 
@@ -58,6 +60,21 @@ The bounded evidence model proves that:
 - dependency evidence is not external-effect-verification evidence.
 
 The model also marks authority-admission and recovery/resume evidence as authorization-relevant classes while explicitly stating that possessing evidence does not itself grant authority.
+
+## Operational product boundary properties
+
+`RPOSOperationalBoundary.lean` deliberately uses a very small teaching model so that the connection between a product risk and a theorem stays readable.
+
+| Product risk | Lean theorem |
+|---|---|
+| model proposal is mistaken for operational authority | `RPOS.model_proposal_is_not_authority` |
+| model proposal is mistaken for verified external effect | `RPOS.model_proposal_is_not_effect_verification` |
+| transport receipt is mistaken for verified external effect | `RPOS.receipt_is_not_effect_verification` |
+| read-only Observatory action mutates operational state | `RPOS.observatory_is_read_only` |
+
+The positive witnesses in that module classify explicit human authorization as authorization-relevant and external observation as effect-verification-relevant. They do not claim that arbitrary evidence is truthful, sufficient, or legitimate in every deployment.
+
+This module is intentionally approachable: it is suitable as a first Lean 4 example because the operational meaning can be understood before advanced proof techniques are needed.
 
 ## Evidence layers
 
