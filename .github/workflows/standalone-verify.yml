@@ -1,22 +1,8 @@
-# Private migration verification trigger: 2026-08-12 JST
 name: RPOS standalone verification
 
 on:
   push:
     branches: [main]
-    paths:
-      - "src/**"
-      - "tests/**"
-      - "examples/**"
-      - "templates/**"
-      - "formal/**"
-      - "docs/**"
-      - "specs/**"
-      - "provenance/**"
-      - "README.md"
-      - "README.ja.md"
-      - "pyproject.toml"
-      - ".github/workflows/standalone-verify.yml"
   pull_request:
   workflow_dispatch:
 
@@ -24,21 +10,45 @@ permissions:
   contents: read
 
 jobs:
-  python-standalone:
+  product-boundary:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Verify migration manifest and public boundary
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root = Path('.')
+          evidence = json.loads((root / 'PUBLIC-EXPORT-EVIDENCE.json').read_text(encoding='utf-8'))
+          expected = {item['path']: item['sha256'] for item in evidence['files']}
+          assert len(expected) == evidence['file_count'] == 98, (len(expected), evidence['file_count'])
+          bad = []
+          for rel, want in expected.items():
+              path = root / rel
+              if not path.is_file():
+                  bad.append((rel, 'missing', want))
+                  continue
+              got = hashlib.sha256(path.read_bytes()).hexdigest()
+              if got != want:
+                  bad.append((rel, got, want))
+          if bad:
+              raise SystemExit(f'manifest mismatch: {bad}')
+          for forbidden in ('review', 'research', 'patent', 'decisions'):
+              assert not (root / forbidden).exists(), forbidden
+          print(f'verified {len(expected)} manifest files; forbidden private roots absent')
+          PY
       - name: Install package and verification tooling from standalone boundary
         run: |
           python -m pip install --upgrade pip build pytest
           python -m pip install .
       - name: Run standalone tests
         run: python -m pytest -q tests
-      - name: Run source examples
+      - name: Run all source examples
         run: |
           for f in examples/*.py; do
             echo "==> $f"
@@ -46,13 +56,83 @@ jobs:
           done
       - name: Build wheel and sdist
         run: python -m build
-      - name: Clean-install wheel
+      - name: Clean-install wheel and verify installed API boundary
         run: |
-          python -m venv "$RUNNER_TEMP/rpos-venv"
-          "$RUNNER_TEMP/rpos-venv/bin/python" -m pip install --upgrade pip
-          "$RUNNER_TEMP/rpos-venv/bin/python" -m pip install dist/*.whl
-          "$RUNNER_TEMP/rpos-venv/bin/rpos" --help
-          (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-venv/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
+          python -m venv "$RUNNER_TEMP/rpos-wheel"
+          "$RUNNER_TEMP/rpos-wheel/bin/python" -m pip install --upgrade pip
+          "$RUNNER_TEMP/rpos-wheel/bin/python" -m pip install dist/*.whl
+          "$RUNNER_TEMP/rpos-wheel/bin/rpos" --help
+          "$RUNNER_TEMP/rpos-wheel/bin/python" - <<'PY'
+          import rpos
+          assert hasattr(rpos, 'ResponsibilityStateEnvelope')
+          assert hasattr(rpos, 'validate_envelope')
+          assert hasattr(rpos, 'ResponsibilityPacket')
+          assert hasattr(rpos, 'validate_packet')
+          new = {
+              'schema_version': 'rpos.responsibility-state-envelope.v0.1',
+              'template_kind': 'human_gate_decision',
+              'authority_effect': 'none',
+              'payload': {'operation_id':'op-1','decision':'approved','decision_actor':'human','decision_reason':'test'},
+          }
+          legacy = dict(new)
+          legacy['schema_version'] = 'rpos.packet.v0.1'
+          a = rpos.validate_envelope(new)
+          b = rpos.validate_packet(legacy)
+          assert a.template_kind == b.template_kind
+          assert a.authority_effect == b.authority_effect == 'none'
+          print('new and legacy envelope APIs verified from installed wheel')
+          PY
+          (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-wheel/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
+      - name: Clean-install sdist and verify installed API boundary
+        run: |
+          python -m venv "$RUNNER_TEMP/rpos-sdist"
+          "$RUNNER_TEMP/rpos-sdist/bin/python" -m pip install --upgrade pip
+          "$RUNNER_TEMP/rpos-sdist/bin/python" -m pip install dist/*.tar.gz
+          "$RUNNER_TEMP/rpos-sdist/bin/rpos" --help
+          "$RUNNER_TEMP/rpos-sdist/bin/python" - <<'PY'
+          import rpos
+          assert hasattr(rpos, 'ResponsibilityStateEnvelope')
+          assert hasattr(rpos, 'validate_envelope')
+          assert hasattr(rpos, 'ResponsibilityPacket')
+          assert hasattr(rpos, 'validate_packet')
+          print('new and legacy envelope APIs import from installed sdist')
+          PY
+          (cd "$RUNNER_TEMP" && "$RUNNER_TEMP/rpos-sdist/bin/python" "$GITHUB_WORKSPACE/examples/quick_start_end_to_end.py")
+      - name: Generate and validate standalone SBOM
+        run: |
+          python -m rpos.sbom --pyproject pyproject.toml --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/rpos-sbom.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'rpos-sbom.json'
+          data = json.loads(p.read_text(encoding='utf-8'))
+          assert data['bomFormat'] == 'CycloneDX'
+          assert data['specVersion'] == '1.6'
+          assert data['metadata']['component']['name'] == 'responsibility-pathway-os'
+          print('CycloneDX SBOM structure verified')
+          PY
+      - name: Scan source boundary for likely committed secrets
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          roots = ['src','tests','examples','templates','formal','docs','specs','provenance']
+          patterns = [
+              re.compile(r'AKIA[0-9A-Z]{16}'),
+              re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
+              re.compile(r'gh[pousr]_[A-Za-z0-9]{30,}'),
+              re.compile(r'sk-[A-Za-z0-9_-]{20,}'),
+          ]
+          hits=[]
+          for root in roots:
+              for p in Path(root).rglob('*'):
+                  if not p.is_file() or p.suffix in {'.pyc','.olean'}: continue
+                  text=p.read_text(encoding='utf-8', errors='ignore')
+                  for pat in patterns:
+                      if pat.search(text): hits.append((str(p), pat.pattern))
+          if hits: raise SystemExit(f'likely secrets found: {hits}')
+          print('no likely committed secret patterns found')
+          PY
 
   lean-standalone:
     runs-on: ubuntu-latest
