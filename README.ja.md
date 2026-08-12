@@ -18,7 +18,7 @@ RPOS は次の責任経路を保持します。
 
 Version: **0.1.0a1 candidate — Early Public Alpha / Executable Preview**
 
-現在の実装には、Python/SQLiteの実行コア、永続的責任状態、Human Gate、限定されたdispatch attempt、外部効果との分離、reconciliation、repair/resume、証拠履歴、再利用可能なresponsibility packet、guideline/evidence view、provenance、CLI、実行可能サンプル、限定範囲のmachine-checked Lean formal modelが含まれます。
+現在の実装には、Python/SQLiteの実行コア、永続的責任状態、Human Gate、限定されたdispatch attempt、外部効果との分離、reconciliation、repair/resume、証拠履歴、再利用可能なResponsibility State Envelope（責任状態エンベロープ）、guideline/evidence view、provenance、CLI、実行可能サンプル、限定範囲のmachine-checked Lean formal modelが含まれます。
 
 このalphaは工学評価と限定的pilotを目的としており、無人の本番運用を前提としていません。
 
@@ -72,7 +72,7 @@ python examples/quick_start_end_to_end.py
 
 これらは各限定シナリオに対するexecutable evidenceであり、一般的なproduction correctnessを証明するものではありません。
 
-## Responsibility packet templates
+## Responsibility State Envelope templates
 
 `templates/catalog.json`には、以下の中立ロール向け再利用templateがあります。
 
@@ -85,9 +85,9 @@ python examples/quick_start_end_to_end.py
 - external evaluation evidence
 - Human Return packet
 
-`rpos.validate_packet(...)` は、未知フィールド、必須フィールド欠落、未対応template kind/schema version、authority effectを主張するpacketを拒否します。
+推奨APIの `rpos.validate_envelope(...)` は、未知フィールド、必須フィールド欠落、未対応template kind/schema version、authority effectを主張するenvelopeを拒否します。
 
-すべてのpacketは `authority_effect: "none"` を持ちます。**packetを記入・検証しても、operationの承認、dispatch、verification、completion、resumeは発生しません。** 詳細は `docs/ja/responsibility-packet-templates.md` を参照してください。
+すべてのResponsibility State Envelopeは `authority_effect: "none"` を持ちます。**envelopeを記入・検証しても、operationの承認、dispatch、verification、completion、resumeは発生しません。** 初期alphaの `ResponsibilityPacket`、`validate_packet(...)`、`rpos.packet.v0.1` は下位互換のため維持します。詳細は `docs/ja/responsibility-packet-templates.md` を参照してください。
 
 ## Core responsibility states
 

@@ -18,7 +18,7 @@ RPOS preserves a responsibility pathway across:
 
 Version: **0.1.0a1 candidate — Early Public Alpha / Executable Preview**
 
-The current implementation provides a Python/SQLite executable core, durable responsibility state, Human Gate handling, bounded dispatch attempts, external-effect separation, reconciliation, repair/resume, evidence history, reusable responsibility packets, guideline/evidence views, provenance support, a CLI, runnable examples, and a bounded machine-checked Lean formal model.
+The current implementation provides a Python/SQLite executable core, durable responsibility state, Human Gate handling, bounded dispatch attempts, external-effect separation, reconciliation, repair/resume, evidence history, reusable Responsibility State Envelopes, guideline/evidence views, provenance support, a CLI, runnable examples, and a bounded machine-checked Lean formal model.
 
 This alpha is intended for engineering evaluation and bounded pilots, not unattended production use.
 
@@ -72,7 +72,7 @@ They cover:
 
 The examples are executable evidence for those bounded scenarios only.
 
-## Responsibility packet templates
+## Responsibility State Envelope templates
 
 `templates/catalog.json` contains reusable neutral-role templates for:
 
@@ -85,9 +85,9 @@ The examples are executable evidence for those bounded scenarios only.
 - external evaluation evidence;
 - Human Return packet.
 
-The `rpos.validate_packet(...)` API rejects unknown fields, missing required fields, unsupported template kinds/schema versions, and any packet that claims an authority effect.
+The preferred `rpos.validate_envelope(...)` API rejects unknown fields, missing required fields, unsupported template kinds/schema versions, and any envelope that claims an authority effect.
 
-Every packet has `authority_effect: "none"`: **filling or validating a packet never authorizes, dispatches, verifies, completes, or resumes an operation.** See `docs/en/responsibility-packet-templates.md`.
+Every Responsibility State Envelope has `authority_effect: "none"`: **filling or validating an envelope never authorizes, dispatches, verifies, completes, or resumes an operation.** The earlier `ResponsibilityPacket`, `validate_packet(...)`, and `rpos.packet.v0.1` names remain supported for backward compatibility. See `docs/en/responsibility-packet-templates.md`.
 
 ## Core responsibility states
 

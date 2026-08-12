@@ -56,10 +56,20 @@ _REQUIRED: dict[PacketTemplateKind, frozenset[str]] = {
 
 _OPTIONAL_COMMON = frozenset({"notes", "evidence_references"})
 _ENVELOPE_KEYS = frozenset({"schema_version", "template_kind", "authority_effect", "payload"})
+_SUPPORTED_SCHEMA_VERSIONS = frozenset({
+    "rpos.responsibility-state-envelope.v0.1",
+    "rpos.packet.v0.1",  # legacy wire identifier retained for backward compatibility
+})
 
 
 @dataclass(frozen=True)
-class ResponsibilityPacket:
+class ResponsibilityStateEnvelope:
+    """Authority-neutral carrier for responsibility state context.
+
+    The envelope prepares and transports responsibility-relevant information. It
+    never creates authority or performs an RPOS state transition by itself.
+    """
+
     schema_version: str
     template_kind: PacketTemplateKind
     payload: Mapping[str, Any]
@@ -74,17 +84,17 @@ class ResponsibilityPacket:
         }
 
 
-def validate_packet(data: Mapping[str, Any]) -> ResponsibilityPacket:
+def validate_envelope(data: Mapping[str, Any]) -> ResponsibilityStateEnvelope:
     unknown_envelope = set(data) - _ENVELOPE_KEYS
     if unknown_envelope:
-        raise ValueError(f"unknown packet fields: {sorted(unknown_envelope)}")
+        raise ValueError(f"unknown envelope fields: {sorted(unknown_envelope)}")
     missing_envelope = _ENVELOPE_KEYS - set(data)
     if missing_envelope:
-        raise ValueError(f"missing packet fields: {sorted(missing_envelope)}")
+        raise ValueError(f"missing envelope fields: {sorted(missing_envelope)}")
 
     schema_version = data["schema_version"]
-    if schema_version != "rpos.packet.v0.1":
-        raise ValueError("unsupported packet schema_version")
+    if schema_version not in _SUPPORTED_SCHEMA_VERSIONS:
+        raise ValueError("unsupported envelope schema_version")
 
     try:
         kind = PacketTemplateKind(str(data["template_kind"]))
@@ -92,7 +102,7 @@ def validate_packet(data: Mapping[str, Any]) -> ResponsibilityPacket:
         raise ValueError("unsupported template_kind") from exc
 
     if data["authority_effect"] != "none":
-        raise ValueError("packet templates cannot create authority or state transitions")
+        raise ValueError("responsibility state envelopes cannot create authority or state transitions")
 
     payload = data["payload"]
     if not isinstance(payload, Mapping):
@@ -113,9 +123,15 @@ def validate_packet(data: Mapping[str, Any]) -> ResponsibilityPacket:
         if value is None:
             raise ValueError(f"required payload field must not be null: {key}")
 
-    return ResponsibilityPacket(
+    return ResponsibilityStateEnvelope(
         schema_version=schema_version,
         template_kind=kind,
         authority_effect="none",
         payload=dict(payload),
     )
+
+
+# Backward-compatible alpha API aliases. Public documentation uses
+# ResponsibilityStateEnvelope / validate_envelope going forward.
+ResponsibilityPacket = ResponsibilityStateEnvelope
+validate_packet = validate_envelope

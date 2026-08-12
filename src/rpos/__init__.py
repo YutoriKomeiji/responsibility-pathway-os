@@ -22,12 +22,43 @@ from .provenance import (
     ProvenanceSourceClass,
 )
 from .provenance_review import ClaimReviewStatus, PublicClaimReviewRecord, build_provenance_review_report
+from .security import (
+    AuthorityEnvelope,
+    AuthorityValidation,
+    ResponsibilityConsistencyFinding,
+    ResponsibilityEventChainCheckpoint,
+    ResponsibilityIntegritySnapshot,
+    SecurityDisposition,
+    build_event_chain_checkpoint,
+    event_chain_matches,
+    find_responsibility_inconsistencies,
+    validate_authority_envelope,
+)
+from .security_policy import (
+    EvidenceChainValidation,
+    EvidenceSupersessionRecord,
+    ResponsibilityDegradationDecision,
+    ResponsibilityDependencyCriticality,
+    ResponsibilityDependencyHealth,
+    ResponsibilityDependencyStatus,
+    evaluate_named_responsibility_dependencies,
+    evaluate_responsibility_degradation,
+    validate_evidence_supersession_chain,
+)
 from .service import RposService, classify_adapter_result
-from .template_packets import PacketTemplateKind, ResponsibilityPacket, validate_packet
+from .template_packets import (
+    PacketTemplateKind,
+    ResponsibilityPacket,
+    ResponsibilityStateEnvelope,
+    validate_envelope,
+    validate_packet,
+)
 
 __all__ = [
     "AdmissionDecision",
     "AdapterResult",
+    "AuthorityEnvelope",
+    "AuthorityValidation",
     "BootReport",
     "ClaimReviewStatus",
     "DefensiveProvenanceRecord",
@@ -35,6 +66,8 @@ __all__ = [
     "DependencyEvidenceClass",
     "DesignAroundReadiness",
     "EvaluationEvidenceClass",
+    "EvidenceChainValidation",
+    "EvidenceSupersessionRecord",
     "ExternalEvaluationEvidence",
     "ExternalReferenceBoundary",
     "HumanReturnPackage",
@@ -47,10 +80,27 @@ __all__ = [
     "ReceiptStatus",
     "ReconciliationResult",
     "ReconciliationStatus",
+    "ResponsibilityConsistencyFinding",
+    "ResponsibilityDegradationDecision",
+    "ResponsibilityDependencyCriticality",
+    "ResponsibilityDependencyHealth",
+    "ResponsibilityDependencyStatus",
+    "ResponsibilityEventChainCheckpoint",
+    "ResponsibilityIntegritySnapshot",
+    "ResponsibilityStateEnvelope",
     "ResponsibilityPacket",
     "RposService",
+    "SecurityDisposition",
     "build_audit_evidence_package",
+    "build_event_chain_checkpoint",
     "build_provenance_review_report",
     "classify_adapter_result",
+    "evaluate_named_responsibility_dependencies",
+    "evaluate_responsibility_degradation",
+    "event_chain_matches",
+    "find_responsibility_inconsistencies",
+    "validate_authority_envelope",
+    "validate_envelope",
+    "validate_evidence_supersession_chain",
     "validate_packet",
 ]
