@@ -1,0 +1,94 @@
+{
+  "schema_version": "rpos.security-quality-readiness.v0.1",
+  "release_candidate": "0.1.0a1",
+  "baseline_date": "2026-08-12",
+  "status": "migration_ready",
+  "compatibility": "backward_compatible",
+  "implemented_controls": [
+    "authority_freshness_envelope",
+    "responsibility_integrity_snapshot",
+    "responsibility_state_non_equivocation_detection",
+    "responsibility_event_chain_checkpoint",
+    "evidence_supersession_chain_validation",
+    "safe_responsibility_dependency_degradation",
+    "human_gate_and_resume_authority_separation",
+    "external_effect_unknown_containment",
+    "restart_recovery_without_redispatch",
+    "idempotency_key_replay_protection",
+    "sbom_generation_and_schema_validation",
+    "dependency_vulnerability_audit",
+    "secret_scanning",
+    "source_bound_artifact_hash_bundle",
+    "clean_install_and_installed_cli_verification",
+    "backward_read_compatibility_for_supported_alpha_state"
+  ],
+  "verification_required_before_freeze": [
+    "focused_python_tests",
+    "public_export_rc",
+    "documentation_sync",
+    "release_quality_evidence"
+  ],
+  "deferred_controls": [
+    {
+      "control": "cryptographic_or_hardware_backed_integrity_anchor",
+      "owner": "Akihisa Ono",
+      "reason": "Current alpha provides deterministic tamper-evident checkpoints but no key-management or trust-anchor subsystem. Introducing one without an operational key lifecycle would create misleading assurance.",
+      "risk": "An attacker controlling both the mutable event store and the retained checkpoint location can rewrite both unless an operator retains the checkpoint independently.",
+      "claim_impact": "Public claims remain limited to tamper evidence, not tamper proofing, signatures, trusted timestamps, or remote attestation.",
+      "human_return_point": "Reassess before any production-readiness, multi-host integrity, regulated evidence-retention, or high-assurance deployment claim."
+    },
+    {
+      "control": "mandatory_authority_envelope_enforcement_on_all_dispatch_paths",
+      "owner": "Akihisa Ono",
+      "reason": "AuthorityEnvelope is additive in 0.1.0a1; making it mandatory would change existing caller behavior and requires a compatibility decision.",
+      "risk": "Callers that do not adopt envelope validation retain the earlier authorization model and do not gain temporal/context binding from this control.",
+      "claim_impact": "RPOS may claim the primitive exists and is tested, but not that every dispatch is currently envelope-enforced.",
+      "human_return_point": "Decide compatibility adapter or breaking-change treatment for the first post-alpha security-enforcement release."
+    },
+    {
+      "control": "mcp_plugin_and_model_specific_trust_enforcement",
+      "owner": "Akihisa Ono",
+      "reason": "The current alpha product surface does not ship a generic MCP/plugin/model execution framework. Trust policy must be bound to concrete integrations rather than pretending universal coverage.",
+      "risk": "Future integrations can introduce prompt/context injection, confused-deputy, identity, credential, and supply-chain risks if connected without a trust profile.",
+      "claim_impact": "No claim of universal prompt-injection, MCP, plugin, or model compromise resistance.",
+      "human_return_point": "Require a trust-boundary profile and negative tests before adding any public MCP/plugin/model execution integration."
+    },
+    {
+      "control": "multi_tenant_isolation",
+      "owner": "Akihisa Ono",
+      "reason": "0.1.0a1 is not presented as a multi-tenant service platform and has no tenant security model to verify.",
+      "risk": "Deploying the alpha as a shared multi-tenant service without additional isolation could mix responsibility data or authority context.",
+      "claim_impact": "No multi-tenant isolation or SaaS hardening claim.",
+      "human_return_point": "Design tenant identity, storage, authorization, quota, and evidence isolation before multi-tenant deployment."
+    },
+    {
+      "control": "production_dos_and_capacity_assurance",
+      "owner": "Akihisa Ono",
+      "reason": "Functional alpha quality is verified, but production traffic envelopes, quotas, rate limits, and capacity objectives are deployment-specific and not yet established.",
+      "risk": "Unbounded hostile or accidental workload can exhaust process, SQLite, disk, or integration resources in an unsuitable deployment.",
+      "claim_impact": "No production availability, capacity, latency SLO, or DoS-resistance claim.",
+      "human_return_point": "Establish workload profiles and resource limits before production-readiness claims."
+    },
+    {
+      "control": "continuous_scheduled_security_revalidation",
+      "owner": "Akihisa Ono",
+      "reason": "Release-quality Actions provide point-in-time dependency, secret, SBOM, and provenance evidence; recurring post-release monitoring cadence is not yet a product feature.",
+      "risk": "New vulnerabilities or changed external standards can emerge after the alpha evidence snapshot.",
+      "claim_impact": "Security evidence is explicitly time-bounded to the release verification date.",
+      "human_return_point": "Define recurring vulnerability and standards revalidation for maintained public releases."
+    }
+  ],
+  "non_claims": [
+    "production_readiness",
+    "certification_or_official_conformity",
+    "legal_or_regulatory_compliance",
+    "universal_ai_safety",
+    "whole_python_lean_conformance",
+    "tamper_proof_event_history",
+    "trusted_time",
+    "distributed_consensus",
+    "universal_prompt_injection_resistance",
+    "multi_tenant_security",
+    "patent_freedom_to_operate"
+  ]
+}

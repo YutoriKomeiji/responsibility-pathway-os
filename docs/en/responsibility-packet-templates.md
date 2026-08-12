@@ -4,15 +4,17 @@
 <!-- RPOS-DOC-STATUS: public-alpha-candidate -->
 <!-- RPOS-DOC-COUNTERPART: ../ja/responsibility-packet-templates.md -->
 
-# Responsibility Packet Templates
+# Responsibility State Envelope Templates
 
-RPOS provides reusable machine-readable packet templates for recurring responsibility handoffs. They help teams prepare consistent inputs for review, verification, repair, resumption, dependency evidence, evaluation evidence, and Human Return.
+RPOS provides reusable machine-readable **Responsibility State Envelope** templates for recurring responsibility handoffs. An envelope prepares and transports responsibility-relevant context for review, verification, repair, resumption, dependency evidence, evaluation evidence, and Human Return.
+
+The earlier alpha term `ResponsibilityPacket` and the `rpos.packet.v0.1` wire identifier remain supported for backward compatibility. They are compatibility names, not the preferred public product terminology.
 
 ## Critical boundary
 
-A valid packet has `authority_effect: "none"`.
+A valid envelope has `authority_effect: "none"`.
 
-Completing, validating, storing, or transmitting a packet does **not** authorize an operation, dispatch an operation, establish external effect, move an operation to `VERIFIED` or `COMPLETED`, or restore resume authority. Those effects require the corresponding RPOS state transition and authorized actor.
+Completing, validating, storing, or transmitting an envelope does **not** authorize an operation, dispatch an operation, establish external effect, move an operation to `VERIFIED` or `COMPLETED`, or restore resume authority. Those effects require the corresponding RPOS state transition and authorized actor.
 
 ## Included template kinds
 
@@ -29,7 +31,7 @@ The catalog is stored at `templates/catalog.json`.
 
 ## Validation behavior
 
-`rpos.validate_packet(...)` is strict by design:
+`rpos.validate_envelope(...)` is the preferred API and is strict by design:
 
 - unknown envelope fields are rejected;
 - unknown payload fields are rejected for the selected template kind;
@@ -38,21 +40,27 @@ The catalog is stored at `templates/catalog.json`.
 - unsupported template kinds and schema versions are rejected;
 - any `authority_effect` other than `none` is rejected.
 
-This fail-closed behavior protects the boundary between **prepared responsibility information** and **actual authority/state change**.
+`rpos.validate_packet(...)` remains as a backward-compatible alias.
+
+This fail-closed behavior protects the boundary between **prepared responsibility context** and **actual authority/state change**.
 
 ## Suggested adoption flow
 
-1. copy the relevant packet from `templates/catalog.json`;
+1. copy the relevant template from `templates/catalog.json`;
 2. replace placeholders using neutral organizational roles;
-3. validate the packet;
+3. validate the envelope;
 4. attach or record supporting evidence where applicable;
-5. present the packet to the actual responsible role or Human Gate;
-6. perform any authority-bearing state transition through the RPOS service/CLI, not through the packet itself;
+5. present the envelope to the actual responsible role or Human Gate;
+6. perform any authority-bearing state transition through the RPOS service/CLI, not through the envelope itself;
 7. preserve unresolved questions, Residual Owner, and Human Return Point when the pathway remains open.
 
 ## Evidence separation
 
-Dependency evidence and external evaluation evidence are intentionally distinct from authorization and external-effect verification. A packet may carry those evidence classes, but it cannot convert them into authority or operational completion.
+Dependency evidence and external evaluation evidence are intentionally distinct from authorization and external-effect verification. An envelope may carry those evidence classes, but it cannot convert them into authority or operational completion.
+
+## Compatibility
+
+The current preferred schema identifier is `rpos.responsibility-state-envelope.v0.1`. The earlier `rpos.packet.v0.1` identifier is accepted so existing alpha artifacts remain readable. This compatibility support does not change the authority-neutral semantics.
 
 ## Not Proven
 

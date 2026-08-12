@@ -4,15 +4,17 @@
 <!-- RPOS-DOC-STATUS: public-alpha-candidate -->
 <!-- RPOS-DOC-COUNTERPART: ../en/responsibility-packet-templates.md -->
 
-# Responsibility Packet Templates
+# Responsibility State Envelope Templates
 
-RPOSは、繰り返し発生する責任の引き渡しを整形するための、再利用可能な機械可読packet templateを提供します。レビュー、検証、修復、再開、依存関係証拠、外部評価証拠、Human Returnに必要な情報を一貫した形で準備できます。
+RPOSは、繰り返し発生する責任の引き渡しを整形するための、再利用可能な機械可読 **Responsibility State Envelope（責任状態エンベロープ）** templateを提供します。レビュー、検証、修復、再開、依存関係証拠、外部評価証拠、Human Returnに必要な責任文脈を一貫した形で準備・搬送できます。
+
+初期alphaで用いていた `ResponsibilityPacket` と `rpos.packet.v0.1` は、下位互換のため引き続き受理します。ただし今後の公開上の推奨名称は Responsibility State Envelope です。
 
 ## 重要な境界
 
-有効なpacketは `authority_effect: "none"` を持ちます。
+有効なenvelopeは `authority_effect: "none"` を持ちます。
 
-packetを記入、検証、保存、送信しても、**それだけでは**操作の承認、dispatch、外部効果の成立、`VERIFIED` / `COMPLETED`への遷移、resume authorityの回復は発生しません。これらには、対応するRPOS状態遷移と正しい権限主体が必要です。
+envelopeを記入、検証、保存、送信しても、**それだけでは**操作の承認、dispatch、外部効果の成立、`VERIFIED` / `COMPLETED`への遷移、resume authorityの回復は発生しません。これらには、対応するRPOS状態遷移と正しい権限主体が必要です。
 
 ## 含まれるtemplate kind
 
@@ -29,7 +31,7 @@ packetを記入、検証、保存、送信しても、**それだけでは**操�
 
 ## 検証動作
 
-`rpos.validate_packet(...)` は意図的にstrict / fail-closedです。
+推奨APIの `rpos.validate_envelope(...)` は意図的にstrict / fail-closedです。
 
 - envelopeの未知フィールドを拒否する
 - 選択したtemplate kindに対するpayloadの未知フィールドを拒否する
@@ -38,21 +40,27 @@ packetを記入、検証、保存、送信しても、**それだけでは**操�
 - 未対応のtemplate kind / schema versionを拒否する
 - `none`以外の`authority_effect`を拒否する
 
-これにより、**責任情報を準備すること**と**実際に権限や状態を変更すること**を分離します。
+`rpos.validate_packet(...)` は下位互換aliasとして残します。
+
+これにより、**責任文脈を準備・搬送すること**と**実際に権限や状態を変更すること**を分離します。
 
 ## 推奨導入フロー
 
-1. `templates/catalog.json`から必要なpacketをコピーする
+1. `templates/catalog.json`から必要なtemplateをコピーする
 2. 中立な組織ロールでplaceholderを置換する
-3. packetを検証する
+3. envelopeを検証する
 4. 必要に応じて根拠証拠を添付・記録する
 5. 実際の責任主体またはHuman Gateへ提示する
-6. 権限を伴う状態遷移はpacketではなくRPOS service / CLIを通して実施する
+6. 権限を伴う状態遷移はenvelopeではなくRPOS service / CLIを通して実施する
 7. 未解決ならResidual OwnerとHuman Return Pointを保持する
 
 ## 証拠クラスの分離
 
-Dependency evidenceとexternal evaluation evidenceは、authorizationおよびexternal-effect verificationとは別物です。packetがそれらを保持しても、権限や運用上の完了へ変換することはできません。
+Dependency evidenceとexternal evaluation evidenceは、authorizationおよびexternal-effect verificationとは別物です。envelopeがそれらを保持しても、権限や運用上の完了へ変換することはできません。
+
+## 互換性
+
+現在の推奨schema identifierは `rpos.responsibility-state-envelope.v0.1` です。従来の `rpos.packet.v0.1` も既存alpha artifactを読み取れるよう受理します。この互換性は、authority-neutralという意味論を変更しません。
 
 ## Not Proven
 

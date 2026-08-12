@@ -19,6 +19,7 @@ from .models import (
     ReconciliationResult,
     ReconciliationStatus,
 )
+from .security import ResponsibilityEventChainCheckpoint, build_event_chain_checkpoint
 from .storage import SQLiteRposStore
 
 
@@ -294,6 +295,10 @@ class RposService:
 
     def event_history(self, operation_id: str) -> list[dict[str, object]]:
         return self.store.list_events(operation_id)
+
+    def event_chain_checkpoint(self, operation_id: str) -> ResponsibilityEventChainCheckpoint:
+        """Return a tamper-sensitive checkpoint for the complete observed event history."""
+        return build_event_chain_checkpoint(operation_id, self.store.list_events(operation_id))
 
     def inspect(self, operation_id: str) -> OperationInspection:
         definition, state, decision = self.store.get_operation(operation_id)
