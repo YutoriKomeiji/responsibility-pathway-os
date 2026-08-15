@@ -40,17 +40,21 @@ RPOS keeps those cases explicit:
 
 Python 3.11+ is required.
 
-```bash
-python -m pip install responsibility-pathway-os==0.1.0a1
-rpos --db rpos.db boot
-```
-
-For a source checkout:
+For the current **pre-release candidate**, install from a source checkout:
 
 ```bash
 python -m pip install -e .
 python examples/quick_start_end_to_end.py
 ```
+
+After version **0.1.0a1** is actually published as a package release, the intended package-install path is:
+
+```bash
+python -m pip install responsibility-pathway-os==0.1.0a1
+rpos --db rpos.db boot
+```
+
+Package publication is not implied by candidate version metadata or by this README.
 
 ## Executable examples
 
