@@ -40,17 +40,21 @@ RPOSはそれらを明示状態として保持します。
 
 Python 3.11+ が必要です。
 
-```bash
-python -m pip install responsibility-pathway-os==0.1.0a1
-rpos --db rpos.db boot
-```
-
-source checkoutでは:
+現在の **pre-release candidate** は source checkout からインストールしてください。
 
 ```bash
 python -m pip install -e .
 python examples/quick_start_end_to_end.py
 ```
+
+Version **0.1.0a1** が実際にpackage releaseとして公開された後は、次のpackage installを想定しています。
+
+```bash
+python -m pip install responsibility-pathway-os==0.1.0a1
+rpos --db rpos.db boot
+```
+
+candidateのversion metadataや本READMEだけでpackage公開済みであることを意味しません。
 
 ## 実行可能サンプル
 
