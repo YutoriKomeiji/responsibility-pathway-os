@@ -1,6 +1,6 @@
-name = "RPOSFormal"
+name = "rposFormal"
 version = "0.1.0"
-defaultTargets = ["RPOSFormal"]
+defaultTargets = ["rposFormal"]
 
 [[lean_lib]]
-name = "RPOSFormal"
+name = "rposFormal"
