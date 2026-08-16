@@ -13,9 +13,22 @@ on:
         required: true
         default: false
         type: boolean
+  pull_request:
+    paths:
+      - ".github/workflows/release.yml"
+      - "pyproject.toml"
+      - "README.md"
+      - "README.ja.md"
+      - "product-status.json"
+      - "src/rpos/sbom.py"
+      - "src/rpos/hash_bundle.py"
+      - "tools/build_public_export_manifest.py"
 
 permissions:
   contents: read
+
+env:
+  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a1' }}
 
 jobs:
   build-and-verify:
@@ -32,7 +45,7 @@ jobs:
           python -m pip install .
       - name: Verify requested version and release metadata
         env:
-          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_VERSION: ${{ env.RPOS_EXPECTED_VERSION }}
         run: |
           python - <<'PY'
           import json, os, tomllib
@@ -66,7 +79,7 @@ jobs:
         run: python -m build
       - name: Validate rendered package metadata
         env:
-          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_VERSION: ${{ env.RPOS_EXPECTED_VERSION }}
         run: |
           python -m twine check dist/*
           python - <<'PY'
@@ -125,14 +138,14 @@ jobs:
       - name: Upload verified distributions
         uses: actions/upload-artifact@v4
         with:
-          name: rpos-${{ inputs.expected_version }}-dist
+          name: rpos-${{ env.RPOS_EXPECTED_VERSION }}-dist
           path: dist/
           if-no-files-found: error
           retention-days: 14
       - name: Upload source-bound release evidence
         uses: actions/upload-artifact@v4
         with:
-          name: rpos-${{ inputs.expected_version }}-evidence-${{ github.sha }}
+          name: rpos-${{ env.RPOS_EXPECTED_VERSION }}-evidence-${{ github.sha }}
           path: release-evidence/
           if-no-files-found: error
           retention-days: 30
@@ -158,7 +171,7 @@ jobs:
           rpos --help
 
   publish-pypi:
-    if: ${{ inputs.publish }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish }}
     needs: [build-and-verify, python-compatibility]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -171,7 +184,7 @@ jobs:
       - name: Download the exact verified distributions
         uses: actions/download-artifact@v4
         with:
-          name: rpos-${{ inputs.expected_version }}-dist
+          name: rpos-${{ env.RPOS_EXPECTED_VERSION }}-dist
           path: dist/
       - name: Publish verified distributions to PyPI
         uses: pypa/gh-action-pypi-publish@v1.14.2
