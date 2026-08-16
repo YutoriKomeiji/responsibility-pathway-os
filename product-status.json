@@ -1,0 +1,43 @@
+{
+  "product": "RPOS — Responsibility Pathway Operating System",
+  "package": "responsibility-pathway-os",
+  "version": "0.1.0a1",
+  "release_stage": "early_public_alpha_candidate",
+  "publication_state": "not_published",
+  "production_ready": false,
+  "release_claim": "engineering evaluation and bounded pilots",
+  "verified_surfaces": [
+    "standalone_python_tests",
+    "source_examples",
+    "wheel_build_and_clean_install",
+    "sdist_build_and_clean_install",
+    "installed_cli_and_api_smoke",
+    "sqlite_restart_and_reconciliation_paths",
+    "deterministic_public_export_boundary",
+    "cyclonedx_sbom_generation",
+    "bounded_lean4_compilation"
+  ],
+  "explicit_non_claims": [
+    "production_availability_or_slo",
+    "legal_or_compliance_certification",
+    "universal_safety",
+    "third_party_system_correctness",
+    "implementation_wide_formal_correctness",
+    "organizational_or_execution_authority"
+  ],
+  "deferred": [
+    "production_workload_capacity_objectives",
+    "multi_tenant_isolation",
+    "generic_integration_trust_enforcement",
+    "external_cryptographic_integrity_anchors",
+    "mandatory_new_security_primitives_on_all_legacy_paths",
+    "recurring_post_release_security_revalidation",
+    "broader_field_os_and_environment_evidence"
+  ],
+  "release_gate": {
+    "publishable_freeze": false,
+    "public_repository_migration_complete": false,
+    "pypi_trusted_publisher_configured": false,
+    "explicit_human_gate_required": true
+  }
+}

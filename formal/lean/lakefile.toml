@@ -1,0 +1,14 @@
+name = "rposFormal"
+version = "0.1.0"
+defaultTargets = ["rposFormal"]
+
+[[lean_lib]]
+name = "rposFormal"
+roots = [
+  "RPOSState",
+  "RPOSReachability",
+  "RPOSEvidenceBoundary",
+  "RPOSPacketBoundary",
+  "RPOSOperationalBoundary",
+  "RPOSTransparencyBoundary",
+]
