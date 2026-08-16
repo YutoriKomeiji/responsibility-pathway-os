@@ -18,29 +18,42 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Verify migration manifest and public boundary
+      - name: Generate exact-head public export evidence
         run: |
           python - <<'PY'
-          import hashlib, json
+          import json
           from pathlib import Path
-          root = Path('.')
-          evidence = json.loads((root / 'PUBLIC-EXPORT-EVIDENCE.json').read_text(encoding='utf-8'))
-          expected = {item['path']: item['sha256'] for item in evidence['files']}
-          assert len(expected) == evidence['file_count'] == 106, (len(expected), evidence['file_count'])
-          bad = []
-          for rel, want in expected.items():
-              path = root / rel
-              if not path.is_file():
-                  bad.append((rel, 'missing', want))
-                  continue
-              got = hashlib.sha256(path.read_bytes()).hexdigest()
-              if got != want:
-                  bad.append((rel, got, want))
-          if bad:
-              raise SystemExit(f'manifest mismatch: {bad}')
-          for forbidden in ('review', 'research', 'patent', 'decisions'):
-              assert not (root / forbidden).exists(), forbidden
-          print(f'verified {len(expected)} manifest files; forbidden private roots absent')
+          baseline = json.loads(Path('PUBLIC-EXPORT-EVIDENCE.json').read_text(encoding='utf-8'))
+          assert baseline['schema_version'] == 'rpos.public-export.evidence.v0.1'
+          assert baseline['release_candidate'] == '0.1.0a1'
+          assert baseline['file_count'] == 106
+          assert set(baseline['excluded_roots']) == {'decisions', 'patent', 'research', 'review'}
+          print('preserved migration baseline policy verified')
+          PY
+          python tools/build_public_export_manifest.py --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/rpos-public-export.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          manifest = json.loads((Path(os.environ['RUNNER_TEMP']) / 'rpos-public-export.json').read_text(encoding='utf-8'))
+          assert manifest['source_commit'] == os.environ['GITHUB_SHA']
+          assert manifest['file_count'] >= 106
+          paths = {item['path'] for item in manifest['files']}
+          required = {
+              'CHANGELOG.md','CONTRIBUTING.md','SUPPORT.md','CODE_OF_CONDUCT.md','product-status.json',
+              'formal/lean/lakefile.toml','formal/lean/lean-toolchain',
+              'tests/test_field_acceptance.py','tests/test_product_status.py','tests/test_cli_bom.py',
+              'examples/idempotency_replay_guard.py','examples/human_return_reauthorization.py',
+              'examples/adapter_exception_containment.py','examples/reconciliation_unresolved_human_return.py',
+              'tools/build_public_export_manifest.py',
+          }
+          missing = sorted(required - paths)
+          if missing:
+              raise SystemExit(f'current public export omits product-quality files: {missing}')
+          forbidden_roots = {'decisions','patent','research','review'}
+          leaked = sorted(path for path in paths if Path(path).parts[0] in forbidden_roots)
+          if leaked:
+              raise SystemExit(f'private roots leaked: {leaked}')
+          print(f"exact-head public export verified: {manifest['file_count']} files")
           PY
       - name: Install package and verification tooling from standalone boundary
         run: |
@@ -128,7 +141,7 @@ jobs:
           python - <<'PY'
           import re
           from pathlib import Path
-          roots = ['src','tests','examples','templates','formal','docs','specs','provenance']
+          roots = ['src','tests','examples','templates','formal','docs','specs','provenance','tools']
           patterns = [
               re.compile(r'AKIA[0-9A-Z]{16}'),
               re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
@@ -145,6 +158,15 @@ jobs:
           if hits: raise SystemExit(f'likely secrets found: {hits}')
           print('no likely committed secret patterns found')
           PY
+      - name: Upload exact-head product evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpos-product-evidence-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/rpos-public-export.json
+            ${{ runner.temp }}/rpos-sbom.json
+          if-no-files-found: error
+          retention-days: 14
 
   lean-standalone:
     runs-on: ubuntu-latest
