@@ -4,3 +4,11 @@ defaultTargets = ["rposFormal"]
 
 [[lean_lib]]
 name = "rposFormal"
+roots = [
+  "RPOSState",
+  "RPOSReachability",
+  "RPOSEvidenceBoundary",
+  "RPOSPacketBoundary",
+  "RPOSOperationalBoundary",
+  "RPOSTransparencyBoundary",
+]
