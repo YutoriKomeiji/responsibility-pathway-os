@@ -52,15 +52,21 @@ python -m pip install -e .
 python examples/quick_start_end_to_end.py
 ```
 
+For a short evaluator route covering executable, formal, and field-quality boundaries, see `docs/en/public-alpha-evaluation-guide.md`.
+
 ## Executable examples
 
-The public alpha candidate includes four primary executable scenarios:
+The public alpha candidate includes eight executable evaluation scenarios:
 
 ```bash
 python examples/happy_path_verified.py
 python examples/human_gate_denied.py
 python examples/effect_unknown_restart_reconcile.py
 python examples/quick_start_end_to_end.py
+python examples/idempotency_replay_guard.py
+python examples/human_return_reauthorization.py
+python examples/adapter_exception_containment.py
+python examples/reconciliation_unresolved_human_return.py
 ```
 
 They cover:
@@ -68,7 +74,11 @@ They cover:
 1. Human Gate approval followed by bounded independent verification and completion;
 2. Human Gate denial with no dispatch;
 3. successful receipt -> `EFFECT_UNKNOWN` -> process restart -> observation-only reconciliation -> completion;
-4. failed first attempt -> `REPAIR_REQUIRED` -> repair preparation -> `READY_TO_RESUME` -> explicit resume authorization -> fresh attempt -> `EFFECT_UNKNOWN` -> restart -> reconciliation -> completion.
+4. failed first attempt -> `REPAIR_REQUIRED` -> repair preparation -> `READY_TO_RESUME` -> explicit resume authorization -> fresh attempt -> `EFFECT_UNKNOWN` -> restart -> reconciliation -> completion;
+5. duplicate idempotency/effect identity -> no silent redispatch of the recorded semantic effect;
+6. repair responsibility -> explicit Human Return -> explicit resume authority rather than implicit authority restoration;
+7. adapter exception after dispatch begins -> `EFFECT_UNKNOWN` rather than proof that no external effect occurred;
+8. unavailable reconciliation observer -> preserved `EFFECT_UNKNOWN` and explicit Human Return.
 
 The examples are executable evidence for those bounded scenarios only.
 
@@ -97,13 +107,21 @@ The normative transition model intentionally prevents a success receipt from dir
 
 ## Bounded Lean 4 formal model
 
-RPOS now has an actual machine-checked formal evidence surface. The dedicated Lean CI compiled the declared formal model with **Lean 4.32.2**.
+RPOS has a machine-checked formal evidence surface pinned to **Lean 4.32.2**. It is independently reproducible as a Lake project:
+
+```bash
+cd formal/lean
+lake build
+```
 
 Current modules:
 
 - `formal/lean/RPOSState.lean` — states, direct transitions, local invariants;
 - `formal/lean/RPOSReachability.lean` — bounded multi-step reachability and no-direct-shortcut properties;
-- `formal/lean/RPOSEvidenceBoundary.lean` — bounded separation among authorization-relevant evidence, external-effect-verification evidence, receipts, evaluations, and dependency evidence.
+- `formal/lean/RPOSEvidenceBoundary.lean` — bounded separation among authorization-relevant evidence, external-effect-verification evidence, receipts, evaluations, and dependency evidence;
+- `formal/lean/RPOSPacketBoundary.lean` — bounded no-authority-effect properties for responsibility envelopes/packets;
+- `formal/lean/RPOSOperationalBoundary.lean` — bounded operational responsibility properties;
+- `formal/lean/RPOSTransparencyBoundary.lean` — bounded transparency/evidence distinctions.
 
 Examples of machine-checked properties include:
 
@@ -166,16 +184,27 @@ A concept should move downstream into executable evidence and then return upstre
 
 Current release-candidate verification includes:
 
-- focused Python tests;
-- execution of all four primary examples from source;
-- wheel build;
-- isolated clean install;
-- installed CLI and all four examples;
-- deterministic public-export reconstruction and verification;
-- registered Japanese/English documentation-pair validation;
-- dedicated Lean 4 compilation of the declared bounded formal modules.
+- the full Python test suite;
+- execution of all eight source examples;
+- wheel and source-distribution builds;
+- isolated clean installation of wheel and sdist;
+- installed CLI/API and Quick Start checks outside the repository working directory;
+- deterministic exact-HEAD public-export reconstruction;
+- source-bound CycloneDX SBOM and SHA-256 release-artifact evidence;
+- likely-secret scanning of the public source boundary;
+- Windows field-portability checks on Python 3.11 and 3.12;
+- pinned `lake build` verification of the declared bounded Lean 4 project.
 
 Passing these checks is evidence within their declared scope. It does not establish production readiness, legal compliance, external-system correctness, universal safety, or implementation-wide formal correctness.
+
+## Project surfaces
+
+- `product-status.json` — machine-readable release stage, verified surfaces, non-claims, and release gates;
+- `CHANGELOG.md` — public-alpha changes and explicit deferrals;
+- `CONTRIBUTING.md` — contribution and evidence discipline;
+- `SUPPORT.md` — alpha support expectations;
+- `SECURITY.md` — security reporting and supported boundary;
+- `docs/en/public-alpha-evaluation-guide.md` — short third-party evaluation route.
 
 ## Not Proven
 
