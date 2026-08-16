@@ -13,9 +13,22 @@ on:
         required: true
         default: false
         type: boolean
+  pull_request:
+    paths:
+      - ".github/workflows/release.yml"
+      - "pyproject.toml"
+      - "README.md"
+      - "README.ja.md"
+      - "product-status.json"
+      - "src/rpos/sbom.py"
+      - "src/rpos/hash_bundle.py"
+      - "tools/build_public_export_manifest.py"
 
 permissions:
   contents: read
+
+env:
+  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a1' }}
 
 jobs:
   build-and-verify:
@@ -26,14 +39,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install release tooling
-        run: python -m pip install --upgrade pip build twine pytest
+      - name: Install release tooling and package
+        run: |
+          python -m pip install --upgrade pip build twine pytest
+          python -m pip install .
       - name: Verify requested version and release metadata
         env:
-          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_VERSION: ${{ env.RPOS_EXPECTED_VERSION }}
         run: |
           python - <<'PY'
-          import os, tomllib
+          import json, os, tomllib
           from pathlib import Path
           expected = os.environ['EXPECTED_VERSION']
           with Path('pyproject.toml').open('rb') as fh:
@@ -51,6 +66,11 @@ jobs:
               missing = [marker for marker in required if marker not in text]
               if missing:
                   raise SystemExit(f'{readme} version markers missing: {missing}')
+          status = json.loads(Path('product-status.json').read_text(encoding='utf-8'))
+          if status['version'] != actual or status['publication_state'] != 'not_published':
+              raise SystemExit('product-status release identity/boundary mismatch')
+          if status['production_ready'] is not False:
+              raise SystemExit('public alpha must not claim production readiness')
           print(f'release identity verified for responsibility-pathway-os=={actual}')
           PY
       - name: Run standalone Python tests
@@ -59,7 +79,7 @@ jobs:
         run: python -m build
       - name: Validate rendered package metadata
         env:
-          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_VERSION: ${{ env.RPOS_EXPECTED_VERSION }}
         run: |
           python -m twine check dist/*
           python - <<'PY'
@@ -92,13 +112,43 @@ jobs:
               raise SystemExit(f'sdist metadata mismatch: Name={metadata["Name"]!r}, Version={metadata["Version"]!r}')
           print('wheel and sdist metadata agree with requested release identity')
           PY
+      - name: Generate exact-head release evidence
+        run: |
+          mkdir -p release-evidence
+          python tools/build_public_export_manifest.py --source-commit "$GITHUB_SHA" --output release-evidence/public-export-manifest.json
+          python -m rpos.sbom pyproject.toml --source-commit "$GITHUB_SHA" --output release-evidence/sbom.cdx.json
+          python -m rpos.hash_bundle dist/* release-evidence/public-export-manifest.json release-evidence/sbom.cdx.json --source-commit "$GITHUB_SHA" --output release-evidence/release-hashes.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          expected = os.environ['GITHUB_SHA']
+          manifest = json.loads(Path('release-evidence/public-export-manifest.json').read_text(encoding='utf-8'))
+          sbom = json.loads(Path('release-evidence/sbom.cdx.json').read_text(encoding='utf-8'))
+          hashes = json.loads(Path('release-evidence/release-hashes.json').read_text(encoding='utf-8'))
+          assert manifest['source_commit'] == expected
+          props = {x['name']: x['value'] for x in sbom['metadata']['component']['properties']}
+          assert props['rpos:source-commit'] == expected
+          assert hashes['source_commit'] == expected
+          names = {item['name'] for item in hashes['artifacts']}
+          assert any(name.endswith('.whl') for name in names)
+          assert any(name.endswith('.tar.gz') for name in names)
+          assert {'public-export-manifest.json', 'sbom.cdx.json'} <= names
+          print('release evidence is source-bound to exact workflow HEAD')
+          PY
       - name: Upload verified distributions
         uses: actions/upload-artifact@v4
         with:
-          name: rpos-${{ inputs.expected_version }}-dist
+          name: rpos-${{ env.RPOS_EXPECTED_VERSION }}-dist
           path: dist/
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14
+      - name: Upload source-bound release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpos-${{ env.RPOS_EXPECTED_VERSION }}-evidence-${{ github.sha }}
+          path: release-evidence/
+          if-no-files-found: error
+          retention-days: 30
 
   python-compatibility:
     runs-on: ${{ matrix.os }}
@@ -121,7 +171,7 @@ jobs:
           rpos --help
 
   publish-pypi:
-    if: ${{ inputs.publish }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish }}
     needs: [build-and-verify, python-compatibility]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -134,7 +184,7 @@ jobs:
       - name: Download the exact verified distributions
         uses: actions/download-artifact@v4
         with:
-          name: rpos-${{ inputs.expected_version }}-dist
+          name: rpos-${{ env.RPOS_EXPECTED_VERSION }}-dist
           path: dist/
       - name: Publish verified distributions to PyPI
         uses: pypa/gh-action-pypi-publish@v1.14.2
