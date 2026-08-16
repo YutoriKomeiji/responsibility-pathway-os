@@ -151,20 +151,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Install Lean 4 through elan
+      - name: Install elan
         run: |
-          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain leanprover/lean4:stable
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --no-modify-path
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      - name: Record Lean version
-        run: lean --version
-      - name: Compile bounded RPOS formal model
+      - name: Record pinned Lean and Lake versions
         working-directory: formal/lean
-        env:
-          LEAN_PATH: .
         run: |
-          lean -o RPOSState.olean RPOSState.lean
-          lean RPOSReachability.lean
-          lean RPOSEvidenceBoundary.lean
-          lean RPOSPacketBoundary.lean
-          lean RPOSOperationalBoundary.lean
-          lean RPOSTransparencyBoundary.lean
+          lean --version
+          lake --version
+      - name: Build bounded RPOS formal project
+        working-directory: formal/lean
+        run: lake build
