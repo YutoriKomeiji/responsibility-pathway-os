@@ -2,7 +2,7 @@
   "product": "RPOS — Responsibility Pathway Operating System",
   "package": "responsibility-pathway-os",
   "version": "0.1.0a1",
-  "release_stage": "early_public_alpha_candidate",
+  "release_stage": "early_public_alpha_publishable_freeze",
   "publication_state": "not_published",
   "production_ready": false,
   "release_claim": "engineering evaluation and bounded pilots",
@@ -35,7 +35,7 @@
     "broader_field_os_and_environment_evidence"
   ],
   "release_gate": {
-    "publishable_freeze": false,
+    "publishable_freeze": true,
     "public_repository_migration_complete": false,
     "pypi_trusted_publisher_configured": false,
     "explicit_human_gate_required": true
