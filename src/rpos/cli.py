@@ -35,6 +35,13 @@ def _emit(value: Any, *, stream: Any | None = None) -> None:
     print(json.dumps(_jsonable(value), ensure_ascii=False, sort_keys=True), file=target)
 
 
+def _read_json_object(path: str | Path, *, kind: str) -> dict[str, Any]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8-sig"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"{kind} JSON must contain an object")
+    return payload
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="rpos")
     parser.add_argument("--db", default="rpos.db", help="SQLite database path")
@@ -105,22 +112,17 @@ def run(argv: Sequence[str] | None = None) -> int:
         elif args.command == "guideline-matrix":
             result = build_guideline_evidence_matrix(service, args.operation_id)
         elif args.command == "record-evaluation-json":
-            payload = json.loads(Path(args.path).read_text(encoding="utf-8"))
-            if not isinstance(payload, dict):
-                raise ValueError("evaluation evidence JSON must contain an object")
-            evidence = ExternalEvaluationEvidence.from_import_dict(payload)
+            evidence = ExternalEvaluationEvidence.from_import_dict(
+                _read_json_object(args.path, kind="evaluation evidence")
+            )
             result = service.record_evaluation_evidence(args.operation_id, actor=args.actor, evidence=evidence)
         elif args.command == "record-dependency-json":
-            payload = json.loads(Path(args.path).read_text(encoding="utf-8"))
-            if not isinstance(payload, dict):
-                raise ValueError("dependency evidence JSON must contain an object")
-            evidence = DependencyEvidence.from_import_dict(payload)
+            evidence = DependencyEvidence.from_import_dict(
+                _read_json_object(args.path, kind="dependency evidence")
+            )
             result = service.record_dependency_evidence(args.operation_id, actor=args.actor, evidence=evidence)
         elif args.command == "propose-json":
-            payload = json.loads(Path(args.path).read_text(encoding="utf-8"))
-            if not isinstance(payload, dict):
-                raise ValueError("proposal JSON must contain an object")
-            result = service.propose(OperationDefinition.from_dict(payload))
+            result = service.propose(OperationDefinition.from_dict(_read_json_object(args.path, kind="proposal")))
         elif args.command == "approve":
             result = service.approve(args.operation_id, actor=args.actor)
         elif args.command == "deny":
