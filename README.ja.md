@@ -52,23 +52,33 @@ python -m pip install -e .
 python examples/quick_start_end_to_end.py
 ```
 
+実装、formal、field-qualityの境界を短時間で確認する評価経路は `docs/ja/public-alpha-evaluation-guide.md` を参照してください。
+
 ## 実行可能サンプル
 
-public alpha candidateには4つの主要シナリオがあります。
+public alpha candidateには8つの実行可能な評価シナリオがあります。
 
 ```bash
 python examples/happy_path_verified.py
 python examples/human_gate_denied.py
 python examples/effect_unknown_restart_reconcile.py
 python examples/quick_start_end_to_end.py
+python examples/idempotency_replay_guard.py
+python examples/human_return_reauthorization.py
+python examples/adapter_exception_containment.py
+python examples/reconciliation_unresolved_human_return.py
 ```
 
-それぞれ以下を実行します。
+それぞれ以下を確認します。
 
 1. Human Gate承認 -> 限定された独立verification -> completion
 2. Human Gate拒否 -> dispatchなし
 3. successful receipt -> `EFFECT_UNKNOWN` -> process restart -> observation-only reconciliation -> completion
 4. first attempt失敗 -> `REPAIR_REQUIRED` -> repair preparation -> `READY_TO_RESUME` -> explicit resume authorization -> fresh attempt -> `EFFECT_UNKNOWN` -> restart -> reconciliation -> completion
+5. 同じidempotency/effect identityの再利用 -> 記録済みsemantic effectを黙って再dispatchしない
+6. repair responsibility -> 明示的Human Return -> 暗黙のauthority復元ではなく明示的resume authorityへ返す
+7. dispatch開始後のadapter exception -> 「外部効果なし」と断定せず `EFFECT_UNKNOWN` を保持する
+8. reconciliation observerが利用不能 -> `EFFECT_UNKNOWN` と明示的Human Returnを保持する
 
 これらは各限定シナリオに対するexecutable evidenceであり、一般的なproduction correctnessを証明するものではありません。
 
@@ -97,13 +107,21 @@ normative transition modelは、成功receiptだけでcompletionへ進むこと�
 
 ## 限定範囲の Lean 4 formal model
 
-RPOSには、実際にmachine-checkedされたformal evidence surfaceがあります。専用Lean CIで、宣言されたformal modelを **Lean 4.32.2** によりコンパイル済みです。
+RPOSには、**Lean 4.32.2** にpinされたmachine-checked formal evidence surfaceがあります。formal部分だけでもLake projectとして独立再現できます。
+
+```bash
+cd formal/lean
+lake build
+```
 
 現在のmodule:
 
 - `formal/lean/RPOSState.lean` — state、direct transition、local invariant
 - `formal/lean/RPOSReachability.lean` — 限定されたmulti-step reachabilityとdirect shortcut禁止
 - `formal/lean/RPOSEvidenceBoundary.lean` — authorization-relevant evidence、external-effect verification evidence、receipt、evaluation、dependency evidenceの限定的分離
+- `formal/lean/RPOSPacketBoundary.lean` — Responsibility State Envelope / packetがauthority effectを持たないことに関する限定property
+- `formal/lean/RPOSOperationalBoundary.lean` — operational responsibilityに関する限定property
+- `formal/lean/RPOSTransparencyBoundary.lean` — transparency / evidence distinctionに関する限定property
 
 machine-checkedされたpropertyの例:
 
@@ -116,7 +134,7 @@ machine-checkedされたpropertyの例:
 
 positive reachability theoremはpathの存在を示すwitnessであり、livenessや必ず完了することを保証しません。
 
-**Formal proof evidenceはPython implementationの正しさを証明しません。** RPOSは、formal proof、executable implementation evidence、operational external-effect evidenceを明示的に分離します。詳細は `formal/lean/README.md` を参照してください。
+**Formal proof evidenceはPython implementationの正しさを証明しません。** RPOSは、formal proof、executable implementation evidence、operational external-effect evidenceを明示的に分離します。詳細は `formal/lean/README.ja.md` を参照してください。
 
 ## Evidence boundaries
 
@@ -166,16 +184,27 @@ Responsibility Pathway Model / Paper
 
 現在のrelease-candidate verificationには以下が含まれます。
 
-- focused Python tests
-- source上で4つの主要サンプルをすべて実行
-- wheel build
-- isolated clean install
-- installed CLIおよび4サンプル実行
-- deterministic public-export reconstruction / verification
-- 登録済み日英ドキュメントpairの検証
-- 宣言された限定formal moduleに対する専用Lean 4 compilation
+- Python test suite全体
+- source上で8つのサンプルをすべて実行
+- wheel / source distribution build
+- wheel / sdistのisolated clean install
+- repository working directory外からのinstalled CLI/APIおよびQuick Start確認
+- exact HEADに対するdeterministic public-export reconstruction
+- source-bound CycloneDX SBOMとSHA-256 release-artifact evidence
+- public source boundaryに対するlikely-secret scan
+- Windows上のPython 3.11 / 3.12 field-portability check
+- 宣言された限定Lean 4 projectに対するpin済み `lake build`
 
 これらの成功は宣言された範囲内のevidenceです。本番適合性、法令適合、外部システムの正しさ、普遍的安全性、implementation全体のformal correctnessを証明しません。
+
+## 主な製品surface
+
+- `product-status.json` — release stage、verified surface、non-claim、release gateの機械可読状態
+- `CHANGELOG.md` — public alphaの変更と明示的deferred項目
+- `CONTRIBUTING.md` — contributionとEvidence discipline
+- `SUPPORT.md` — alpha supportの期待値
+- `SECURITY.md` — security reportとsupport boundary
+- `docs/ja/public-alpha-evaluation-guide.md` — 第三者向けの短い評価経路
 
 ## Not Proven
 
