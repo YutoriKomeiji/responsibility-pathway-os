@@ -1,0 +1,6 @@
+name = "RPOSFormal"
+version = "0.1.0"
+defaultTargets = ["RPOSFormal"]
+
+[[lean_lib]]
+name = "RPOSFormal"
