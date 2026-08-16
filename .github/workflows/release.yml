@@ -1,0 +1,140 @@
+name: RPOS release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: Exact version expected from pyproject.toml
+        required: true
+        default: "0.1.0a1"
+        type: string
+      publish:
+        description: Publish verified distributions to PyPI
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install release tooling
+        run: python -m pip install --upgrade pip build twine pytest
+      - name: Verify requested version and release metadata
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: |
+          python - <<'PY'
+          import os, tomllib
+          from pathlib import Path
+          expected = os.environ['EXPECTED_VERSION']
+          with Path('pyproject.toml').open('rb') as fh:
+              project = tomllib.load(fh)['project']
+          actual = project['version']
+          if actual != expected:
+              raise SystemExit(f'version mismatch: requested={expected!r}, project={actual!r}')
+          for readme in ('README.md', 'README.ja.md'):
+              text = Path(readme).read_text(encoding='utf-8')
+              required = (
+                  f'RPOS-DOC-VERSION: {actual}',
+                  f'Version: **{actual} candidate',
+                  f'responsibility-pathway-os=={actual}',
+              )
+              missing = [marker for marker in required if marker not in text]
+              if missing:
+                  raise SystemExit(f'{readme} version markers missing: {missing}')
+          print(f'release identity verified for responsibility-pathway-os=={actual}')
+          PY
+      - name: Run standalone Python tests
+        run: python -m pytest -q tests
+      - name: Build distributions once
+        run: python -m build
+      - name: Validate rendered package metadata
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: |
+          python -m twine check dist/*
+          python - <<'PY'
+          import email
+          import glob
+          import os
+          import tarfile
+          import zipfile
+          from pathlib import Path
+
+          expected_name = 'responsibility-pathway-os'
+          expected_version = os.environ['EXPECTED_VERSION']
+          wheels = glob.glob('dist/*.whl')
+          sdists = glob.glob('dist/*.tar.gz')
+          if len(wheels) != 1 or len(sdists) != 1:
+              raise SystemExit(f'expected exactly one wheel and one sdist: wheels={wheels}, sdists={sdists}')
+
+          with zipfile.ZipFile(wheels[0]) as zf:
+              metadata_name = next(name for name in zf.namelist() if name.endswith('.dist-info/METADATA'))
+              metadata = email.message_from_bytes(zf.read(metadata_name))
+          if metadata['Name'] != expected_name or metadata['Version'] != expected_version:
+              raise SystemExit(f'wheel metadata mismatch: Name={metadata["Name"]!r}, Version={metadata["Version"]!r}')
+
+          with tarfile.open(sdists[0], 'r:gz') as tf:
+              pkg_info_name = next(name for name in tf.getnames() if name.endswith('/PKG-INFO'))
+              member = tf.extractfile(pkg_info_name)
+              if member is None:
+                  raise SystemExit('sdist PKG-INFO missing')
+              metadata = email.message_from_bytes(member.read())
+          if metadata['Name'] != expected_name or metadata['Version'] != expected_version:
+              raise SystemExit(f'sdist metadata mismatch: Name={metadata["Name"]!r}, Version={metadata["Version"]!r}')
+          print('wheel and sdist metadata agree with requested release identity')
+          PY
+      - name: Upload verified distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpos-${{ inputs.expected_version }}-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  python-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install and test declared Python version
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install . pytest
+          python -m pytest -q tests
+          rpos --help
+
+  publish-pypi:
+    if: ${{ inputs.publish }}
+    needs: [build-and-verify, python-compatibility]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/p/responsibility-pathway-os
+    permissions:
+      id-token: write
+    steps:
+      - name: Download the exact verified distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: rpos-${{ inputs.expected_version }}-dist
+          path: dist/
+      - name: Publish verified distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.14.2
