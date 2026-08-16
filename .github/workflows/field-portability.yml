@@ -1,0 +1,38 @@
+name: RPOS field portability
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-cli-and-recovery:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package and test tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install . pytest
+      - name: Verify Windows CLI and field boundaries
+        run: |
+          python -m pytest -q tests/test_cli.py tests/test_cli_bom.py tests/test_field_acceptance.py tests/test_reconciliation_slice.py
+          rpos --help
+      - name: Run field-oriented examples
+        run: |
+          python examples/idempotency_replay_guard.py
+          python examples/human_return_reauthorization.py
+          python examples/adapter_exception_containment.py
+          python examples/reconciliation_unresolved_human_return.py
