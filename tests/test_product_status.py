@@ -22,9 +22,10 @@ def test_product_status_matches_package_identity_and_release_boundary() -> None:
     assert status["publication_state"] == "not_published"
     assert status["production_ready"] is False
     assert status["release_gate"]["publishable_freeze"] is True
-    assert status["release_gate"]["public_repository_migration_complete"] is False
+    assert status["release_gate"]["public_repository_migration_complete"] is True
     assert status["release_gate"]["pypi_trusted_publisher_configured"] is False
     assert status["release_gate"]["explicit_human_gate_required"] is True
+    assert "public_product_site_deployment" in status["verified_surfaces"]
 
 
 def test_product_status_keeps_high_impact_non_claims_explicit() -> None:
