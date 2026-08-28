@@ -4,10 +4,12 @@ from datetime import datetime, timedelta, timezone
 
 from rpos.security import (
     AuthorityEnvelope,
+    CommitAuthorityEnvelope,
     ResponsibilityIntegritySnapshot,
     SecurityDisposition,
     find_responsibility_inconsistencies,
     validate_authority_envelope,
+    validate_commit_authority,
 )
 
 
@@ -40,6 +42,39 @@ def _validate(envelope: AuthorityEnvelope):
     )
 
 
+def _commit_envelope(**overrides: object) -> CommitAuthorityEnvelope:
+    values: dict[str, object] = {
+        "actor": "approver-a",
+        "operation_id": "op-1",
+        "action_name": "bounded-write",
+        "target_digest": "target-v1",
+        "effect_digest": "effect-v1",
+        "issued_at": NOW - timedelta(minutes=1),
+        "expires_at": NOW + timedelta(minutes=5),
+        "evidence_digest": "evidence-v1",
+        "context_digest": "context-v1",
+        "authority_epoch": 7,
+        "consumed": False,
+    }
+    values.update(overrides)
+    return CommitAuthorityEnvelope(**values)  # type: ignore[arg-type]
+
+
+def _validate_commit(envelope: CommitAuthorityEnvelope):
+    return validate_commit_authority(
+        envelope,
+        now=NOW,
+        expected_actor="approver-a",
+        expected_operation_id="op-1",
+        expected_action_name="bounded-write",
+        expected_target_digest="target-v1",
+        expected_effect_digest="effect-v1",
+        expected_evidence_digest="evidence-v1",
+        expected_context_digest="context-v1",
+        current_authority_epoch=7,
+    )
+
+
 def test_fresh_context_bound_authority_is_allowed() -> None:
     result = _validate(_envelope())
     assert result.disposition is SecurityDisposition.ALLOW
@@ -62,6 +97,46 @@ def test_authority_is_bound_to_evidence_and_context() -> None:
     result = _validate(_envelope(evidence_digest="old-evidence", context_digest="old-context"))
     assert result.disposition is SecurityDisposition.HOLD
     assert set(result.reasons) == {"authority_evidence_mismatch", "authority_context_mismatch"}
+
+
+def test_commit_authority_allows_exact_current_unconsumed_effect() -> None:
+    result = _validate_commit(_commit_envelope())
+    assert result.disposition is SecurityDisposition.ALLOW
+    assert result.reasons == ()
+
+
+def test_commit_authority_is_bound_to_exact_target_and_effect() -> None:
+    result = _validate_commit(_commit_envelope(target_digest="target-old", effect_digest="effect-old"))
+    assert result.disposition is SecurityDisposition.HOLD
+    assert set(result.reasons) == {"commit_authority_target_mismatch", "commit_authority_effect_mismatch"}
+
+
+def test_commit_authority_rejects_stale_epoch_after_revocation_or_regrant() -> None:
+    result = _validate_commit(_commit_envelope(authority_epoch=6))
+    assert result.disposition is SecurityDisposition.HOLD
+    assert result.reasons == ("commit_authority_epoch_mismatch",)
+
+
+def test_commit_authority_rejects_consumed_one_shot_authority() -> None:
+    result = _validate_commit(_commit_envelope(consumed=True))
+    assert result.disposition is SecurityDisposition.HOLD
+    assert result.reasons == ("commit_authority_consumed",)
+
+
+def test_commit_authority_rechecks_freshness_and_evidence_at_commit_time() -> None:
+    result = _validate_commit(
+        _commit_envelope(
+            expires_at=NOW,
+            evidence_digest="evidence-old",
+            context_digest="context-old",
+        )
+    )
+    assert result.disposition is SecurityDisposition.HOLD
+    assert set(result.reasons) == {
+        "commit_authority_expired",
+        "commit_authority_evidence_mismatch",
+        "commit_authority_context_mismatch",
+    }
 
 
 def test_integrity_snapshot_digest_is_deterministic_and_tamper_sensitive() -> None:
