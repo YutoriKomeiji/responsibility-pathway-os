@@ -105,6 +105,117 @@ def test_restart_recovery_does_not_redispatch(tmp_path: Path) -> None:
     assert restarted.inspect("op-restart").state is OperationState.EFFECT_UNKNOWN
 
 
+def test_dispatch_start_transaction_rolls_back_before_external_effect(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    database = tmp_path / "rpos.db"
+    service = RposService(str(database))
+    service.propose(definition("op-start-crash", gate=False))
+    adapter = CountingAdapter(AdapterResult(ReceiptStatus.SUCCEEDED, {}, True, {}))
+    original_record_event = service.store.record_event
+
+    def crash_after_dispatch_transition(operation_id: str, event_type: str, actor: str, payload: dict[str, object]) -> None:
+        original_record_event(operation_id, event_type, actor, payload)
+        if event_type == "state_transition" and payload.get("to") == OperationState.DISPATCHING.value:
+            raise RuntimeError("simulated crash before dispatch-start commit")
+
+    monkeypatch.setattr(service.store, "record_event", crash_after_dispatch_transition)
+    with pytest.raises(RuntimeError, match="dispatch-start"):
+        service.dispatch("op-start-crash", attempt_id="a1", idempotency_key="k1", adapter=adapter)
+
+    assert adapter.calls == 0
+    restarted = RposService(str(database))
+    inspection = restarted.inspect("op-start-crash")
+    assert inspection.state is OperationState.AUTHORIZED
+    assert inspection.latest_attempt is None
+    assert all(
+        not (event["event_type"] == "state_transition" and event["payload"].get("to") == "dispatching")
+        for event in restarted.event_history("op-start-crash")
+    )
+
+
+def test_dispatch_result_transaction_rolls_back_to_recoverable_dispatching(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    database = tmp_path / "rpos.db"
+    service = RposService(str(database))
+    service.propose(definition("op-result-crash", gate=False))
+    adapter = CountingAdapter(AdapterResult(ReceiptStatus.SUCCEEDED, {"accepted": True}, True, {"exists": True}))
+    original_record_event = service.store.record_event
+
+    def crash_after_adapter_result(operation_id: str, event_type: str, actor: str, payload: dict[str, object]) -> None:
+        original_record_event(operation_id, event_type, actor, payload)
+        if event_type == "adapter_result":
+            raise RuntimeError("simulated crash before result commit")
+
+    monkeypatch.setattr(service.store, "record_event", crash_after_adapter_result)
+    with pytest.raises(RuntimeError, match="result commit"):
+        service.dispatch("op-result-crash", attempt_id="a1", idempotency_key="k1", adapter=adapter)
+
+    assert adapter.calls == 1
+    restarted = RposService(str(database))
+    stranded = restarted.inspect("op-result-crash")
+    assert stranded.state is OperationState.DISPATCHING
+    assert stranded.latest_attempt is not None
+    assert stranded.latest_attempt["dispatch_finished"] == 0
+    assert all(event["event_type"] != "adapter_result" for event in restarted.event_history("op-result-crash"))
+
+    recovered = restarted.recover_incomplete_dispatches()
+    assert recovered == ("op-result-crash",)
+    assert restarted.inspect("op-result-crash").state is OperationState.EFFECT_UNKNOWN
+
+
+def test_restart_recovers_legacy_finished_attempt_stranded_in_dispatching(tmp_path: Path) -> None:
+    database = tmp_path / "rpos.db"
+    first = RposService(str(database))
+    first.propose(definition("op-legacy-finished", gate=False))
+    first.store.begin_attempt("op-legacy-finished", "a1", "k1")
+    first._transition(
+        "op-legacy-finished",
+        OperationState.DISPATCHING,
+        actor="executor",
+        reason="simulate_pre_fix_dispatch_start",
+    )
+    first.store.finish_attempt(
+        "a1",
+        receipt_status=ReceiptStatus.SUCCEEDED.value,
+        readback_verified=True,
+        result_reason="simulate_pre_fix_crash_after_finish_attempt",
+    )
+
+    restarted = RposService(str(database))
+    stranded = restarted.inspect("op-legacy-finished")
+    assert stranded.state is OperationState.DISPATCHING
+    assert stranded.latest_attempt is not None
+    assert stranded.latest_attempt["dispatch_finished"] == 1
+
+    recovered = restarted.recover_incomplete_dispatches()
+    assert recovered == ("op-legacy-finished",)
+    assert restarted.inspect("op-legacy-finished").state is OperationState.EFFECT_UNKNOWN
+
+
+def test_state_transition_and_event_roll_back_together(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    database = tmp_path / "rpos.db"
+    service = RposService(str(database))
+    service.propose(definition("op-transition-crash"))
+    original_record_event = service.store.record_event
+
+    def crash_after_transition_event(operation_id: str, event_type: str, actor: str, payload: dict[str, object]) -> None:
+        original_record_event(operation_id, event_type, actor, payload)
+        if event_type == "state_transition" and payload.get("to") == OperationState.AUTHORIZED.value:
+            raise RuntimeError("simulated crash before transition commit")
+
+    monkeypatch.setattr(service.store, "record_event", crash_after_transition_event)
+    with pytest.raises(RuntimeError, match="transition commit"):
+        service.approve("op-transition-crash", actor="master")
+
+    restarted = RposService(str(database))
+    assert restarted.inspect("op-transition-crash").state is OperationState.HUMAN_GATE
+    assert all(
+        not (event["event_type"] == "state_transition" and event["payload"].get("to") == "authorized")
+        for event in restarted.event_history("op-transition-crash")
+    )
+
+
 def test_unresolved_inspection_retains_human_return(tmp_path: Path) -> None:
     service = RposService(str(tmp_path / "rpos.db"))
     inspection = service.propose(definition("op-return"))
