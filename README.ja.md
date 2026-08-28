@@ -206,20 +206,35 @@ Responsibility Pathway Model / Paper
 - `SECURITY.md` — security reportとsupport boundary
 - `docs/ja/public-alpha-evaluation-guide.md` — 第三者向けの短い評価経路
 
-## Not Proven
+## Claim boundary と promotion path
 
-RPOS 0.1.0a1 は以下を証明・主張しません。
+RPOSは、現在のnon-claimをすべて永久的な免責事項として扱いません。公開境界を、**evidenceが揃えば前進できる境界**と、**RPOS単体では越えるべきではない恒久責任境界**に分離します。詳細は [Claim Boundary Promotion](docs/ja/claim-boundary-promotion.md) を参照してください。
 
-- production / enterprise readiness
-- 法的・規制上のcompliance
-- certification / official conformity
-- universal AI safety
-- 任意remote adapterやcredentialの正しさ
-- 任意の外部システムに対するexactly-once effect
-- 完全なsoftware-supply-chain trustworthiness
-- Python implementation全体のformal correctness / conformance
-- 任意operationのliveness / eventual completion
-- patent non-infringement / invalidity / freedom to operate
+### Current evidence-limited boundaries
+
+次は必要evidenceがまだ十分でないため意図的に主張していない項目です。scopeを明示したreview可能なevidenceが得られ、public claimへ明示採用された場合にのみ昇格できます。
+
+- **production readiness** — sustained workload / soak evidence、対応deployment profileでのfault injection、upgrade/rollback/backup/recovery evidence、operational monitoring/SLO evidence、review済みsecurity/deployment controlが必要
+- **より広いplatform support** — 対応OS、Python、container、network、identity、storage profileの宣言されたsupport matrixと再現可能なCI/field resultが必要
+- **implementation-wide formal conformance** — formal modelとexecutable semantics間の明示的refinement/conformance relationと、対象実装surfaceの再現可能なconformance evidenceが必要
+- **より広いsoftware supply-chain trust** — provenance強化、必要箇所のimmutable input、artifact signing/attestation、独立検証、継続的vulnerability-response evidenceが必要
+- **公開scenarioを超えるdomain effectiveness** — 仮説、failure criteria、観測結果、counterexampleを明示したdomain-specific pilotと独立reviewが必要
+
+Promotionは自動ではありません。新しいevidenceはscopeが明示され、review可能で、必要に応じて再現可能であり、対応public claimへ明示的に採用される必要があります。
+
+### Permanent responsibility boundaries
+
+次は未完成機能ではなく、RPOSが成熟しても単独では越えない責任境界です。
+
+- RPOS単体は法的権限、法解釈、法的責任、認証、規制当局の承認を生成しない
+- RPOSが経路を管理しても、任意外部systemそのものの正しさを生成しない
+- 適切なverification contractとevidence sourceなしにtransport receiptを現実effectの証明へ昇格させない
+- 最終的な組織責任を責任主体である人間・制度からsoftwareへ移転しない
+- 必要なtransaction/idempotency/verification contractを持たない任意外部systemへuniversal exactly-onceを保証しない
+- abstract modelへのformal proofだけでPython実装全体やdeployment environment全体を証明済みと扱わない
+- patent non-infringement / invalidity / freedom to operate / legal claim scopeはRPOSの権限外
+
+可能な範囲で、evidence依存境界は `evidence_collecting` / `review_ready` / `promoted`、恒久境界は `permanently_out_of_scope` として追跡します。
 
 ## License
 
