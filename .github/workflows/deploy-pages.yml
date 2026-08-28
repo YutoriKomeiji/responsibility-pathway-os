@@ -1,0 +1,71 @@
+name: Deploy RPOS product site
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy-pages.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy-pages.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate bilingual entry points and demo boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s site/index.html
+          test -s site/ja.html
+          test -s site/demo.html
+          test -s site/styles.css
+          test -s site/app.js
+          grep -F 'href="ja.html"' site/index.html
+          grep -F 'href="index.html"' site/ja.html
+          grep -F 'lang="en"' site/index.html
+          grep -F 'lang="ja"' site/ja.html
+          grep -F 'prefers-reduced-motion' site/styles.css
+          grep -F 'does not execute the Python runtime' site/demo.html
+          grep -F 'EFFECT_UNKNOWN' site/app.js
+          grep -F 'commit-time authority revalidation' site/app.js
+
+  deploy:
+    name: Deploy Pages
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

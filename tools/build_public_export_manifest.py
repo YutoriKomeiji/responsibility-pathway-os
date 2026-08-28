@@ -30,6 +30,7 @@ PUBLIC_ROOT_DIRS = {
     "examples",
     "formal",
     "provenance",
+    "site",
     "specs",
     "src",
     "templates",
