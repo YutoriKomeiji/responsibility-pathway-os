@@ -15,7 +15,8 @@
     "sqlite_restart_and_reconciliation_paths",
     "deterministic_public_export_boundary",
     "cyclonedx_sbom_generation",
-    "bounded_lean4_compilation"
+    "bounded_lean4_compilation",
+    "public_product_site_deployment"
   ],
   "explicit_non_claims": [
     "production_availability_or_slo",
@@ -36,7 +37,7 @@
   ],
   "release_gate": {
     "publishable_freeze": true,
-    "public_repository_migration_complete": false,
+    "public_repository_migration_complete": true,
     "pypi_trusted_publisher_configured": false,
     "explicit_human_gate_required": true
   }
