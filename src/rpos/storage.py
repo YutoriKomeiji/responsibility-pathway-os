@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from .models import AdmissionDecision, OperationDefinition, OperationState
 
@@ -20,7 +21,36 @@ class SQLiteRposStore:
         self.database_path = str(database_path)
         self.connection = sqlite3.connect(self.database_path)
         self.connection.row_factory = sqlite3.Row
+        self._transaction_depth = 0
         self._init_schema()
+
+    @contextmanager
+    def transaction(self) -> Iterator[None]:
+        """Group store mutations into one SQLite transaction.
+
+        Nested store operations participate in the outer transaction. Public
+        mutation methods retain their historical auto-commit behaviour when
+        called without this context.
+        """
+        outermost = self._transaction_depth == 0
+        if outermost:
+            self.connection.execute("BEGIN IMMEDIATE")
+        self._transaction_depth += 1
+        try:
+            yield
+        except Exception:
+            self._transaction_depth -= 1
+            if outermost:
+                self.connection.rollback()
+            raise
+        else:
+            self._transaction_depth -= 1
+            if outermost:
+                self.connection.commit()
+
+    def _commit_if_outermost(self) -> None:
+        if self._transaction_depth == 0:
+            self.connection.commit()
 
     def _init_schema(self) -> None:
         self.connection.executescript(
@@ -74,7 +104,7 @@ class SQLiteRposStore:
                 _now(),
             ),
         )
-        self.connection.commit()
+        self._commit_if_outermost()
 
     def get_operation(self, operation_id: str) -> tuple[OperationDefinition, OperationState, AdmissionDecision]:
         row = self.connection.execute(
@@ -96,7 +126,7 @@ class SQLiteRposStore:
         )
         if cursor.rowcount != 1:
             raise KeyError(operation_id)
-        self.connection.commit()
+        self._commit_if_outermost()
 
     def count_operations(self) -> int:
         return int(self.connection.execute("SELECT COUNT(*) FROM operations").fetchone()[0])
@@ -123,7 +153,7 @@ class SQLiteRposStore:
             "INSERT INTO attempts(attempt_id, operation_id, idempotency_key, dispatch_started, dispatch_finished) VALUES (?, ?, ?, 1, 0)",
             (attempt_id, operation_id, idempotency_key),
         )
-        self.connection.commit()
+        self._commit_if_outermost()
 
     def finish_attempt(
         self,
@@ -144,7 +174,7 @@ class SQLiteRposStore:
         )
         if cursor.rowcount != 1:
             raise KeyError(attempt_id)
-        self.connection.commit()
+        self._commit_if_outermost()
 
     def latest_attempt(self, operation_id: str) -> dict[str, Any] | None:
         row = self.connection.execute(
@@ -153,25 +183,36 @@ class SQLiteRposStore:
         ).fetchone()
         return None if row is None else dict(row)
 
-    def incomplete_dispatch_operations(self) -> list[str]:
+    def dispatching_operations(self) -> list[str]:
+        """Return all operations stranded in DISPATCHING.
+
+        A finished attempt with a still-DISPATCHING operation is also ambiguous:
+        the external effect may have happened while the result transaction did
+        not commit. Recovery must therefore include both finished and unfinished
+        attempts and must never redispatch automatically.
+        """
         rows = self.connection.execute(
             """
             SELECT DISTINCT o.operation_id
             FROM operations o
             JOIN attempts a ON a.operation_id = o.operation_id
-            WHERE o.state = ? AND a.dispatch_started = 1 AND a.dispatch_finished = 0
+            WHERE o.state = ? AND a.dispatch_started = 1
             ORDER BY o.operation_id
             """,
             (OperationState.DISPATCHING.value,),
         ).fetchall()
         return [str(row["operation_id"]) for row in rows]
 
+    def incomplete_dispatch_operations(self) -> list[str]:
+        """Backward-compatible alias for restart recovery candidates."""
+        return self.dispatching_operations()
+
     def record_event(self, operation_id: str, event_type: str, actor: str, payload: dict[str, Any]) -> None:
         self.connection.execute(
             "INSERT INTO events(operation_id, event_type, actor, payload_json, created_at) VALUES (?, ?, ?, ?, ?)",
             (operation_id, event_type, actor, json.dumps(payload, sort_keys=True), _now()),
         )
-        self.connection.commit()
+        self._commit_if_outermost()
 
     def list_events(self, operation_id: str) -> list[dict[str, Any]]:
         self.get_operation(operation_id)
