@@ -206,20 +206,35 @@ Passing these checks is evidence within their declared scope. It does not establ
 - `SECURITY.md` — security reporting and supported boundary;
 - `docs/en/public-alpha-evaluation-guide.md` — short third-party evaluation route.
 
-## Not Proven
+## Claim boundary and promotion path
 
-RPOS 0.1.0a1 does not prove or claim:
+RPOS does not treat every current non-claim as a permanent disclaimer. Public boundaries are separated into **evidence-limited boundaries that can move** and **permanent responsibility boundaries that RPOS should not cross by itself**. See [Claim Boundary Promotion](docs/en/claim-boundary-promotion.md).
 
-- production or enterprise readiness;
-- legal or regulatory compliance;
-- certification or official conformity;
-- universal AI safety;
-- correctness of arbitrary remote adapters or credentials;
-- exactly-once effects over arbitrary external systems;
-- complete software-supply-chain trustworthiness;
-- formal correctness/conformance of the Python implementation as a whole;
-- liveness/eventual completion for arbitrary operations;
-- patent non-infringement, patent invalidity, or freedom to operate.
+### Current evidence-limited boundaries
+
+The following claims are intentionally withheld because the required evidence is not yet sufficient. They may be promoted only after scoped, reviewable evidence is obtained and explicitly admitted into the public claim:
+
+- **production readiness** — requires sustained workload/soak evidence, fault injection across supported deployment profiles, upgrade/rollback/backup/recovery evidence, operational monitoring/SLO evidence, and reviewed security/deployment controls;
+- **broader platform support** — requires a declared support matrix with reproducible CI and field results for the supported OS, Python, container, network, identity, and storage profiles;
+- **implementation-wide formal conformance** — requires an explicit refinement/conformance relation between the formal model and executable semantics plus reproducible conformance evidence for the claimed implementation surface;
+- **broader software-supply-chain trust** — requires stronger provenance, immutable inputs where justified, artifact signing/attestation, independent verification, and maintained vulnerability-response evidence;
+- **domain effectiveness beyond the published scenarios** — requires domain-specific pilots with declared hypotheses, failure criteria, observed outcomes, counterexamples, and independent review.
+
+Promotion is not automatic: new evidence must be scoped, reviewable, reproducible where applicable, and explicitly adopted into the corresponding public claim.
+
+### Permanent responsibility boundaries
+
+These are not unfinished features and are not expected to disappear merely because RPOS matures:
+
+- RPOS does not create legal authority, legal interpretation, liability, certification, or regulatory approval by itself;
+- RPOS does not make an arbitrary external system correct merely because it governs the pathway to that system;
+- a transport receipt does not become proof of a real-world effect without an appropriate verification contract and evidence source;
+- RPOS does not transfer final organizational responsibility from the responsible human or institution to software;
+- RPOS cannot provide a universal exactly-once guarantee for arbitrary external systems that do not expose the required transactional/idempotency/verification contract;
+- formal proof about an abstract model does not automatically prove the complete Python implementation or deployment environment;
+- patent non-infringement, patent invalidity, freedom to operate, and legal claim scope remain outside RPOS's authority.
+
+Where practical, evidence-limited boundaries are tracked as `evidence_collecting`, `review_ready`, or `promoted`; permanent boundaries are `permanently_out_of_scope`.
 
 ## License
 
