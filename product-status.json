@@ -26,6 +26,57 @@
     "implementation_wide_formal_correctness",
     "organizational_or_execution_authority"
   ],
+  "claim_boundary_model": {
+    "spec": "docs/en/claim-boundary-promotion.md",
+    "evidence_limited_boundaries": [
+      {
+        "claim": "production_readiness",
+        "promotion_state": "evidence_collecting",
+        "promotion_requires": [
+          "sustained_workload_and_soak_evidence",
+          "fault_injection_across_supported_deployment_profiles",
+          "upgrade_rollback_backup_and_recovery_evidence",
+          "operational_monitoring_and_slo_evidence",
+          "reviewed_security_and_deployment_controls"
+        ]
+      },
+      {
+        "claim": "broader_platform_support",
+        "promotion_state": "evidence_collecting",
+        "promotion_requires": [
+          "declared_support_matrix",
+          "reproducible_ci_and_field_results_for_supported_profiles"
+        ]
+      },
+      {
+        "claim": "implementation_wide_formal_conformance",
+        "promotion_state": "evidence_collecting",
+        "promotion_requires": [
+          "explicit_model_to_executable_refinement_or_conformance_relation",
+          "reproducible_conformance_evidence_for_claimed_surface"
+        ]
+      },
+      {
+        "claim": "broader_software_supply_chain_trust",
+        "promotion_state": "evidence_collecting",
+        "promotion_requires": [
+          "stronger_dependency_provenance",
+          "immutable_inputs_where_justified",
+          "artifact_signing_or_attestation",
+          "independent_verification",
+          "maintained_vulnerability_response_evidence"
+        ]
+      }
+    ],
+    "permanent_responsibility_boundaries": [
+      "legal_or_regulatory_authority_creation",
+      "third_party_system_correctness_creation",
+      "receipt_as_external_effect_proof_without_verification_contract",
+      "transfer_of_final_organizational_responsibility_to_software",
+      "universal_exactly_once_for_arbitrary_external_systems",
+      "abstract_formal_proof_as_automatic_complete_runtime_or_deployment_proof"
+    ]
+  },
   "deferred": [
     "production_workload_capacity_objectives",
     "multi_tenant_isolation",
