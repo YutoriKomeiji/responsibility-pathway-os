@@ -85,6 +85,103 @@ def validate_authority_envelope(
 
 
 @dataclass(frozen=True)
+class CommitAuthorityEnvelope:
+    """Strict authority evidence revalidated at the durable-effect boundary.
+
+    Unlike the more general AuthorityEnvelope, this envelope binds authority to the
+    exact target and effect identity and carries an authority epoch plus one-shot
+    consumption state. It is intentionally additive: callers opt into this stricter
+    commit-time gate without changing existing RPOS authorization semantics.
+    """
+
+    actor: str
+    operation_id: str
+    action_name: str
+    target_digest: str
+    effect_digest: str
+    issued_at: datetime
+    expires_at: datetime
+    evidence_digest: str
+    context_digest: str
+    authority_epoch: int
+    consumed: bool = False
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "actor",
+            "operation_id",
+            "action_name",
+            "target_digest",
+            "effect_digest",
+            "evidence_digest",
+            "context_digest",
+        ):
+            if not str(getattr(self, field_name)).strip():
+                raise ValueError(f"{field_name} must not be empty")
+        if self.issued_at.tzinfo is None or self.expires_at.tzinfo is None:
+            raise ValueError("commit authority timestamps must be timezone-aware")
+        if self.expires_at <= self.issued_at:
+            raise ValueError("expires_at must be later than issued_at")
+        if self.authority_epoch < 0:
+            raise ValueError("authority_epoch must not be negative")
+
+
+def validate_commit_authority(
+    envelope: CommitAuthorityEnvelope,
+    *,
+    now: datetime,
+    expected_actor: str,
+    expected_operation_id: str,
+    expected_action_name: str,
+    expected_target_digest: str,
+    expected_effect_digest: str,
+    expected_evidence_digest: str,
+    expected_context_digest: str,
+    current_authority_epoch: int,
+) -> AuthorityValidation:
+    """Fail closed unless authority is still valid for this exact durable effect.
+
+    The check is intentionally value-bound. Earlier authority is insufficient when
+    the target/effect, evidence/context, authority epoch, freshness, or one-shot
+    consumption state no longer matches the commit being attempted.
+    """
+
+    if now.tzinfo is None:
+        raise ValueError("now must be timezone-aware")
+    if current_authority_epoch < 0:
+        raise ValueError("current_authority_epoch must not be negative")
+
+    reasons: list[str] = []
+    if now < envelope.issued_at:
+        reasons.append("commit_authority_not_yet_valid")
+    if now >= envelope.expires_at:
+        reasons.append("commit_authority_expired")
+    if envelope.consumed:
+        reasons.append("commit_authority_consumed")
+    if envelope.authority_epoch != current_authority_epoch:
+        reasons.append("commit_authority_epoch_mismatch")
+    if envelope.actor != expected_actor:
+        reasons.append("commit_authority_actor_mismatch")
+    if envelope.operation_id != expected_operation_id:
+        reasons.append("commit_authority_operation_mismatch")
+    if envelope.action_name != expected_action_name:
+        reasons.append("commit_authority_action_mismatch")
+    if envelope.target_digest != expected_target_digest:
+        reasons.append("commit_authority_target_mismatch")
+    if envelope.effect_digest != expected_effect_digest:
+        reasons.append("commit_authority_effect_mismatch")
+    if envelope.evidence_digest != expected_evidence_digest:
+        reasons.append("commit_authority_evidence_mismatch")
+    if envelope.context_digest != expected_context_digest:
+        reasons.append("commit_authority_context_mismatch")
+
+    return AuthorityValidation(
+        disposition=SecurityDisposition.HOLD if reasons else SecurityDisposition.ALLOW,
+        reasons=tuple(reasons),
+    )
+
+
+@dataclass(frozen=True)
 class ResponsibilityIntegritySnapshot:
     """Canonical integrity projection of responsibility-critical state."""
 

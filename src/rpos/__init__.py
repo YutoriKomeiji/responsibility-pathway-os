@@ -26,6 +26,7 @@ from .provenance_review import ClaimReviewStatus, PublicClaimReviewRecord, build
 from .security import (
     AuthorityEnvelope,
     AuthorityValidation,
+    CommitAuthorityEnvelope,
     ResponsibilityConsistencyFinding,
     ResponsibilityEventChainCheckpoint,
     ResponsibilityIntegritySnapshot,
@@ -34,6 +35,7 @@ from .security import (
     event_chain_matches,
     find_responsibility_inconsistencies,
     validate_authority_envelope,
+    validate_commit_authority,
 )
 from .security_policy import (
     EvidenceChainValidation,
@@ -74,6 +76,7 @@ __all__ = [
     "AuthorityValidation",
     "BootReport",
     "ClaimReviewStatus",
+    "CommitAuthorityEnvelope",
     "DefensiveProvenanceRecord",
     "DependencyEvidence",
     "DependencyEvidenceClass",
@@ -123,6 +126,7 @@ __all__ = [
     "human_review_proves_legal_compliance",
     "marker_proves_content_truth",
     "validate_authority_envelope",
+    "validate_commit_authority",
     "validate_envelope",
     "validate_evidence_supersession_chain",
     "validate_packet",
