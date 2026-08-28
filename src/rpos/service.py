@@ -73,15 +73,16 @@ class RposService:
 
     def propose(self, definition: OperationDefinition) -> OperationInspection:
         decision = AdmissionDecision.HUMAN_GATE if definition.requires_human_gate else AdmissionDecision.ALLOW
-        self.store.create_operation(definition, OperationState.PROPOSED, decision)
-        self.store.record_event(
-            definition.operation_id,
-            "operation_proposed",
-            definition.requested_by,
-            {"definition": definition.to_dict(), "admission_decision": decision.value},
-        )
         target = OperationState.HUMAN_GATE if decision is AdmissionDecision.HUMAN_GATE else OperationState.AUTHORIZED
-        self._transition(definition.operation_id, target, actor=definition.requested_by, reason="initial_admission")
+        with self.store.transaction():
+            self.store.create_operation(definition, OperationState.PROPOSED, decision)
+            self.store.record_event(
+                definition.operation_id,
+                "operation_proposed",
+                definition.requested_by,
+                {"definition": definition.to_dict(), "admission_decision": decision.value},
+            )
+            self._transition(definition.operation_id, target, actor=definition.requested_by, reason="initial_admission")
         return self.inspect(definition.operation_id)
 
     def record_evaluation_evidence(
@@ -152,14 +153,19 @@ class RposService:
             return self.inspect(operation_id)
         if state is not OperationState.AUTHORIZED:
             raise PermissionError(f"operation is not authorized for dispatch: {state.value}")
-        self.store.begin_attempt(operation_id, attempt_id, idempotency_key)
 
-        self._transition(
-            operation_id,
-            OperationState.DISPATCHING,
-            actor=definition.execution_actor,
-            reason=f"dispatch_started:{attempt_id}",
-        )
+        # Persist the attempt and DISPATCHING transition atomically before any
+        # external effect. A crash before commit leaves the operation authorized;
+        # a crash after commit leaves a recoverable DISPATCHING responsibility.
+        with self.store.transaction():
+            self.store.begin_attempt(operation_id, attempt_id, idempotency_key)
+            self._transition(
+                operation_id,
+                OperationState.DISPATCHING,
+                actor=definition.execution_actor,
+                reason=f"dispatch_started:{attempt_id}",
+            )
+
         try:
             result = adapter.execute(
                 operation_id=operation_id,
@@ -175,26 +181,40 @@ class RposService:
                 reason=f"adapter_exception:{type(exc).__name__}",
             )
 
-        self.store.finish_attempt(
-            attempt_id,
-            receipt_status=result.receipt_status.value,
-            readback_verified=result.readback_verified,
-            result_reason=result.reason,
-        )
-        self.store.record_event(
-            operation_id,
-            "adapter_result",
-            definition.execution_actor,
-            {
-                "attempt_id": attempt_id,
-                "idempotency_key": idempotency_key,
-                "result": asdict(result),
-            },
-        )
         target = classify_adapter_result(definition, result)
-        self._transition(operation_id, target, actor=definition.execution_actor, reason=result.reason or "adapter_result_classified")
-        if target is OperationState.VERIFIED:
-            self._transition(operation_id, OperationState.COMPLETED, actor=definition.execution_actor, reason="verified_effect_completed")
+        # Persist receipt metadata, evidence event, and resulting state in one
+        # transaction. If this transaction is interrupted, restart recovery sees
+        # DISPATCHING and must not redispatch automatically.
+        with self.store.transaction():
+            self.store.finish_attempt(
+                attempt_id,
+                receipt_status=result.receipt_status.value,
+                readback_verified=result.readback_verified,
+                result_reason=result.reason,
+            )
+            self.store.record_event(
+                operation_id,
+                "adapter_result",
+                definition.execution_actor,
+                {
+                    "attempt_id": attempt_id,
+                    "idempotency_key": idempotency_key,
+                    "result": asdict(result),
+                },
+            )
+            self._transition(
+                operation_id,
+                target,
+                actor=definition.execution_actor,
+                reason=result.reason or "adapter_result_classified",
+            )
+            if target is OperationState.VERIFIED:
+                self._transition(
+                    operation_id,
+                    OperationState.COMPLETED,
+                    actor=definition.execution_actor,
+                    reason="verified_effect_completed",
+                )
         return self.inspect(operation_id)
 
     def reconcile(
@@ -220,27 +240,48 @@ class RposService:
                 reason=f"reconciliation_exception:{type(exc).__name__}",
             )
 
-        self.store.record_event(
-            operation_id,
-            "reconciliation_observed",
-            actor,
-            {
-                "attempt_id": None if latest_attempt is None else latest_attempt.get("attempt_id"),
-                "status": result.status.value,
-                "evidence": dict(result.evidence),
-                "reason": result.reason,
-            },
-        )
-
-        if result.status is ReconciliationStatus.VERIFIED_APPLIED:
-            if not result.evidence:
-                raise ValueError("verified_applied reconciliation requires evidence")
-            self._transition(operation_id, OperationState.VERIFIED, actor=actor, reason=result.reason or "reconciliation_verified_applied")
-            self._transition(operation_id, OperationState.COMPLETED, actor=actor, reason="reconciled_effect_completed")
-        elif result.status is ReconciliationStatus.VERIFIED_NOT_APPLIED:
-            self._transition(operation_id, OperationState.REPAIR_REQUIRED, actor=actor, reason=result.reason or "reconciliation_verified_not_applied")
-        elif result.status is not ReconciliationStatus.UNRESOLVED:
+        if result.status is ReconciliationStatus.VERIFIED_APPLIED and not result.evidence:
+            raise ValueError("verified_applied reconciliation requires evidence")
+        if result.status not in {
+            ReconciliationStatus.VERIFIED_APPLIED,
+            ReconciliationStatus.VERIFIED_NOT_APPLIED,
+            ReconciliationStatus.UNRESOLVED,
+        }:
             raise ValueError(f"unsupported reconciliation status: {result.status}")
+
+        with self.store.transaction():
+            self.store.record_event(
+                operation_id,
+                "reconciliation_observed",
+                actor,
+                {
+                    "attempt_id": None if latest_attempt is None else latest_attempt.get("attempt_id"),
+                    "status": result.status.value,
+                    "evidence": dict(result.evidence),
+                    "reason": result.reason,
+                },
+            )
+
+            if result.status is ReconciliationStatus.VERIFIED_APPLIED:
+                self._transition(
+                    operation_id,
+                    OperationState.VERIFIED,
+                    actor=actor,
+                    reason=result.reason or "reconciliation_verified_applied",
+                )
+                self._transition(
+                    operation_id,
+                    OperationState.COMPLETED,
+                    actor=actor,
+                    reason="reconciled_effect_completed",
+                )
+            elif result.status is ReconciliationStatus.VERIFIED_NOT_APPLIED:
+                self._transition(
+                    operation_id,
+                    OperationState.REPAIR_REQUIRED,
+                    actor=actor,
+                    reason=result.reason or "reconciliation_verified_not_applied",
+                )
 
         return self.inspect(operation_id)
 
@@ -254,16 +295,17 @@ class RposService:
             raise ValueError("repair summary must not be empty")
 
         latest_attempt = self.store.latest_attempt(operation_id)
-        self.store.record_event(
-            operation_id,
-            "repair_prepared",
-            actor,
-            {
-                "attempt_id": None if latest_attempt is None else latest_attempt.get("attempt_id"),
-                "summary": summary.strip(),
-            },
-        )
-        self._transition(operation_id, OperationState.READY_TO_RESUME, actor=actor, reason="repair_prepared")
+        with self.store.transaction():
+            self.store.record_event(
+                operation_id,
+                "repair_prepared",
+                actor,
+                {
+                    "attempt_id": None if latest_attempt is None else latest_attempt.get("attempt_id"),
+                    "summary": summary.strip(),
+                },
+            )
+            self._transition(operation_id, OperationState.READY_TO_RESUME, actor=actor, reason="repair_prepared")
         return self.inspect(operation_id)
 
     def resume(self, operation_id: str, *, actor: str) -> OperationInspection:
@@ -277,7 +319,7 @@ class RposService:
 
     def recover_incomplete_dispatches(self) -> tuple[str, ...]:
         recovered: list[str] = []
-        for operation_id in self.store.incomplete_dispatch_operations():
+        for operation_id in self.store.dispatching_operations():
             definition, state, _ = self.store.get_operation(operation_id)
             if state is not OperationState.DISPATCHING:
                 continue
@@ -332,13 +374,16 @@ class RposService:
         return OperationInspection(definition, state, decision, latest_attempt, human_return)
 
     def _transition(self, operation_id: str, target: OperationState, *, actor: str, reason: str) -> None:
-        _, current, _ = self.store.get_operation(operation_id)
-        if target not in _ALLOWED[current]:
-            raise ValueError(f"invalid transition: {current.value} -> {target.value}")
-        self.store.set_state(operation_id, target)
-        self.store.record_event(
-            operation_id,
-            "state_transition",
-            actor,
-            {"from": current.value, "to": target.value, "reason": reason},
-        )
+        # State and its transition event are one durable fact. Nested calls join
+        # an outer service transaction; standalone transitions commit atomically.
+        with self.store.transaction():
+            _, current, _ = self.store.get_operation(operation_id)
+            if target not in _ALLOWED[current]:
+                raise ValueError(f"invalid transition: {current.value} -> {target.value}")
+            self.store.set_state(operation_id, target)
+            self.store.record_event(
+                operation_id,
+                "state_transition",
+                actor,
+                {"from": current.value, "to": target.value, "reason": reason},
+            )
