@@ -12,6 +12,7 @@ RPOS uses pre-release versions while the public API and operational contracts ar
 - Fail-closed handling for unknown external effect and adapter/reconciliation exceptions.
 - Responsibility State Envelope templates with no implicit authority effect.
 - Responsibility Observatory, evidence/provenance helpers, security primitives, CLI, and executable examples.
+- Commit-time authority revalidation with exact target/effect binding, authority-epoch currentness, freshness, and one-shot consumption checks as an additive opt-in security primitive.
 - Bounded Lean 4 evidence for state, reachability, evidence, packet/envelope, operational, and transparency boundaries.
 - Deterministic public-export verification, wheel/sdist clean-install checks, SBOM generation, and release-candidate workflow.
 
