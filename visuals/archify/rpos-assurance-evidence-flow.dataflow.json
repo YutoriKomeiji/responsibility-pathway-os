@@ -23,21 +23,21 @@
   ],
   "nodes": [
     { "id": "source", "type": "backend", "label": "RPOS Source Commit", "sublabel": "exact Git SHA", "stage": 0, "row": 1, "tag": "source of truth" },
-    { "id": "lean", "type": "backend", "label": "Lean 4 Model", "sublabel": "bounded structural invariants", "stage": 1, "row": 0, "tag": "formal" },
-    { "id": "tests", "type": "backend", "label": "Python Runtime Tests", "sublabel": "executable implementation evidence", "stage": 1, "row": 2, "tag": "runtime" },
+    { "id": "lean", "type": "backend", "label": "Lean 4 Model", "sublabel": "structural invariants", "stage": 1, "row": 0, "tag": "formal" },
+    { "id": "tests", "type": "backend", "label": "Runtime Tests", "sublabel": "implementation evidence", "stage": 1, "row": 2, "tag": "runtime" },
     { "id": "machine_check", "type": "security", "label": "Pinned lake build", "sublabel": "machine-checked theorem set", "stage": 2, "row": 0, "tag": "Lean" },
-    { "id": "manifest", "type": "database", "label": "formal-assurance.json", "sublabel": "theorem + test + hashes + ceiling", "stage": 2, "row": 2, "tag": "exact-head manifest" },
-    { "id": "viewer", "type": "frontend", "label": "Formal Assurance Viewer", "sublabel": "user-visible crosswalk", "stage": 3, "row": 1, "tag": "public assurance" },
+    { "id": "manifest", "type": "database", "label": "Assurance Manifest", "sublabel": "theorem + tests + hashes", "stage": 2, "row": 2, "tag": "exact-head manifest" },
+    { "id": "viewer", "type": "frontend", "label": "Assurance Viewer", "sublabel": "user-visible crosswalk", "stage": 3, "row": 1, "tag": "public assurance" },
     { "id": "human_authority", "type": "external", "label": "Human Authority", "sublabel": "operational decision owner", "stage": 4, "row": 1, "tag": "separate authority" }
   ],
   "flows": [
     { "from": "source", "to": "lean", "label": "formal model sources", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel" },
-    { "from": "source", "to": "tests", "label": "runtime implementation + tests", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "source", "to": "tests", "label": "runtime implementation + tests", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel", "labelAt": [250, 330] },
     { "from": "lean", "to": "machine_check", "label": "lake build", "classification": "machine check", "variant": "emphasis", "route": "straight" },
     { "from": "machine_check", "to": "manifest", "label": "machine_checked=true", "classification": "bounded theorem evidence", "variant": "emphasis", "route": "vertical-channel" },
-    { "from": "tests", "to": "manifest", "label": "test crosswalk + source hashes", "classification": "runtime evidence", "variant": "default", "route": "straight" },
+    { "from": "tests", "to": "manifest", "label": "test crosswalk + source hashes", "classification": "runtime evidence", "variant": "default", "route": "straight", "labelAt": [423, 428] },
     { "from": "source", "to": "manifest", "label": "source_commit + catalog hashes", "classification": "provenance", "variant": "dashed", "route": "bottom-channel" },
-    { "from": "manifest", "to": "viewer", "label": "public assurance data", "classification": "read-only", "variant": "emphasis", "route": "straight" },
+    { "from": "manifest", "to": "viewer", "label": "public assurance data", "classification": "read-only", "variant": "emphasis", "route": "straight", "labelAt": [638, 428] },
     { "from": "viewer", "to": "human_authority", "label": "review context only", "classification": "no authority effect", "variant": "dashed", "route": "straight" }
   ],
   "cards": [
