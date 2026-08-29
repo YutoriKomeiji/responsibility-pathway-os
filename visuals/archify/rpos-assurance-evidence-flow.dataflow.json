@@ -28,7 +28,7 @@
     { "id": "machine_check", "type": "security", "label": "Pinned lake build", "sublabel": "checked theorems", "stage": 2, "row": 0, "tag": "Lean" },
     { "id": "manifest", "type": "database", "label": "Assurance Manifest", "sublabel": "theorem + tests + hashes", "stage": 2, "row": 2, "tag": "exact-head manifest" },
     { "id": "viewer", "type": "frontend", "label": "Assurance Viewer", "sublabel": "user-visible crosswalk", "stage": 3, "row": 1, "tag": "public assurance" },
-    { "id": "human_authority", "type": "external", "label": "Human Authority", "sublabel": "operational decision owner", "stage": 4, "row": 1, "tag": "separate authority" }
+    { "id": "human_authority", "type": "external", "label": "Human Authority", "sublabel": "decision owner", "stage": 4, "row": 1, "tag": "separate authority" }
   ],
   "flows": [
     { "from": "source", "to": "lean", "label": "formal model sources", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel" },
