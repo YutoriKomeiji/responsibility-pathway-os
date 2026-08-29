@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: en -->
-<!-- RPOS-DOC-VERSION: 0.1.0a1 -->
-<!-- RPOS-DOC-STATUS: public-alpha-candidate -->
+<!-- RPOS-DOC-VERSION: 0.1.0a2 -->
+<!-- RPOS-DOC-STATUS: public-alpha-release-candidate -->
 <!-- RPOS-DOC-COUNTERPART: ../ja/current-scope-and-extension-surface.md -->
 
 # Current Scope and Extension Surface
 
-RPOS 0.1.0a1 is an early public alpha for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
+RPOS 0.1.0a2 is an early public-alpha release candidate for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
 
 ## What works today
 
@@ -20,11 +20,11 @@ RPOS currently provides at least:
 - `REPAIR_REQUIRED -> READY_TO_RESUME` with explicit resume authorization;
 - Residual Owner / Human Return Point handling;
 - bounded evidence import and provenance;
-- responsibility packet templates;
+- Responsibility State Envelope templates with no implicit authority effect;
 - CLI and runnable examples;
 - wheel / sdist build and clean-install verification;
 - CycloneDX 1.6 SBOM, artifact hash bundle, dependency audit, and secret scan;
-- bounded machine-checked Lean 4 formal evidence.
+- six published Lean 4 responsibility invariants machine-checked in declared bounded models and cross-linked to Python runtime tests.
 
 ## Current constraints are extension surfaces
 
@@ -57,7 +57,7 @@ Accepting a request does not promise implementation, schedule, conformity, or sa
 
 ## Backward compatibility
 
-With 2026-08-12 as the current program baseline, RPOS follows the freshest verified specifications, toolchains, and official references available at the time of a material change. Updates must not silently break previously supported alpha artifacts or adopter workflows.
+RPOS follows the freshest verified specifications, toolchains, and official references available at the time of a material change. Updates must not silently break previously supported alpha artifacts or adopter workflows.
 
 Compatibility impact is classified as one of:
 
@@ -67,21 +67,19 @@ Compatibility impact is classified as one of:
 
 When a breaking change is necessary, the affected versions/artifacts, migration path, claim impact, Residual Owner, and Human Return Point are recorded.
 
-## Japan-first, world-quality
+## Japan-first, world-reviewable
 
-Initial adoption prioritizes Japanese organizations and enterprises, economic and industry bodies, national/local public-sector users, and individual practitioners, engineers, and researchers.
+Initial adoption work prioritizes Japanese organizations and enterprises, economic and industry bodies, national/local public-sector users, and individual practitioners, engineers, and researchers.
 
-At the same time, core semantics, formal evidence, security/release engineering, package quality, terminology, and evidence discipline are maintained at a level suitable for international technical review. Even when Japanese material is designed first, product, adoption, operations, profile, review, value, release, and public technical documentation is maintained as synchronized Japanese/English pairs within the same change.
+That is a development direction, not a claim of adoption by those groups. Core semantics, formal evidence, security/release engineering, package quality, terminology, and evidence discipline are maintained so they can be inspected internationally. Public technical material is maintained in synchronized Japanese/English surfaces where practical.
 
 ## Claim boundary and promotion
 
-RPOS does not need to understate capabilities that are actually implemented and verified. Where implementation, tests, and formal evidence support them, terms such as `runtime`, `operating system`, `formal`, `verified`, `assurance`, `security`, and `evidence` may be used with their supporting scope.
+RPOS does not need to understate capabilities that are actually implemented and verified. Where implementation, tests, and formal evidence support them, terms such as `runtime`, `operating system`, `formal`, `machine-checked`, `assurance`, `security`, and `evidence` may be used with their supporting scope.
 
 Public boundaries are classified rather than flattened into one disclaimer list:
 
-- **evidence-limited boundaries** may move when scoped, reviewable evidence satisfies declared promotion criteria and the corresponding public claim is explicitly promoted;
-- **permanent responsibility boundaries** do not disappear merely through product maturity because they belong to qualified humans, institutions, integrators, external systems, or other responsibility layers.
+- **Current Evidence Boundaries** may move when scoped, reviewable evidence satisfies declared promotion criteria and the corresponding public claim is explicitly promoted;
+- **Permanent Responsibility Boundaries** do not disappear merely through product maturity because they belong to qualified humans, institutions, integrators, external systems, or other responsibility layers.
 
-This distinction exists so an adopter can see both the current evidence-backed capability surface and the route by which a temporary boundary can move, without confusing that route with responsibilities RPOS must not appropriate.
-
-See [Claim Boundary Promotion](claim-boundary-promotion.md) for the current criteria, evidence owners, and promotion states. The normative product direction remains [RPOS Operational Product Experience](operational-product-experience.md): the Public Alpha is an implemented core slice of that Operational System direction, not a redefinition of RPOS as a generic library.
+The normative product direction remains [RPOS Operational Product Experience](operational-product-experience.md): the Public Alpha is an implemented core slice of that Operational System direction, not a redefinition of RPOS as a generic library.
