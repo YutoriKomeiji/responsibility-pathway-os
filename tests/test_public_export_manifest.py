@@ -25,16 +25,23 @@ def test_public_export_includes_product_surface_and_excludes_private_roots() -> 
         "SUPPORT.md",
         "CODE_OF_CONDUCT.md",
         "product-status.json",
+        "formal/assurance-catalog.json",
         "formal/lean/lakefile.toml",
         "formal/lean/lean-toolchain",
         "site/index.html",
         "site/ja.html",
         "site/demo.html",
+        "site/assurance.html",
+        "site/assurance.js",
         "site/styles.css",
         "site/app.js",
+        "docs/en/formal-assurance-surface.md",
+        "docs/ja/formal-assurance-surface.md",
         "tests/test_field_acceptance.py",
         "tests/test_cli_bom.py",
+        "tests/test_formal_assurance_manifest.py",
         "tools/build_public_export_manifest.py",
+        "tools/build_formal_assurance_manifest.py",
     }
     assert required <= paths
     assert not any(path.startswith(".github/") for path in paths)
