@@ -35,7 +35,7 @@
     { "from": "source", "to": "tests", "label": "runtime implementation + tests", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel", "labelAt": [250, 330] },
     { "from": "lean", "to": "machine_check", "label": "lake build", "classification": "machine check", "variant": "emphasis", "route": "straight" },
     { "from": "machine_check", "to": "manifest", "label": "machine_checked=true", "classification": "bounded theorem evidence", "variant": "emphasis", "route": "vertical-channel" },
-    { "from": "tests", "to": "manifest", "label": "test crosswalk + source hashes", "classification": "runtime evidence", "variant": "default", "route": "straight", "labelAt": [423, 428] },
+    { "from": "tests", "to": "manifest", "label": "test crosswalk + source hashes", "classification": "runtime evidence", "variant": "default", "route": "straight", "labelAt": [423, 470] },
     { "from": "source", "to": "manifest", "label": "source_commit + catalog hashes", "classification": "provenance", "variant": "dashed", "route": "bottom-channel" },
     { "from": "manifest", "to": "viewer", "label": "public assurance data", "classification": "read-only", "variant": "emphasis", "route": "straight", "labelAt": [638, 428] },
     { "from": "viewer", "to": "human_authority", "label": "review context only", "classification": "no authority effect", "variant": "dashed", "route": "straight" }
