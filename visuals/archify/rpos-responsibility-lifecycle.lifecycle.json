@@ -4,7 +4,7 @@
   "meta": {
     "title": "RPOS Responsibility Lifecycle",
     "output": "site/visuals/rpos-responsibility-lifecycle.html",
-    "viewBox": [1180, 760],
+    "viewBox": [1080, 760],
     "animation": "trace",
     "quality_profile": "showcase",
     "visual_preset": "signal-flow",
