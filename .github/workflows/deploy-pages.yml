@@ -6,8 +6,10 @@ on:
     paths:
       - "site/**"
       - "formal/**"
+      - "visuals/**"
       - "tests/**"
       - "tools/build_formal_assurance_manifest.py"
+      - "tools/build_archify_visuals.sh"
       - ".github/workflows/deploy-pages.yml"
   push:
     branches:
@@ -15,8 +17,10 @@ on:
     paths:
       - "site/**"
       - "formal/**"
+      - "visuals/**"
       - "tests/**"
       - "tools/build_formal_assurance_manifest.py"
+      - "tools/build_archify_visuals.sh"
       - ".github/workflows/deploy-pages.yml"
 
 permissions:
@@ -30,11 +34,24 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate site and assurance crosswalk
+    name: Validate site, assurance, and architecture visuals
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout RPOS
         uses: actions/checkout@v4
+      - name: Checkout pinned Archify fork
+        uses: actions/checkout@v4
+        with:
+          repository: YutoriKomeiji/archify
+          ref: 0853a805003514776bef3593ecca091409828902
+          path: .archify-tool
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Archify dependencies
+        run: npm ci --prefix .archify-tool/archify
       - name: Validate bilingual entry points, demo, and assurance surface
         shell: bash
         run: |
@@ -44,10 +61,16 @@ jobs:
           test -s site/demo.html
           test -s site/assurance.html
           test -s site/assurance.js
+          test -s site/architecture.html
+          test -s site/architecture-ja.html
           test -s site/styles.css
           test -s site/app.js
           test -s formal/assurance-catalog.json
           test -s tools/build_formal_assurance_manifest.py
+          test -s tools/build_archify_visuals.sh
+          test -s visuals/archify/rpos-responsibility-lifecycle.lifecycle.json
+          test -s visuals/archify/rpos-operational-architecture.architecture.json
+          test -s visuals/archify/rpos-assurance-evidence-flow.dataflow.json
           grep -F 'href="ja.html"' site/index.html
           grep -F 'href="index.html"' site/ja.html
           grep -F 'href="assurance.html"' site/index.html
@@ -67,9 +90,11 @@ jobs:
           assert data['assertion_count'] >= 6
           print('site assurance crosswalk references validated')
           PY
+      - name: Validate and render pinned architecture visuals
+        run: bash tools/build_archify_visuals.sh
 
   deploy:
-    name: Deploy Pages with machine-checked assurance
+    name: Deploy Pages with machine-checked assurance and verified visuals
     needs: validate
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
@@ -77,7 +102,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout RPOS
         uses: actions/checkout@v4
       - name: Install pinned Lean toolchain via elan
         run: |
@@ -101,6 +126,21 @@ jobs:
           assert data['evidence_role'] == 'public_assurance_not_runtime_authority'
           print(f"Pages formal assurance bound to {data['source_commit']} with {data['assertion_count']} assertions")
           PY
+      - name: Checkout pinned Archify fork
+        uses: actions/checkout@v4
+        with:
+          repository: YutoriKomeiji/archify
+          ref: 0853a805003514776bef3593ecca091409828902
+          path: .archify-tool
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Archify dependencies
+        run: npm ci --prefix .archify-tool/archify
+      - name: Render verified architecture visuals into Pages artifact
+        run: bash tools/build_archify_visuals.sh
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
