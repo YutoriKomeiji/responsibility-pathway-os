@@ -3,6 +3,7 @@
 # RPOS-SOURCE-LANG: en
 from __future__ import annotations
 
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -19,8 +20,10 @@ def test_sbom_identifies_rpos_candidate_and_source_commit() -> None:
     assert result["bomFormat"] == "CycloneDX"
     assert result["specVersion"] == "1.6"
     component = result["metadata"]["component"]
-    assert component["name"] == "responsibility-pathway-os"
-    assert component["version"] == "0.1.0a1"
+    with (ROOT / "pyproject.toml").open("rb") as fh:
+        project = tomllib.load(fh)["project"]
+    assert component["name"] == project["name"] == "responsibility-pathway-os"
+    assert component["version"] == project["version"]
     assert {item["name"]: item["value"] for item in component["properties"]}["rpos:source-commit"] == "abc123"
 
 

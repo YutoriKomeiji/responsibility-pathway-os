@@ -4,14 +4,14 @@ RPOSでは、公開上の主張を永久的な免責事項ではなく、**証�
 
 現在「主張しない」としている項目には、性質の異なる2種類があります。
 
-1. 必要な証拠が揃い、レビューされれば前進できる **evidence-limited boundary（証拠依存の境界）**
-2. 成熟してもRPOS単体では越えるべきではない **permanent responsibility boundary（恒久的な責任境界）**
+1. 必要な証拠が揃い、レビューされれば前進できる **Current Evidence Boundary（現在の証拠境界）**
+2. 成熟してもRPOS単体では越えるべきではない **Permanent Responsibility Boundary（恒久的な責任境界）**
 
 この2つを同じ「できないこと」の一覧として扱いません。
 
 ## Current Evidence Boundary
 
-RPOS 0.1.0a1 は Early Public Alpha / Executable Preview です。現在のverified surfaceには、限定されたPython実行挙動、永続化と障害回復シナリオ、clean package install、public-export再構築、SBOM/source-bound check、限定されたWindows portability evidence、明示した抽象propertyに対するbounded Lean modelが含まれます。
+RPOS 0.1.0a2 は Early Public Alpha / Executable Preview のrelease candidateです。現在のverified surfaceには、限定されたPython実行挙動、永続化と障害回復scenario、clean package install、public-export再構築、SBOM/source-bound check、Ubuntu/Windows × Python 3.11/3.12 evidence、GitHub Pages deployment check、宣言された限定model上でmachine-checkされPython runtime testへcross-linkされた6件のLean 4責任不変条件が含まれます。
 
 このevidenceが支えるのは現在のPublic Alpha claimまでです。本番、法的判断、組織的権限、外部system全体、Python実装全体のformal correctnessまで自動的に昇格するものではありません。
 

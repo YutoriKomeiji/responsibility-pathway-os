@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "responsibility-pathway-os"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "Executable Responsibility Pathway OS in Python with Lean 4 machine-checked responsibility invariants"
 readme = "README.md"
 requires-python = ">=3.11"

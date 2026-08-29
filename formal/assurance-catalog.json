@@ -1,6 +1,6 @@
 {
   "schema_version": "rpos.formal-assurance.catalog.v0.1",
-  "product_version": "0.1.0a1",
+  "product_version": "0.1.0a2",
   "purpose": "Canonical Responsibility Pathway OS crosswalk: map operational responsibility risks to machine-checked Lean 4 invariants and corresponding executable Python runtime tests, with explicit model scope and proof ceilings and without treating formal proof as runtime authority.",
   "assertions": [
     {
