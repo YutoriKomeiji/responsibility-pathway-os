@@ -1,0 +1,74 @@
+name: RPOS architecture visuals
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "visuals/**"
+      - "tools/build_archify_visuals.sh"
+      - "site/architecture.html"
+      - ".github/workflows/archify-visuals.yml"
+      - ".github/workflows/deploy-pages.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "visuals/**"
+      - "tools/build_archify_visuals.sh"
+      - "site/architecture.html"
+      - ".github/workflows/archify-visuals.yml"
+      - ".github/workflows/deploy-pages.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: Validate and render pinned Archify visuals
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout RPOS
+        uses: actions/checkout@v4
+      - name: Checkout pinned Archify fork
+        uses: actions/checkout@v4
+        with:
+          repository: YutoriKomeiji/archify
+          ref: 0853a805003514776bef3593ecca091409828902
+          path: .archify-tool
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Archify dependencies
+        run: npm ci --prefix .archify-tool/archify
+      - name: Validate and render RPOS visual sources
+        run: bash tools/build_archify_visuals.sh
+      - name: Verify visual source/output boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          sources = [
+              Path('visuals/archify/rpos-responsibility-lifecycle.lifecycle.json'),
+              Path('visuals/archify/rpos-operational-architecture.architecture.json'),
+              Path('visuals/archify/rpos-assurance-evidence-flow.dataflow.json'),
+          ]
+          expected_types = {'lifecycle', 'architecture', 'dataflow'}
+          seen = set()
+          for path in sources:
+              data = json.loads(path.read_text(encoding='utf-8'))
+              assert data['schema_version'] == 1
+              assert data['diagram_type'] in expected_types
+              assert data['diagram_type'] not in seen
+              seen.add(data['diagram_type'])
+          assert seen == expected_types
+          print('typed RPOS Archify source set verified')
+          PY
+      - name: Upload rendered visual evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpos-archify-visuals-${{ github.sha }}
+          path: site/visuals/*.html
+          if-no-files-found: error
+          retention-days: 14
