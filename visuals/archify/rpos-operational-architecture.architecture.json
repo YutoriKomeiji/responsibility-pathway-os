@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "RPOS Operational Architecture",
+    "output": "site/visuals/rpos-operational-architecture.html",
+    "visual_preset": "blueprint",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "authority-path", "label": "Authority to dispatch", "focus": ["requester", "rpos", "human_authority", "adapter", "external_system"], "note": "Follow proposal, explicit authority, and the bounded dispatch boundary." },
+      { "id": "evidence-path", "label": "Evidence and reconciliation", "focus": ["external_system", "observer", "rpos", "sqlite", "observatory"], "note": "Follow readback and unresolved responsibility back into durable state and human-visible inspection." },
+      { "id": "assurance-separation", "label": "Assurance is not authority", "focus": ["formal_assurance", "rpos", "human_authority"], "note": "Formal assurance explains structural invariants but does not authorize runtime operations." }
+    ]
+  },
+  "components": [
+    { "id": "requester", "type": "external", "label": "Requester / Model", "sublabel": "proposal source", "pos": [40, 290], "size": [138, 64], "tag": "proposal ≠ authority" },
+    { "id": "rpos", "type": "backend", "label": "RPOS Core", "sublabel": "service + state machine", "pos": [270, 290], "size": [150, 70], "tag": "owns operation" },
+    { "id": "human_authority", "type": "security", "label": "Human Authority", "sublabel": "approve / deny / resume", "pos": [270, 105], "size": [150, 66], "tag": "authority owner" },
+    { "id": "sqlite", "type": "database", "label": "SQLite Store", "sublabel": "state + attempts + events", "pos": [520, 105], "size": [150, 66], "tag": "durable facts" },
+    { "id": "adapter", "type": "backend", "label": "Operation Adapter", "sublabel": "external dispatch boundary", "pos": [520, 291], "size": [154, 68], "tag": "effect attempt" },
+    { "id": "external_system", "type": "external", "label": "External System", "sublabel": "effect outside RPOS", "pos": [780, 291], "size": [150, 68], "tag": "third party" },
+    { "id": "observer", "type": "backend", "label": "Reconciliation Observer", "sublabel": "independent readback", "pos": [771, 470], "size": [168, 68], "tag": "evidence only" },
+    { "id": "observatory", "type": "cloud", "label": "Responsibility Observatory", "sublabel": "read-only service facade", "pos": [520, 470], "size": [170, 68], "tag": "no mutation" },
+    { "id": "formal_assurance", "type": "security", "label": "Formal Assurance Surface", "sublabel": "Lean theorem + test crosswalk", "pos": [40, 470], "size": [176, 70], "tag": "not runtime authority" }
+  ],
+  "boundaries": [
+    { "kind": "security-group", "label": "RPOS operational boundary", "wraps": ["rpos", "sqlite", "adapter", "observatory"], "pad": 22 },
+    { "kind": "region", "label": "External-effect domain", "wraps": ["external_system", "observer"], "pad": 18 }
+  ],
+  "connections": [
+    { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default", "labelAt": [200, 368] },
+    { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "fromSide": "left", "toSide": "left", "via": [[230, 325], [230, 138]], "labelAt": [170, 235] },
+    { "from": "human_authority", "to": "rpos", "label": "decision / resume", "variant": "emphasis", "fromSide": "right", "toSide": "right", "via": [[450, 138], [450, 325]], "labelAt": [650, 190] },
+    { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "fromSide": "top", "toSide": "bottom", "via": [[345, 230], [595, 230]], "labelAt": [550, 215] },
+    { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "fromSide": "left", "toSide": "top", "via": [[485, 138], [485, 265], [345, 265]], "labelAt": [535, 255] },
+    { "from": "rpos", "to": "adapter", "label": "authorized dispatch", "variant": "emphasis", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [470, 345] },
+    { "from": "adapter", "to": "external_system", "label": "effect attempt", "variant": "security", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [727, 305] },
+    { "from": "external_system", "to": "adapter", "label": "transport receipt", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "via": [[855, 395], [597, 395]], "labelAt": [727, 410] },
+    { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [915, 420] },
+    { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "bottom", "toSide": "left", "via": [[855, 575], [250, 575], [250, 325]], "labelAt": [650, 560] },
+    { "from": "observatory", "to": "rpos", "label": "read-only inspect / history", "variant": "dashed", "fromSide": "left", "toSide": "bottom", "via": [[480, 504], [480, 390], [345, 390]], "labelAt": [540, 440] },
+    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "fromSide": "right", "toSide": "left", "via": [[230, 505], [230, 325]], "labelAt": [165, 445] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Operation Ownership", "items": ["RPOS owns the operation pathway, not model intelligence", "Human Authority remains separate from proposal generation and execution", "SQLite persists responsibility before and after external dispatch boundaries"] },
+    { "dot": "amber", "title": "Receipt vs Effect", "items": ["Transport receipt is evidence about transport, not proof of external effect", "Required independent readback may reconcile EFFECT_UNKNOWN", "Observer failure stays unresolved rather than manufacturing success"] },
+    { "dot": "emerald", "title": "Assurance Separation", "items": ["Lean checks bounded structural invariants", "Responsibility Observatory reads through RposService and exposes no mutation", "Neither formal assurance nor visualization creates Operational Authority"] }
+  ]
+}

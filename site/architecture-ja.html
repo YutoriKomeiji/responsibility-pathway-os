@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RPOSのOperational Architecture、Responsibility Lifecycle、Formal Assurance Evidence Flowをtyped Archify sourceから再現可能に表示します。">
+  <title>RPOS Architecture & Responsibility Maps</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-header"><a class="brand" href="ja.html"><span class="brand-mark">RPOS</span><span>Responsibility Pathway OS</span></a><nav><a href="ja.html">Home</a><a href="demo.html?lang=ja">デモ</a><a href="assurance.html?lang=ja">形式保証</a><a href="architecture.html" lang="en">English</a></nav></header>
+<main id="main">
+<section class="hero" id="top"><div><p class="eyebrow">Verified architecture visuals</p><h1>Responsibility Pathwayを、システム・ライフサイクル・証拠フローとして読む。</h1><p class="lede">この3つのinteractive mapは、repository内のtyped JSONを正本とし、CIとPages deploy時に固定したArchify revisionでvalidate/renderされます。図はRPOSを説明しますが、runtime authority・operational evidence・sourceにないtopologyを生成しません。</p></div><div class="pathway-card" aria-label="Visualization provenance"><div class="node">RPOS source facts</div><span>↓</span><div class="node">Typed Archify JSON</div><span>↓</span><div class="node accent">Validate + Render</div><span>↓</span><div class="node">Published interactive map</div></div></section>
+<section class="section"><p class="eyebrow">3つの見方</p><h2>問いが違えば、見るべき図も変わる。</h2><div class="feature-grid"><article><h3>Operational Architecture</h3><p>proposal、Human Authority、RPOS Core、durable state、adapter boundary、external system、reconciliation、Observatory、Formal Assuranceを別々の責任として表示します。</p><div class="actions"><a class="button primary" href="visuals/rpos-operational-architecture.html">Architecture mapを開く</a></div></article><article><h3>Responsibility Lifecycle</h3><p>実装されているRPOS state machineを、Human Gate、EFFECT_UNKNOWN、repair、Human Return、explicit resume、verified completionまで含めて表示します。</p><div class="actions"><a class="button primary" href="visuals/rpos-responsibility-lifecycle.html">Lifecycle mapを開く</a></div></article><article><h3>Formal Assurance Evidence Flow</h3><p>exact source、Lean machine check、Python runtime test、source-bound assurance manifest、公開Viewerを、混同せず別のevidence layerとして表示します。</p><div class="actions"><a class="button primary" href="visuals/rpos-assurance-evidence-flow.html">Evidence-flow mapを開く</a></div></article></div></section>
+<section class="section split"><div><p class="eyebrow">Reproducibility</p><h2>図にも公開sourceと固定rendererを持たせる。</h2><p>正本となるdiagram inputは <code>visuals/archify/</code> に保存します。CIはfork済みArchifyの <code>0853a805003514776bef3593ecca091409828902</code> を固定してrenderします。RPOS側diagram sourceまたはrenderer routeを変更した場合は、再度validationが必要です。</p><div class="actions"><a class="button secondary" href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/visuals/archify">diagram sourceを見る</a><a class="button secondary" href="https://github.com/YutoriKomeiji/archify/tree/0853a805003514776bef3593ecca091409828902">固定Archify forkを見る</a></div></div><aside class="boundary-card"><h3>Visualization boundary</h3><ul><li>図はoperationをauthorizeしない</li><li>図はexternal effectを証明しない</li><li>図はLean/Python evidenceを代替しない</li><li>sourceで確認した関係だけを表示する</li></ul></aside></section>
+</main>
+<footer><p>Responsibility Pathway OS · MIT License · Public Alpha</p><nav><a href="ja.html">Home</a><a href="assurance.html?lang=ja">Formal Assurance</a><a href="architecture.html" lang="en">English</a></nav></footer>
+</body>
+</html>

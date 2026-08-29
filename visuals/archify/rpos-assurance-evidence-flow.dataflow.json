@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "RPOS Formal Assurance Evidence Flow",
+    "output": "site/visuals/rpos-assurance-evidence-flow.html",
+    "viewBox": [1080, 760],
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "formal-route", "label": "Formal route", "focus": ["source", "lean", "machine_check", "manifest", "viewer"], "note": "Follow exact source into Lean machine checking and the source-bound public assurance manifest." },
+      { "id": "runtime-route", "label": "Runtime evidence route", "focus": ["source", "tests", "manifest", "viewer"], "note": "Runtime tests remain a separate evidence stream that is cross-referenced rather than collapsed into formal proof." },
+      { "id": "authority-ceiling", "label": "Authority ceiling", "focus": ["manifest", "viewer", "human_authority"], "note": "Assurance can inform review but cannot authorize an operation or approve a Human Gate." }
+    ]
+  },
+  "stages": [
+    { "label": "Exact source" },
+    { "label": "Independent checks" },
+    { "label": "Source-bound evidence" },
+    { "label": "Public assurance" },
+    { "label": "Operational authority" }
+  ],
+  "nodes": [
+    { "id": "source", "type": "backend", "label": "RPOS Source Commit", "sublabel": "exact Git SHA", "stage": 0, "row": 1, "tag": "source of truth" },
+    { "id": "lean", "type": "backend", "label": "Lean 4 Model", "sublabel": "structural invariants", "stage": 1, "row": 0, "tag": "formal" },
+    { "id": "tests", "type": "backend", "label": "Runtime Tests", "sublabel": "implementation evidence", "stage": 1, "row": 2, "tag": "runtime" },
+    { "id": "machine_check", "type": "security", "label": "Pinned lake build", "sublabel": "checked theorems", "stage": 2, "row": 0, "tag": "Lean" },
+    { "id": "manifest", "type": "database", "label": "Assurance Manifest", "sublabel": "theorem + tests + hashes", "stage": 2, "row": 2, "tag": "exact-head manifest" },
+    { "id": "viewer", "type": "frontend", "label": "Assurance Viewer", "sublabel": "user-visible crosswalk", "stage": 3, "row": 1, "tag": "public assurance" },
+    { "id": "human_authority", "type": "external", "label": "Human Authority", "sublabel": "decision owner", "stage": 4, "row": 1, "tag": "separate authority" }
+  ],
+  "flows": [
+    { "from": "source", "to": "lean", "label": "formal model sources", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "source", "to": "tests", "label": "runtime implementation + tests", "classification": "exact commit", "variant": "emphasis", "route": "vertical-channel", "labelAt": [250, 330] },
+    { "from": "lean", "to": "machine_check", "label": "lake build", "classification": "machine check", "variant": "emphasis", "route": "straight" },
+    { "from": "machine_check", "to": "manifest", "label": "machine_checked=true", "classification": "bounded theorem evidence", "variant": "emphasis", "route": "vertical-channel" },
+    { "from": "tests", "to": "manifest", "label": "test crosswalk + source hashes", "classification": "runtime evidence", "variant": "default", "route": "straight", "labelAt": [423, 470] },
+    { "from": "source", "to": "manifest", "label": "source_commit + catalog hashes", "classification": "provenance", "variant": "dashed", "route": "bottom-channel" },
+    { "from": "manifest", "to": "viewer", "label": "public assurance data", "classification": "read-only", "variant": "emphasis", "route": "vertical-channel", "labelAt": [638, 428] },
+    { "from": "viewer", "to": "human_authority", "label": "review context only", "classification": "no authority effect", "variant": "dashed", "route": "straight" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Two Evidence Streams", "items": ["Lean machine checking and Python runtime tests are related but distinct", "The manifest cross-links them without claiming implementation-wide formal equivalence", "Every release binds the evidence to an exact source commit"] },
+    { "dot": "amber", "title": "Proof Ceiling", "items": ["Formal claims are limited to the modeled structural invariants", "The manifest states what each theorem does not prove", "External-effect truth still requires operational evidence"] },
+    { "dot": "rose", "title": "No Authority Transfer", "items": ["The viewer is public assurance, not a runtime control plane", "Passing Lean theorems cannot approve a Human Gate", "Human Authority remains the operational decision owner"] }
+  ]
+}
