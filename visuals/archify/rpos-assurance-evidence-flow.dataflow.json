@@ -4,7 +4,7 @@
   "meta": {
     "title": "RPOS Formal Assurance Evidence Flow",
     "output": "site/visuals/rpos-assurance-evidence-flow.html",
-    "viewBox": [980, 760],
+    "viewBox": [1080, 760],
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
@@ -25,7 +25,7 @@
     { "id": "source", "type": "backend", "label": "RPOS Source Commit", "sublabel": "exact Git SHA", "stage": 0, "row": 1, "tag": "source of truth" },
     { "id": "lean", "type": "backend", "label": "Lean 4 Model", "sublabel": "structural invariants", "stage": 1, "row": 0, "tag": "formal" },
     { "id": "tests", "type": "backend", "label": "Runtime Tests", "sublabel": "implementation evidence", "stage": 1, "row": 2, "tag": "runtime" },
-    { "id": "machine_check", "type": "security", "label": "Pinned lake build", "sublabel": "machine-checked theorem set", "stage": 2, "row": 0, "tag": "Lean" },
+    { "id": "machine_check", "type": "security", "label": "Pinned lake build", "sublabel": "checked theorems", "stage": 2, "row": 0, "tag": "Lean" },
     { "id": "manifest", "type": "database", "label": "Assurance Manifest", "sublabel": "theorem + tests + hashes", "stage": 2, "row": 2, "tag": "exact-head manifest" },
     { "id": "viewer", "type": "frontend", "label": "Assurance Viewer", "sublabel": "user-visible crosswalk", "stage": 3, "row": 1, "tag": "public assurance" },
     { "id": "human_authority", "type": "external", "label": "Human Authority", "sublabel": "operational decision owner", "stage": 4, "row": 1, "tag": "separate authority" }
