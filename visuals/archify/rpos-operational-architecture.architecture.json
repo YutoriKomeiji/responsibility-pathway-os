@@ -29,18 +29,18 @@
     { "kind": "region", "label": "External-effect domain", "wraps": ["external_system", "observer"], "pad": 18 }
   ],
   "connections": [
-    { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default" },
-    { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "route": "orthogonal-v" },
-    { "from": "human_authority", "to": "rpos", "label": "approve / deny / resume", "variant": "emphasis", "route": "orthogonal-v" },
-    { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "route": "orthogonal-v" },
-    { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "route": "orthogonal-v" },
-    { "from": "rpos", "to": "adapter", "label": "authorized dispatch", "variant": "emphasis" },
-    { "from": "adapter", "to": "external_system", "label": "effect attempt", "variant": "security" },
-    { "from": "external_system", "to": "adapter", "label": "transport receipt", "variant": "dashed" },
-    { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "route": "orthogonal-v" },
-    { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "left", "toSide": "bottom", "via": [[700, 505], [345, 505], [345, 360]] },
-    { "from": "sqlite", "to": "observatory", "label": "read-only state/history", "variant": "dashed", "route": "orthogonal-v" },
-    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "route": "orthogonal-v" }
+    { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default", "labelAt": [222, 315] },
+    { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "fromSide": "top", "toSide": "bottom", "via": [[315, 260], [315, 200], [315, 190]], "labelAt": [250, 242] },
+    { "from": "human_authority", "to": "rpos", "label": "approve / deny / resume", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "via": [[375, 190], [375, 240], [375, 260]], "labelAt": [425, 218] },
+    { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "fromSide": "right", "toSide": "bottom", "via": [[470, 325], [470, 205], [595, 205]], "labelAt": [525, 190] },
+    { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "fromSide": "left", "toSide": "top", "via": [[490, 138], [450, 138], [450, 255], [345, 255]], "labelAt": [405, 145] },
+    { "from": "rpos", "to": "adapter", "label": "authorized dispatch", "variant": "emphasis", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [470, 345] },
+    { "from": "adapter", "to": "external_system", "label": "effect attempt", "variant": "security", "fromSide": "right", "toSide": "left", "via": [[710, 310], [750, 310]], "labelAt": [720, 292] },
+    { "from": "external_system", "to": "adapter", "label": "transport receipt", "variant": "dashed", "fromSide": "left", "toSide": "right", "via": [[750, 340], [710, 340]], "labelAt": [720, 360] },
+    { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [885, 410] },
+    { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "bottom", "toSide": "bottom", "via": [[864, 575], [470, 575], [470, 400], [345, 400]], "labelAt": [650, 560] },
+    { "from": "sqlite", "to": "observatory", "label": "read-only state/history", "variant": "dashed", "fromSide": "right", "toSide": "top", "via": [[720, 138], [720, 430], [605, 430]], "labelAt": [735, 270] },
+    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "fromSide": "top", "toSide": "left", "via": [[358, 440], [235, 440], [235, 325]], "labelAt": [245, 420] }
   ],
   "cards": [
     { "dot": "cyan", "title": "Operation Ownership", "items": ["RPOS owns the operation pathway, not model intelligence", "Human Authority remains separate from proposal generation and execution", "SQLite persists responsibility before and after external dispatch boundaries"] },
