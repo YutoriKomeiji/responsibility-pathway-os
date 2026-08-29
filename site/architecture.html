@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RPOS architecture, responsibility lifecycle, and formal assurance evidence flow rendered from typed Archify sources.">
+  <title>RPOS Architecture & Responsibility Maps</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">RPOS</span><span>Responsibility Pathway OS</span></a><nav><a href="index.html">Home</a><a href="demo.html">Demo</a><a href="assurance.html">Formal Assurance</a><a href="architecture-ja.html" lang="ja">日本語</a></nav></header>
+<main id="main">
+<section class="hero" id="top"><div><p class="eyebrow">Verified architecture visuals</p><h1>Read the responsibility pathway as a system, lifecycle, and evidence flow.</h1><p class="lede">These interactive maps are rendered from checked-in typed JSON sources with a pinned Archify revision during CI and Pages deployment. They explain RPOS; they do not create runtime authority, operational evidence, or new topology beyond the authored sources.</p></div><div class="pathway-card" aria-label="Visualization provenance"><div class="node">RPOS source facts</div><span>↓</span><div class="node">Typed Archify JSON</div><span>↓</span><div class="node accent">Validate + Render</div><span>↓</span><div class="node">Published interactive map</div></div></section>
+<section class="section"><p class="eyebrow">Three views</p><h2>Different questions need different diagrams.</h2><div class="feature-grid"><article><h3>Operational Architecture</h3><p>Shows proposal, Human Authority, RPOS Core, durable state, adapter boundary, external system, reconciliation, Observatory, and Formal Assurance as separate responsibilities.</p><div class="actions"><a class="button primary" href="visuals/rpos-operational-architecture.html">Open architecture map</a></div></article><article><h3>Responsibility Lifecycle</h3><p>Shows the actual RPOS state machine, including Human Gate, EFFECT_UNKNOWN, repair, Human Return, explicit resume, and verified completion.</p><div class="actions"><a class="button primary" href="visuals/rpos-responsibility-lifecycle.html">Open lifecycle map</a></div></article><article><h3>Formal Assurance Evidence Flow</h3><p>Shows how exact source, Lean machine checks, Python runtime tests, the source-bound assurance manifest, and the public viewer remain distinct evidence layers.</p><div class="actions"><a class="button primary" href="visuals/rpos-assurance-evidence-flow.html">Open evidence-flow map</a></div></article></div></section>
+<section class="section split"><div><p class="eyebrow">Reproducibility</p><h2>The maps have public source and a pinned renderer.</h2><p>The canonical diagram inputs live under <code>visuals/archify/</code>. CI renders them with the forked Archify revision <code>0853a805003514776bef3593ecca091409828902</code>. A change to either RPOS diagram sources or the pinned renderer route must pass validation again.</p><div class="actions"><a class="button secondary" href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/visuals/archify">Read diagram sources</a><a class="button secondary" href="https://github.com/YutoriKomeiji/archify/tree/0853a805003514776bef3593ecca091409828902">Inspect pinned Archify fork</a></div></div><aside class="boundary-card"><h3>Visualization boundary</h3><ul><li>the diagram does not authorize an operation;</li><li>the diagram does not prove an external effect;</li><li>the diagram does not replace Lean or Python evidence;</li><li>only authored and source-grounded relationships are shown.</li></ul></aside></section>
+</main>
+<footer><p>Responsibility Pathway OS · MIT License · Public Alpha</p><nav><a href="index.html">Home</a><a href="assurance.html">Formal Assurance</a><a href="architecture-ja.html" lang="ja">日本語</a></nav></footer>
+</body>
+</html>
