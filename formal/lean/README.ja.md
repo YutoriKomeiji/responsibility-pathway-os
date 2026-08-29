@@ -1,105 +1,94 @@
 <!-- RPOS-DOC-ID: RPOS-FORMAL-001 -->
 <!-- RPOS-DOC-LANG: ja -->
-<!-- RPOS-DOC-VERSION: 0.1 -->
-<!-- RPOS-DOC-STATUS: public-alpha-candidate -->
 <!-- RPOS-DOC-COUNTERPART: README.md -->
 
-# RPOS Lean Formalization — Public Alpha Candidate
+# RPOS Lean 4 Formal Assurance — Responsibility Pathway不変条件
 
-Status: machine-checked bounded formal model / Lean 4 CI verified
+RPOSはPython/SQLiteで実装された実行可能なResponsibility Pathway OSです。このディレクトリには、宣言されたRPOS modelの選択された責任不変条件をLean 4でmachine-checkするFormal Assurance layerがあります。
 
-## Verification evidence
+このformal surfaceは、次の3点を同時に見えるようにします。
 
-`RP-CYCLE-001`で専用workflow `RPOS Lean formal verification` を導入し、宣言されたformal moduleをLean 4.32.2で実際にコンパイルしました。
+1. **何の責任propertyをmachine-checkしているか**
+2. **そのpublic assertionに対応するPython runtime testは何か**
+3. **proof ceilingはどこか**
 
-この証拠が意味するのは、下記theorem sourceが宣言されたabstract modelについて設定済みLean compilerに受理された、という範囲です。Python implementation、外部システム、deployment、組織挙動、法的結論を証明するものではありません。
+canonicalなpublic crosswalkは `../assurance-catalog.json` です。
+
+## 公開済みmachine-checked responsibility assertions
+
+| Operational Risk | Lean theorem | 宣言modelでの意味 |
+| --- | --- | --- |
+| Human decision stateがexecution authorityになる | `RPOS.human_gate_cannot_dispatch_directly` | `HUMAN_GATE`から直接`DISPATCHING`へ入れない |
+| intermediate/transport successがcompletionになる | `RPOS.only_verified_enters_completed` | `VERIFIED`だけが直接`COMPLETED`へ入れる |
+| 曖昧なexternal effectがsuccessへ潰される | `RPOS.effect_unknown_is_not_completed` | `EFFECT_UNKNOWN`と`COMPLETED`は別state |
+| repair readinessがauthorityを暗黙復元する | `RPOS.ready_to_resume_is_not_authorized` | `READY_TO_RESUME`と`AUTHORIZED`は別state |
+| API/transport receiptが現実effectの証明になる | `RPOS.receipt_is_not_effect_verification` | transport receiptはexternal-effect-verification evidenceではない |
+| model outputが暗黙にauthorityになる | `RPOS.model_proposal_is_not_authority` | model proposalはauthorization-relevant evidenceではない |
+
+これらのtheorem名は、**何を証明しているかをそのまま読めるようにしたdomain-readable name**です。より広い主張へ見せるためのmarketing aliasではありません。
+
+## Build
+
+Lean 4.32.2にpinしています。
+
+```bash
+cd formal/lean
+lake build
+```
+
+CIとrelease evidenceも同じ限定formal projectをbuildし、exact-sourceのFormal Assurance manifestを生成します。
 
 ## Modules
 
-- `RPOSState.lean` — normative responsibility state、direct transition relation、local transition invariant
-- `RPOSReachability.lean` — uncertainty、repair、resumption、completionに関する限定されたreflexive/transitive reachability witnessとdirect shortcut禁止
-- `RPOSEvidenceBoundary.lean` — authorization-relevant evidence、effect-verification evidence、receipt、evaluation、dependency/software-supply-chain evidenceの限定的分離
-- `RPOSPacketBoundary.lean` — responsibility/evidence packetの限定的な分離性質
-- `RPOSOperationalBoundary.lean` — product-facingなmodel independence境界。model proposalはauthorityでもeffect verificationでもなく、receiptはverified effectではなく、bounded command modelでObservatory readはstateを変更しない
+- `RPOSState.lean` — state machine、Human Gate、completion、不確実性、resume-authority invariant
+- `RPOSReachability.lean` — bounded multi-step reachabilityとdirect shortcut禁止
+- `RPOSEvidenceBoundary.lean` — authority/effect verification/receipt/evaluation/dependency evidenceの分離
+- `RPOSPacketBoundary.lean` — Responsibility State Envelope / packetのno-authority-effect property
+- `RPOSOperationalBoundary.lean` — model proposal、human authorization、transport receipt、external observation、read-only observability boundary
+- `RPOSTransparencyBoundary.lean` — transparencyとevidence distinction
 
-## Direct-transition invariants
+## Python × Lean 4 evidence architecture
 
-| Invariant | Lean theorem |
-|---|---|
-| `AUTHORIZED`だけが直接`DISPATCHING`へ入れる | `RPOS.only_authorized_enters_dispatching` |
-| `HUMAN_GATE`から直接dispatchできない | `RPOS.human_gate_cannot_dispatch_directly` |
-| `VERIFIED`だけが直接`COMPLETED`へ入れる | `RPOS.only_verified_enters_completed` |
-| `REPAIR_REQUIRED`から直接`AUTHORIZED`へ行けない | `RPOS.repair_required_cannot_authorize_directly` |
-| `READY_TO_RESUME`と`AUTHORIZED`は別state | `RPOS.ready_to_resume_is_not_authorized` |
-| resumeは直接dispatchしない | `RPOS.resume_does_not_dispatch_directly` |
-| `EFFECT_UNKNOWN`と`COMPLETED`は別state | `RPOS.effect_unknown_is_not_completed` |
+RPOSはLeanを飾りとして置きません。public Formal Assurance assertionはPython runtime testへcross-linkされています。
 
-## Reachability / repair-resume properties
+```text
+operational risk
+  -> named Lean theorem
+  -> machine-checked abstract invariant
+  -> corresponding Python runtime test(s)
+  -> source identity + model scope + proof ceiling
+```
 
-| Property | Lean theorem |
-|---|---|
-| `AUTHORIZED`にはnormative dispatch pathがある | `RPOS.authorized_reaches_dispatching` |
-| `EFFECT_UNKNOWN`にはverification経由のcompletion witnessがある | `RPOS.effect_unknown_has_verified_completion_path` |
-| repairにはreadinessからreauthorizationへのwitnessがある | `RPOS.repair_has_explicit_reauthorization_path` |
-| `EFFECT_UNKNOWN`から直接completionできない | `RPOS.effect_unknown_cannot_complete_directly` |
-| `REPAIR_REQUIRED`から直接dispatchできない | `RPOS.repair_required_cannot_dispatch_directly` |
-| `READY_TO_RESUME`から直接completionできない | `RPOS.ready_to_resume_cannot_complete_directly` |
-| `READY_TO_RESUME`は`AUTHORIZED`を通してauthorityを復元する | `RPOS.ready_to_resume_restores_authority` |
+これはLeanとPythonの自動的なrefinement proofではありません。runtime testはexecutable behaviorを独立に確認し、Lean theoremは宣言されたformal modelでnamed propertyを確立します。
 
-positive reachability theoremは**path existence witness**であり、liveness claimではありません。たとえば`EFFECT_UNKNOWN`から`COMPLETED`へのpathが存在することは、すべての未解決operationが最終的に完了することを意味しません。
+## Formal layerが証明するもの
 
-## Evidence-class separation properties
+各theoremについて、Leanはsource module内のdefinitionとassumptionから、そのtheoremが述べるpropositionを証明します。
 
-限定されたevidence modelでは以下をmachine-checkしています。
+現在の6 assertionでは、例えば次をmachine-checkしています。
 
-- safety-evaluation evidenceはauthorization-relevant evidenceではない
-- capability-evaluation evidenceはauthorization-relevant evidenceではない
-- dependency/supply-chain evidenceはauthorization-relevant evidenceではない
-- execution receiptはexternal-effect-verification evidenceではない
-- safety/capability evaluation evidenceはexternal-effect-verification evidenceではない
-- dependency evidenceはexternal-effect-verification evidenceではない
+- Human Gateとdirect dispatchの構造的分離
+- direct-transition modelでの`VERIFIED`→`COMPLETED` gate
+- external-effect uncertaintyとcompletionの分離
+- repair readinessとauthorizationの分離
+- transport receiptとexternal-effect-verification evidenceの分離
+- model proposalとOperational Authorityの分離
 
-またauthority-admissionとrecovery/resume evidenceをauthorization-relevant classとして表現しますが、**evidenceを持つこと自体がauthority付与になるわけではありません**。
+## Proof ceiling
 
-## Operational product boundary properties
+Formal layer単体では次を確立しません。
 
-`RPOSOperationalBoundary.lean`は、product riskとtheoremの対応を読みやすく保つため、意図的に小さなteaching modelを使います。
+- Python implementation全体のconformance
+- 任意external observationの真実性・十分性
+- 具体的human authorizationの正当性
+- SQLite、adapter、OS、network、external service全体のcorrectness
+- universal exactly-once
+- production readiness、legal compliance、certification、organizational authority
 
-| Product risk | Lean theorem |
-|---|---|
-| model proposalをOperational Authorityと誤認する | `RPOS.model_proposal_is_not_authority` |
-| model proposalをverified external effectと誤認する | `RPOS.model_proposal_is_not_effect_verification` |
-| transport receiptをverified external effectと誤認する | `RPOS.receipt_is_not_effect_verification` |
-| read-only Observatory actionがOperational Stateを変更する | `RPOS.observatory_is_read_only` |
+これらはtheorem名で隠す弱点ではなく、別のevidence ownerまたはresponsibility ownerです。
 
-同moduleのpositive witnessは、explicit human authorizationをauthorization-relevant、external observationをeffect-verification-relevantとして分類します。ただし任意のEvidenceがすべてのdeploymentで真実・十分・正当であるとは主張しません。
+## なぜ境界を明示するのか
 
-このmoduleは意図的に初心者にも読めるようにしてあり、advancedなproof techniqueを学ぶ前にOperationalな意味を理解できるLean 4の最初の実例として使えます。
+RPOSはformal proof、executable implementation evidence、operational external-effect evidenceを別evidence classとして扱います。より強いpublic claimへ昇格するのは、足りないbridge evidenceが実際に供給・reviewされた場合だけです。
 
-## Evidence layers
-
-RPOSは3つのevidence layerを分離します。
-
-1. **Formal proof evidence** — 明示されたabstract model上のLean theorem
-2. **Executable implementation evidence** — 現行implementation上のPython tests / runnable examples
-3. **Operational effect evidence** — 具体的な外部効果に対するobservation / readback
-
-どのlayerも別layerの証拠を代用しません。
-
-## Not Proven
-
-これらのLean fileは以下を証明しません。
-
-- Python implementation全体のcorrectness / conformance
-- SQLiteのcorrectness / durability
-- external adapter/service behavior
-- 任意外部システム上のexactly-once behavior
-- deployment environmentのsecurity
-- legal / regulatory compliance
-- patent non-infringement / freedom to operate
-- organizational responsibility / authority legitimacy
-- real-world AI/system safety
-- runtime evidenceの真実性・完全性
-- 任意operationのliveness / eventual completion
-
-今後のcycleでは、このevidence boundaryを維持したままtemporal/trace invariantとimplementation-to-model conformanceを拡張します。
+そのため、**証明が強い場所では強く述べ、evidenceが限定される場所では限定されたまま述べる**ことができます。
