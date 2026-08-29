@@ -29,9 +29,9 @@
     { "kind": "region", "label": "External-effect domain", "wraps": ["external_system", "observer"], "pad": 18 }
   ],
   "connections": [
-    { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default", "labelAt": [200, 345] },
+    { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default", "labelAt": [200, 368] },
     { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "fromSide": "left", "toSide": "left", "via": [[230, 325], [230, 138]], "labelAt": [170, 235] },
-    { "from": "human_authority", "to": "rpos", "label": "decision / resume", "variant": "emphasis", "fromSide": "right", "toSide": "right", "via": [[450, 138], [450, 325]], "labelAt": [560, 190] },
+    { "from": "human_authority", "to": "rpos", "label": "decision / resume", "variant": "emphasis", "fromSide": "right", "toSide": "right", "via": [[450, 138], [450, 325]], "labelAt": [650, 190] },
     { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "fromSide": "top", "toSide": "bottom", "via": [[345, 230], [595, 230]], "labelAt": [550, 215] },
     { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "fromSide": "left", "toSide": "top", "via": [[485, 138], [485, 265], [345, 265]], "labelAt": [535, 255] },
     { "from": "rpos", "to": "adapter", "label": "authorized dispatch", "variant": "emphasis", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [470, 345] },
@@ -40,7 +40,7 @@
     { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [915, 420] },
     { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "bottom", "toSide": "left", "via": [[855, 575], [250, 575], [250, 325]], "labelAt": [650, 560] },
     { "from": "observatory", "to": "rpos", "label": "read-only inspect / history", "variant": "dashed", "fromSide": "left", "toSide": "bottom", "via": [[480, 504], [480, 390], [345, 390]], "labelAt": [540, 440] },
-    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "fromSide": "right", "toSide": "left", "via": [[230, 505], [230, 430], [240, 430], [240, 325]], "labelAt": [165, 445] }
+    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "fromSide": "right", "toSide": "left", "via": [[230, 505], [230, 325]], "labelAt": [165, 445] }
   ],
   "cards": [
     { "dot": "cyan", "title": "Operation Ownership", "items": ["RPOS owns the operation pathway, not model intelligence", "Human Authority remains separate from proposal generation and execution", "SQLite persists responsibility before and after external dispatch boundaries"] },
