@@ -1,0 +1,61 @@
+{
+  "schema_version": "rpos.formal-assurance.catalog.v0.1",
+  "product_version": "0.1.0a1",
+  "purpose": "Map user-visible operational risks to bounded Lean theorems and executable runtime evidence without treating formal proof as runtime authority.",
+  "assertions": [
+    {
+      "id": "ASSURE-GATE-001",
+      "title": {"en": "Human Gate cannot dispatch directly", "ja": "Human Gate から直接 dispatch できない"},
+      "risk": {"en": "A pending human decision is mistaken for execution authority.", "ja": "人間の判断待ち状態が実行権限として扱われる。"},
+      "lean": {"module": "formal/lean/RPOSState.lean", "theorem": "RPOS.human_gate_cannot_dispatch_directly"},
+      "runtime_tests": ["tests/test_first_slice.py::test_gated_operation_cannot_dispatch_before_approval"],
+      "model_scope": {"en": "Direct transitions in the bounded RPOS v0.1 state model.", "ja": "限定された RPOS v0.1 state model の direct transition。"},
+      "proof_ceiling": {"en": "Does not prove the legitimacy of a human approval or every runtime admission check.", "ja": "人間の承認自体の正当性や、すべての runtime admission check は証明しない。"}
+    },
+    {
+      "id": "ASSURE-COMPLETE-001",
+      "title": {"en": "Only VERIFIED may enter COMPLETED", "ja": "VERIFIED のみが COMPLETED へ入れる"},
+      "risk": {"en": "Transport success or an intermediate state is reported as completed work.", "ja": "transport success や中間状態が完了済みとして報告される。"},
+      "lean": {"module": "formal/lean/RPOSState.lean", "theorem": "RPOS.only_verified_enters_completed"},
+      "runtime_tests": ["tests/test_first_slice.py::test_verified_readback_completes", "tests/test_first_slice.py::test_success_receipt_without_readback_is_effect_unknown"],
+      "model_scope": {"en": "Direct completion transition in the bounded state model.", "ja": "限定 state model における direct completion transition。"},
+      "proof_ceiling": {"en": "Does not prove that arbitrary readback evidence is truthful or sufficient.", "ja": "任意の readback evidence が真実または十分であることは証明しない。"}
+    },
+    {
+      "id": "ASSURE-UNKNOWN-001",
+      "title": {"en": "EFFECT_UNKNOWN is not COMPLETED", "ja": "EFFECT_UNKNOWN は COMPLETED ではない"},
+      "risk": {"en": "An ambiguous external effect is collapsed into false success.", "ja": "曖昧な external effect が偽の成功へ潰される。"},
+      "lean": {"module": "formal/lean/RPOSState.lean", "theorem": "RPOS.effect_unknown_is_not_completed"},
+      "runtime_tests": ["tests/test_first_slice.py::test_success_receipt_without_readback_is_effect_unknown", "tests/test_field_acceptance.py::test_restart_preserves_effect_unknown_without_automatic_redispatch"],
+      "model_scope": {"en": "State distinction plus executable uncertainty-preservation behavior.", "ja": "state の区別と executable な uncertainty-preservation behavior。"},
+      "proof_ceiling": {"en": "Does not decide what the external system actually did; it preserves that uncertainty.", "ja": "external system が実際に何をしたかを決定せず、その不確実性を保持する。"}
+    },
+    {
+      "id": "ASSURE-RESUME-001",
+      "title": {"en": "READY_TO_RESUME is not execution authority", "ja": "READY_TO_RESUME は実行権限ではない"},
+      "risk": {"en": "Repair readiness silently restores permission to execute.", "ja": "repair readiness が暗黙に実行権限を復元する。"},
+      "lean": {"module": "formal/lean/RPOSState.lean", "theorem": "RPOS.ready_to_resume_is_not_authorized"},
+      "runtime_tests": ["tests/test_field_acceptance.py::test_human_return_authority_tracks_recovery_stage"],
+      "model_scope": {"en": "State separation between repair readiness and authorization.", "ja": "repair readiness と authorization の state separation。"},
+      "proof_ceiling": {"en": "Does not prove the correctness of the repair or the legitimacy of renewed authority.", "ja": "repair の正しさや renewed authority の正当性は証明しない。"}
+    },
+    {
+      "id": "ASSURE-RECEIPT-001",
+      "title": {"en": "A receipt is not external-effect verification", "ja": "receipt は external-effect verification ではない"},
+      "risk": {"en": "An API or transport acknowledgement is treated as proof of real-world effect.", "ja": "API / transport acknowledgement が現実の作用の証明として扱われる。"},
+      "lean": {"module": "formal/lean/RPOSOperationalBoundary.lean", "theorem": "RPOS.receipt_is_not_effect_verification"},
+      "runtime_tests": ["tests/test_first_slice.py::test_success_receipt_without_readback_is_effect_unknown"],
+      "model_scope": {"en": "Bounded classification of operational evidence sources.", "ja": "operational evidence source の限定 classification。"},
+      "proof_ceiling": {"en": "Does not prove an external observation itself is correct; concrete verification remains adapter/evidence work.", "ja": "external observation 自体の正しさは証明せず、具体的 verification は adapter/evidence 側に残る。"}
+    },
+    {
+      "id": "ASSURE-MODEL-001",
+      "title": {"en": "A model proposal is not operational authority", "ja": "model proposal は Operational Authority ではない"},
+      "risk": {"en": "Model confidence or intent is allowed to become authority by implication.", "ja": "model の confidence や intent が暗黙に authority へ昇格する。"},
+      "lean": {"module": "formal/lean/RPOSOperationalBoundary.lean", "theorem": "RPOS.model_proposal_is_not_authority"},
+      "runtime_tests": ["tests/test_first_slice.py::test_gated_operation_cannot_dispatch_before_approval"],
+      "model_scope": {"en": "Bounded classification of model proposals versus human authorization.", "ja": "model proposal と human authorization の限定 classification。"},
+      "proof_ceiling": {"en": "Does not evaluate model quality or define every deployment-specific authority rule.", "ja": "model quality や deployment 固有の全 authority rule は評価・定義しない。"}
+    }
+  ]
+}
