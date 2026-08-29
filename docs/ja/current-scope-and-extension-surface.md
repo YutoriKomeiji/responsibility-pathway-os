@@ -73,8 +73,15 @@ RPOS は、利用者・組織・研究者・開発者からの改善要望を将
 
 一方で、core semantics、formal evidence、security/release engineering、package quality、terminology、evidence discipline は国際的な技術レビューに耐える品質を維持します。日本向け文書を先に設計する場合でも、製品・導入・運用・profile・review・value・release・public technical 文書は日本語/英語 pair を同一変更内で維持します。
 
-## Claim boundary
+## Claim boundary と promotion
 
 RPOS は、現在実装・検証されている機能を弱く表現する必要はありません。実装、test、formal evidence が伴う範囲では、`runtime`、`operating system`、`formal`、`verified`、`assurance`、`security`、`evidence` 等の技術語を根拠とともに使用します。
 
-同時に、未証明・未検証領域は `Not Proven` として技術境界を保持します。これは製品価値を否定するためではなく、利用者が「現在の保証範囲」と「次に拡張可能な範囲」を区別できるようにするためです。
+公開境界は一つの免責リストに平坦化せず、次の2種類に分類します。
+
+- **evidence-limited boundary** — scopeを明示したreview可能なevidenceが宣言済みpromotion criteriaを満たし、対応public claimへ明示採用された場合に前進できる境界
+- **permanent responsibility boundary** — product maturityだけでは消えず、資格・権限を持つ人間・制度、integrator、external system、または他のresponsibility layerに残る境界
+
+この区別により、利用者は「現在のevidence-backed capability」と「一時的な境界を前進させる経路」を確認でき、同時にRPOSが引き受けるべきでない責任との混同を避けられます。
+
+現在のcriteria、Evidence Owner、Promotion Stateは [Claim Boundary Promotion](claim-boundary-promotion.md) を参照してください。また、RPOSのnormativeなproduct directionは [RPOS Operational Product Experience](operational-product-experience.md) に保持します。Public Alphaは、そのOperational System方向のimplemented core sliceであり、RPOSをgeneric libraryへ再定義するものではありません。
