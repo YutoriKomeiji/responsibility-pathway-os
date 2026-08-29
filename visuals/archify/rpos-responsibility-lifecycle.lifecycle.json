@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "RPOS Responsibility Lifecycle",
+    "output": "site/visuals/rpos-responsibility-lifecycle.html",
+    "viewBox": [1180, 760],
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "visual_preset": "signal-flow",
+    "views": [
+      { "id": "main-path", "label": "Main responsibility path", "focus": ["proposed", "human_gate", "authorized", "dispatching", "verified", "completed"], "note": "Follow a consequential operation from proposal through explicit authority and verified completion." },
+      { "id": "uncertainty", "label": "Uncertainty and reconciliation", "focus": ["dispatching", "effect_unknown", "verified", "repair_required"], "note": "A receipt without verified effect remains unresolved rather than becoming success." },
+      { "id": "repair-resume", "label": "Repair and explicit resume", "focus": ["repair_required", "ready_to_resume", "authorized", "dispatching"], "note": "Repair prepares a new responsibility state; explicit resume authority is still required before another dispatch." }
+    ]
+  },
+  "lanes": [
+    { "id": "main", "label": "Authorized operation path" },
+    { "id": "uncertain", "label": "Uncertainty + repair" },
+    { "id": "terminal", "label": "Terminal outcomes" }
+  ],
+  "states": [
+    { "id": "proposed", "type": "start", "label": "PROPOSED", "sublabel": "operation admitted", "lane": "main", "col": 0, "step": "01", "tag": "proposal" },
+    { "id": "human_gate", "type": "waiting", "label": "HUMAN_GATE", "sublabel": "declared approver required", "lane": "main", "col": 1, "step": "02", "tag": "authority" },
+    { "id": "authorized", "type": "decision", "label": "AUTHORIZED", "sublabel": "dispatch may proceed", "lane": "main", "col": 2, "step": "03", "tag": "bounded" },
+    { "id": "dispatching", "type": "active", "label": "DISPATCHING", "sublabel": "attempt persisted first", "lane": "main", "col": 3, "step": "04", "tag": "external" },
+    { "id": "verified", "type": "success", "label": "VERIFIED", "sublabel": "effect evidence accepted", "lane": "main", "col": 4, "step": "05", "tag": "evidence" },
+    { "id": "completed", "type": "success", "label": "COMPLETED", "sublabel": "responsibility closed", "lane": "main", "col": 5, "step": "06", "tag": "terminal" },
+    { "id": "effect_unknown", "type": "waiting", "label": "EFFECT_UNKNOWN", "sublabel": "receipt is not proof", "lane": "uncertain", "col": 3, "tag": "unresolved" },
+    { "id": "repair_required", "type": "failure", "label": "REPAIR_REQUIRED", "sublabel": "residual owner acts", "lane": "uncertain", "col": 4, "tag": "owner" },
+    { "id": "ready_to_resume", "type": "waiting", "label": "READY_TO_RESUME", "sublabel": "resume authority required", "lane": "uncertain", "col": 5, "tag": "human return" },
+    { "id": "denied", "type": "failure", "label": "DENIED", "sublabel": "Human Gate refused", "lane": "terminal", "col": 1, "tag": "terminal" },
+    { "id": "aborted", "type": "failure", "label": "ABORTED", "sublabel": "terminal reserved state", "lane": "terminal", "col": 2, "tag": "terminal" }
+  ],
+  "transitions": [
+    { "id": "propose-gate", "from": "proposed", "to": "human_gate", "variant": "security", "route": "straight" },
+    { "id": "propose-allow", "from": "proposed", "to": "authorized", "variant": "dashed", "fromSide": "top", "toSide": "top", "via": [[80, 90], [520, 90]] },
+    { "id": "gate-authorize", "from": "human_gate", "to": "authorized", "variant": "emphasis", "route": "straight" },
+    { "id": "gate-deny", "from": "human_gate", "to": "denied", "variant": "security", "fromSide": "bottom", "toSide": "top", "route": "straight" },
+    { "id": "dispatch-start", "from": "authorized", "to": "dispatching", "variant": "emphasis", "route": "straight" },
+    { "id": "dispatch-verified", "from": "dispatching", "to": "verified", "variant": "emphasis", "route": "straight" },
+    { "id": "verified-completed", "from": "verified", "to": "completed", "variant": "emphasis", "route": "straight" },
+    { "id": "dispatch-unknown", "from": "dispatching", "to": "effect_unknown", "variant": "security", "fromSide": "bottom", "toSide": "top", "route": "straight" },
+    { "id": "dispatch-repair", "from": "dispatching", "to": "repair_required", "variant": "security", "route": "drop" },
+    { "id": "unknown-verified", "from": "effect_unknown", "to": "verified", "variant": "emphasis", "fromSide": "top", "toSide": "bottom", "route": "straight" },
+    { "id": "unknown-repair", "from": "effect_unknown", "to": "repair_required", "variant": "security", "route": "straight" },
+    { "id": "repair-ready", "from": "repair_required", "to": "ready_to_resume", "variant": "default", "route": "straight" },
+    { "id": "resume-authorized", "from": "ready_to_resume", "to": "authorized", "variant": "emphasis", "fromSide": "top", "toSide": "bottom", "via": [[1030, 360], [520, 360]] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Authority Boundary", "items": ["A model proposal is not Operational Authority", "Human Gate approval is checked against the declared approval authority", "READY_TO_RESUME still requires explicit resume authority"] },
+    { "dot": "amber", "title": "Uncertainty Is Preserved", "items": ["DISPATCHING is persisted before the adapter performs an external effect", "A successful receipt without required readback becomes EFFECT_UNKNOWN", "Restart recovery moves incomplete dispatch responsibility to EFFECT_UNKNOWN without silent redispatch"] },
+    { "dot": "emerald", "title": "Completion Rule", "items": ["Only VERIFIED can transition to COMPLETED", "Reconciliation may establish VERIFIED only with the required evidence", "Repair and Human Return preserve residual ownership rather than erasing it"] }
+  ]
+}
