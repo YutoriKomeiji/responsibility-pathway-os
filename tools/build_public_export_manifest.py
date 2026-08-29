@@ -36,6 +36,7 @@ PUBLIC_ROOT_DIRS = {
     "templates",
     "tests",
     "tools",
+    "visuals",
 }
 
 
