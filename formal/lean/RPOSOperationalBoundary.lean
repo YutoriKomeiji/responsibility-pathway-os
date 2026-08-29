@@ -1,3 +1,19 @@
+/-!
+# RPOS — Responsibility Pathway OS operational responsibility invariants
+
+This Lean 4 module machine-checks selected operational-boundary properties of
+RPOS, an executable Responsibility Pathway OS implemented in Python.
+
+The formal model separates model proposals, human authorization, transport
+receipts, and external observations so lower-grade evidence cannot silently
+become authority or external-effect verification.
+
+The corresponding Python runtime has executable tests for the published
+assurance assertions. This module proves the named abstract properties only;
+it does not prove the complete Python implementation or the truth of an
+arbitrary external observation.
+-/
+
 namespace RPOS
 
 /-- Sources that may appear around an RPOS operation. This is a deliberately
@@ -21,7 +37,8 @@ def effectVerificationRelevant : OperationalSource → Bool
   | .externalObservation => true
   | _ => false
 
-/-- Product boundary: model proposals do not grant operational authority. -/
+/-- Machine-checked responsibility invariant: a model proposal does not grant
+operational authority in the declared RPOS model. -/
 theorem model_proposal_is_not_authority :
     authorizationRelevant .modelProposal = false := by
   rfl
@@ -31,7 +48,8 @@ theorem model_proposal_is_not_effect_verification :
     effectVerificationRelevant .modelProposal = false := by
   rfl
 
-/-- Product boundary: a transport receipt does not verify an external effect. -/
+/-- Machine-checked external-effect invariant: a transport/API receipt is not
+external-effect verification in the declared RPOS model. -/
 theorem receipt_is_not_effect_verification :
     effectVerificationRelevant .transportReceipt = false := by
   rfl

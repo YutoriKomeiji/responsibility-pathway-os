@@ -1,105 +1,96 @@
 <!-- RPOS-DOC-ID: RPOS-FORMAL-001 -->
 <!-- RPOS-DOC-LANG: en -->
-<!-- RPOS-DOC-VERSION: 0.1 -->
-<!-- RPOS-DOC-STATUS: public-alpha-candidate -->
 <!-- RPOS-DOC-COUNTERPART: README.ja.md -->
 
-# RPOS Lean Formalization — Public Alpha Candidate
+# RPOS Lean 4 Formal Assurance — Responsibility Pathway invariants
 
-Status: machine-checked bounded formal model / Lean 4 CI verified
+RPOS is an executable Responsibility Pathway OS implemented in Python/SQLite. This directory contains the Lean 4 formal assurance layer that machine-checks selected structural responsibility invariants of the declared RPOS model.
 
-## Verification evidence
+The formal surface is designed to make three things simultaneously visible:
 
-`RP-CYCLE-001` introduced the dedicated `RPOS Lean formal verification` workflow. The first successful run compiled the declared formal modules with Lean 4.32.2.
+1. **what responsibility property is machine-checked;**
+2. **which executable Python runtime test corresponds to that public assertion;**
+3. **where the proof stops.**
 
-This evidence means that the theorem sources listed below are accepted by the configured Lean compiler for the declared abstract model. It does **not** prove the Python implementation, external systems, deployment, organizational behavior, or legal conclusions.
+The canonical public crosswalk is `../assurance-catalog.json`.
+
+## Published machine-checked responsibility assertions
+
+| Operational risk | Lean theorem | Meaning in the declared model |
+| --- | --- | --- |
+| Human decision state becomes execution authority | `RPOS.human_gate_cannot_dispatch_directly` | `HUMAN_GATE` cannot directly enter `DISPATCHING`. |
+| Intermediate/transport success becomes completion | `RPOS.only_verified_enters_completed` | only `VERIFIED` may directly enter `COMPLETED`. |
+| Ambiguous external effect is collapsed into success | `RPOS.effect_unknown_is_not_completed` | `EFFECT_UNKNOWN` is distinct from `COMPLETED`. |
+| Repair readiness silently restores authority | `RPOS.ready_to_resume_is_not_authorized` | `READY_TO_RESUME` is distinct from `AUTHORIZED`. |
+| API/transport receipt is treated as real-world effect proof | `RPOS.receipt_is_not_effect_verification` | a transport receipt is not external-effect-verification evidence. |
+| Model output becomes authority by implication | `RPOS.model_proposal_is_not_authority` | a model proposal is not authorization-relevant evidence. |
+
+These theorem names are intentionally domain-readable because they identify the exact responsibility property being checked; they are not marketing aliases for broader claims.
+
+## Build
+
+The project is pinned to Lean 4.32.2.
+
+```bash
+cd formal/lean
+lake build
+```
+
+CI and release evidence run the same bounded formal project and generate an exact-source Formal Assurance manifest.
 
 ## Modules
 
-- `RPOSState.lean` — normative responsibility states, direct transition relation, and local transition invariants.
-- `RPOSReachability.lean` — bounded reflexive/transitive reachability witnesses and no-direct-shortcut properties for uncertainty, repair, resumption, and completion.
-- `RPOSEvidenceBoundary.lean` — bounded separation between authorization-relevant evidence, effect-verification evidence, receipts, evaluations, and dependency/supply-chain evidence.
-- `RPOSPacketBoundary.lean` — bounded separation properties for responsibility/evidence packets.
-- `RPOSOperationalBoundary.lean` — product-facing model-independence boundary: model proposals are not authority or effect verification, receipts are not verified effects, and Observatory reads are non-mutating in the bounded command model.
+- `RPOSState.lean` — state machine, Human Gate, completion, uncertainty, and resume-authority invariants.
+- `RPOSReachability.lean` — bounded multi-step reachability and no-direct-shortcut results.
+- `RPOSEvidenceBoundary.lean` — separation among authority-relevant, effect-verification, receipt, evaluation, and dependency evidence.
+- `RPOSPacketBoundary.lean` — no-authority-effect properties for Responsibility State Envelopes / packets.
+- `RPOSOperationalBoundary.lean` — model proposal, human authorization, transport receipt, external observation, and read-only observability boundaries.
+- `RPOSTransparencyBoundary.lean` — transparency and evidence distinctions.
 
-## Direct-transition invariants
+## Python × Lean 4 evidence architecture
 
-| Invariant | Lean theorem |
-|---|---|
-| only `AUTHORIZED` may directly enter `DISPATCHING` | `RPOS.only_authorized_enters_dispatching` |
-| `HUMAN_GATE` cannot directly dispatch | `RPOS.human_gate_cannot_dispatch_directly` |
-| only `VERIFIED` may directly enter `COMPLETED` | `RPOS.only_verified_enters_completed` |
-| `REPAIR_REQUIRED` cannot directly become `AUTHORIZED` | `RPOS.repair_required_cannot_authorize_directly` |
-| `READY_TO_RESUME` is distinct from `AUTHORIZED` | `RPOS.ready_to_resume_is_not_authorized` |
-| resume does not directly dispatch | `RPOS.resume_does_not_dispatch_directly` |
-| `EFFECT_UNKNOWN` is distinct from `COMPLETED` | `RPOS.effect_unknown_is_not_completed` |
+RPOS does not use Lean as a decorative badge. Public Formal Assurance assertions are cross-linked to executable Python tests.
 
-## Reachability / repair-resume properties
+The evidence relation is:
 
-| Property | Lean theorem |
-|---|---|
-| `AUTHORIZED` has the normative dispatch path | `RPOS.authorized_reaches_dispatching` |
-| `EFFECT_UNKNOWN` has an explicit verification-to-completion witness | `RPOS.effect_unknown_has_verified_completion_path` |
-| repair has an explicit readiness-to-reauthorization witness | `RPOS.repair_has_explicit_reauthorization_path` |
-| `EFFECT_UNKNOWN` cannot directly complete | `RPOS.effect_unknown_cannot_complete_directly` |
-| `REPAIR_REQUIRED` cannot directly dispatch | `RPOS.repair_required_cannot_dispatch_directly` |
-| `READY_TO_RESUME` cannot directly complete | `RPOS.ready_to_resume_cannot_complete_directly` |
-| `READY_TO_RESUME` restores authority through `AUTHORIZED` | `RPOS.ready_to_resume_restores_authority` |
+```text
+operational risk
+  -> named Lean theorem
+  -> machine-checked abstract invariant
+  -> corresponding Python runtime test(s)
+  -> source identity + model scope + proof ceiling
+```
 
-The positive reachability theorems are **existence witnesses**, not liveness claims. For example, a theorem showing a path from `EFFECT_UNKNOWN` to `COMPLETED` does not claim every unresolved operation eventually completes.
+This is a crosswalk, not an automatic refinement proof between Lean and Python. The runtime tests exercise executable behavior independently; the Lean theorem establishes the named property in the declared formal model.
 
-## Evidence-class separation properties
+## What this formal layer proves
 
-The bounded evidence model proves that:
+For each theorem, Lean proves the proposition stated by that theorem from the definitions and assumptions in the source module. The six public assertions therefore have machine-checked proof evidence for their declared abstract scope.
 
-- safety-evaluation evidence is not authorization-relevant evidence;
-- capability-evaluation evidence is not authorization-relevant evidence;
-- dependency/supply-chain evidence is not authorization-relevant evidence;
-- an execution receipt is not external-effect-verification evidence;
-- safety/capability evaluation evidence is not external-effect-verification evidence;
-- dependency evidence is not external-effect-verification evidence.
+For example:
 
-The model also marks authority-admission and recovery/resume evidence as authorization-relevant classes while explicitly stating that possessing evidence does not itself grant authority.
+- Human Gate is structurally separated from direct dispatch;
+- completion is structurally gated by `VERIFIED` in the direct-transition model;
+- external-effect uncertainty remains distinct from completion;
+- repair readiness remains distinct from authorization;
+- transport receipts remain distinct from external-effect-verification evidence;
+- model proposals remain distinct from operational authority.
 
-## Operational product boundary properties
+## Proof ceiling
 
-`RPOSOperationalBoundary.lean` deliberately uses a very small teaching model so that the connection between a product risk and a theorem stays readable.
+The formal layer does not by itself establish:
 
-| Product risk | Lean theorem |
-|---|---|
-| model proposal is mistaken for operational authority | `RPOS.model_proposal_is_not_authority` |
-| model proposal is mistaken for verified external effect | `RPOS.model_proposal_is_not_effect_verification` |
-| transport receipt is mistaken for verified external effect | `RPOS.receipt_is_not_effect_verification` |
-| read-only Observatory action mutates operational state | `RPOS.observatory_is_read_only` |
+- full Python implementation conformance;
+- truth or sufficiency of an arbitrary external observation;
+- legitimacy of a concrete human authorization;
+- correctness of SQLite, adapters, operating systems, networks, or external services;
+- universal exactly-once behavior;
+- production readiness, legal compliance, certification, or organizational authority.
 
-The positive witnesses in that module classify explicit human authorization as authorization-relevant and external observation as effect-verification-relevant. They do not claim that arbitrary evidence is truthful, sufficient, or legitimate in every deployment.
+Those are separate evidence or responsibility owners, not weaknesses hidden by the theorem names.
 
-This module is intentionally approachable: it is suitable as a first Lean 4 example because the operational meaning can be understood before advanced proof techniques are needed.
+## Why the boundary is explicit
 
-## Evidence layers
+RPOS treats formal proof, executable implementation evidence, and operational external-effect evidence as distinct evidence classes. A stronger public claim may be promoted only when the missing bridge evidence is actually supplied and reviewed.
 
-RPOS keeps three evidence layers separate:
-
-1. **Formal proof evidence** — Lean theorems over the explicitly declared abstract model.
-2. **Executable implementation evidence** — Python tests and runnable examples over the current implementation.
-3. **Operational effect evidence** — observation/readback of concrete external effects.
-
-No layer may impersonate another.
-
-## Not Proven
-
-These Lean files do not prove:
-
-- correctness or conformance of the Python implementation;
-- correctness/durability of SQLite;
-- external adapter/service behavior;
-- exactly-once behavior over arbitrary external systems;
-- security of a deployment environment;
-- legal or regulatory compliance;
-- patent non-infringement or freedom to operate;
-- organizational responsibility or authority legitimacy;
-- real-world AI/system safety;
-- truth or completeness of runtime evidence;
-- liveness or eventual completion for arbitrary operations.
-
-Future cycles should expand temporal/trace invariants and implementation-to-model conformance without weakening this evidence boundary.
+This keeps the public statement strong where the proof is strong, and narrow where the evidence is narrow.

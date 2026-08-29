@@ -93,32 +93,49 @@ jobs:
       - name: Verify requested version and release metadata
         env:
           EXPECTED_VERSION: ${{ env.RPOS_EXPECTED_VERSION }}
+          PUBLISH_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.publish || false }}
         run: |
           python - <<'PY'
           import json, os, tomllib
           from pathlib import Path
+
           expected = os.environ['EXPECTED_VERSION']
+          publish_requested = os.environ.get('PUBLISH_REQUESTED', 'false').lower() == 'true'
+
           with Path('pyproject.toml').open('rb') as fh:
               project = tomllib.load(fh)['project']
           actual = project['version']
           if actual != expected:
               raise SystemExit(f'version mismatch: requested={expected!r}, project={actual!r}')
+
           for readme in ('README.md', 'README.ja.md'):
               text = Path(readme).read_text(encoding='utf-8')
               required = (
                   f'RPOS-DOC-VERSION: {actual}',
-                  f'Version: **{actual} candidate',
+                  f'Version: **{actual}',
                   f'responsibility-pathway-os=={actual}',
               )
               missing = [marker for marker in required if marker not in text]
               if missing:
                   raise SystemExit(f'{readme} version markers missing: {missing}')
+
           status = json.loads(Path('product-status.json').read_text(encoding='utf-8'))
-          if status['version'] != actual or status['publication_state'] != 'not_published':
-              raise SystemExit('product-status release identity/boundary mismatch')
+          if status['version'] != actual:
+              raise SystemExit('product-status version mismatch')
+          publication_state = status['publication_state']
+          if publication_state not in {'not_published', 'pypi_published'}:
+              raise SystemExit(f'unsupported publication_state: {publication_state!r}')
+          if publish_requested and publication_state != 'not_published':
+              raise SystemExit(
+                  f'publish=true requires publication_state=not_published; current={publication_state!r}'
+              )
           if status['production_ready'] is not False:
               raise SystemExit('public alpha must not claim production readiness')
-          print(f'release identity verified for responsibility-pathway-os=={actual}')
+
+          print(
+              f'release identity verified for responsibility-pathway-os=={actual}; '
+              f'publication_state={publication_state}; publish_requested={publish_requested}'
+          )
           PY
       - name: Run standalone Python tests
         run: python -m pytest -q tests

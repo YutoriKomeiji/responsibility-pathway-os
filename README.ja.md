@@ -1,62 +1,77 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: ja -->
 <!-- RPOS-DOC-VERSION: 0.1.0a1 -->
-<!-- RPOS-DOC-STATUS: public-alpha-candidate -->
+<!-- RPOS-DOC-STATUS: public-alpha -->
 <!-- RPOS-DOC-COUNTERPART: README.md -->
 
 # RPOS — Responsibility Pathway Operating System
 
-RPOS は、重大な影響を伴う AI・自動化ワークフローのための、実行可能な責任経路オペレーティング層です。
+**Pythonで実行可能な責任経路と、Lean 4でmachine-checkされた重要な責任不変条件を統合するResponsibility Pathway OSです。**
 
-基本原則は、**承認は実行ではなく、実行受付は外部効果の証明ではなく、失敗や不確実性によって責任を消してはいけない**、です。
+RPOSは、影響を伴うAI・自動化ワークフローのためのオープンソース実装です。Python/SQLiteによる実行runtimeと、Human Gate、Operational Authority、dispatch、外部作用検証、不確実性、修復、再開、完了に関する選択された不変条件をLean 4で機械検証するFormal Assurance Surfaceを組み合わせます。
 
-RPOS は次の責任経路を保持します。
+責任をlog、policy document、model outputのどれか一つへ還元せず、次の経路を実行可能な状態として保持します。
 
-`提案 -> Human Gate -> 承認 -> dispatch -> 効果検証 -> 不確実性 -> 修復 -> 明示的再開 -> 完了`
+`提案 -> Human Gate -> 承認 -> dispatch -> 外部作用検証 -> 不確実性 -> 修復 -> 明示的再開 -> 完了`
 
-## Public alpha status
+基本原則は、**承認は実行ではなく、実行receiptは外部作用の証明ではなく、失敗や不確実性によって責任を消してはいけない**、です。
 
-Version: **0.1.0a1 candidate — Early Public Alpha / Executable Preview**
+## Python × Lean 4 — 実行可能な責任経路と機械検証された不変条件
 
-現在の実装には、Python/SQLiteの実行コア、永続的責任状態、Human Gate、限定されたdispatch attempt、外部効果との分離、reconciliation、repair/resume、証拠履歴、再利用可能なResponsibility State Envelope（責任状態エンベロープ）、guideline/evidence view、provenance、CLI、実行可能サンプル、限定範囲のmachine-checked Lean formal modelが含まれます。
+現在の公開実装には、次の両方があります。
 
-このalphaは工学評価と限定的pilotを目的としており、無人の本番運用を前提としていません。
+- Python/SQLiteによる実行可能なOperational State Machine。永続状態、Human Gate、限定dispatch、restart/reconciliation、repair/resume、evidence history、CLI、実行サンプルを含みます。
+- Lean 4による再現可能なFormal Assurance project。選択された責任不変条件をmachine-checkし、`formal/assurance-catalog.json`を通じて対応するPython runtime testへcross-linkします。
 
-## なぜ RPOS が必要か
+公開済みのmachine-checked assertionは次の6件です。
 
-Agentシステムでは、ツール実行が成功を返しても、現実の効果が未発生・部分的・重複・不明・検証不能である場合があります。また、障害後のretryで人間の意思決定境界が失われることもあります。
+1. `RPOS.human_gate_cannot_dispatch_directly` — Human Gateは直接dispatchする権限ではない。
+2. `RPOS.only_verified_enters_completed` — `VERIFIED`だけが直接`COMPLETED`へ入れる。
+3. `RPOS.effect_unknown_is_not_completed` — 未解決の外部作用不確実性は完了ではない。
+4. `RPOS.ready_to_resume_is_not_authorized` — repair readinessは実行権限ではない。
+5. `RPOS.receipt_is_not_effect_verification` — transport/API receiptは外部作用検証ではない。
+6. `RPOS.model_proposal_is_not_authority` — model proposalはOperational Authorityではない。
 
-RPOSはそれらを明示状態として保持します。
+各assertionには、Lean theorem、対応するPython runtime test evidence、model scope、source identity、proof ceilingを明示します。
 
-- `AUTHORIZED` は実行開始・成功を意味しません。
-- `DISPATCHING` は発行済みだが未解決のattemptを保持します。
-- `EFFECT_UNKNOWN` は不確実性をfalse successに変換しません。
-- `REPAIR_REQUIRED` は修復責任を明示します。
-- `READY_TO_RESUME` は修復準備完了であり、実行許可ではありません。
-- 再開は、新しいdispatch attemptの前にauthorityを明示的に復元します。
-- `COMPLETED` はtransport receiptではなく、限定されたverificationの後にのみ成立します。
+これは単なる文書上のルールより強く、同時に「Python runtime全体が形式証明済み」という主張より限定的です。**名前を付けたabstract invariantはLean 4でmachine-checkし、実装証拠と外部運用証拠は別の検証可能なevidence classとして保持します。**
 
-## Install
+## Public Alpha
 
-Python 3.11+ が必要です。
+Version: **0.1.0a1 — Early Public Alpha / Executable Preview**
+
+`responsibility-pathway-os==0.1.0a1` はPyPIで公開されています。
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a1
 rpos --db rpos.db boot
 ```
 
-source checkoutでは:
+Python 3.11+ が必要です。
 
-```bash
-python -m pip install -e .
-python examples/quick_start_end_to_end.py
-```
+このalphaは工学評価と限定pilotを目的としており、無人production運用を前提としていません。
 
-実装、formal、field-qualityの境界を短時間で確認する評価経路は `docs/ja/public-alpha-evaluation-guide.md` を参照してください。
+## なぜRPOSが必要か
+
+Agentや自動化システムでは、APIやtoolがsuccess receiptを返しても、現実の作用が未発生・部分的・重複・曖昧・検証不能である場合があります。また、障害後のretryやrepairで、誰が再実行を許可したかというHuman Gate境界を失うことがあります。
+
+RPOSはそれを状態として消しません。
+
+- `AUTHORIZED` は実行開始や成功ではない。
+- `DISPATCHING` は発行済みだが未解決のattemptを保持する。
+- `EFFECT_UNKNOWN` は不確実性をfalse successへ変換しない。
+- `REPAIR_REQUIRED` は修復責任を明示する。
+- `READY_TO_RESUME` は修復準備完了であり実行許可ではない。
+- resumeはfresh dispatchの前にauthorityを明示的に復元する。
+- `COMPLETED` はtransport receiptではなく、限定されたverificationの後に成立する。
+
+## Core responsibility states
+
+`PROPOSED`, `HUMAN_GATE`, `AUTHORIZED`, `DISPATCHING`, `EFFECT_UNKNOWN`, `VERIFIED`, `REPAIR_REQUIRED`, `READY_TO_RESUME`, `COMPLETED`, `DENIED`, `ABORTED`。
 
 ## 実行可能サンプル
 
-public alpha candidateには8つの実行可能な評価シナリオがあります。
+8つの公開シナリオがあります。
 
 ```bash
 python examples/happy_path_verified.py
@@ -69,184 +84,94 @@ python examples/adapter_exception_containment.py
 python examples/reconciliation_unresolved_human_return.py
 ```
 
-それぞれ以下を確認します。
+Human Gate承認/拒否、receipt後の`EFFECT_UNKNOWN`、restart、reconciliation、repair、explicit resume authority、idempotency guard、adapter exception、Human Returnを実行例として確認できます。
 
-1. Human Gate承認 -> 限定された独立verification -> completion
-2. Human Gate拒否 -> dispatchなし
-3. successful receipt -> `EFFECT_UNKNOWN` -> process restart -> observation-only reconciliation -> completion
-4. first attempt失敗 -> `REPAIR_REQUIRED` -> repair preparation -> `READY_TO_RESUME` -> explicit resume authorization -> fresh attempt -> `EFFECT_UNKNOWN` -> restart -> reconciliation -> completion
-5. 同じidempotency/effect identityの再利用 -> 記録済みsemantic effectを黙って再dispatchしない
-6. repair responsibility -> 明示的Human Return -> 暗黙のauthority復元ではなく明示的resume authorityへ返す
-7. dispatch開始後のadapter exception -> 「外部効果なし」と断定せず `EFFECT_UNKNOWN` を保持する
-8. reconciliation observerが利用不能 -> `EFFECT_UNKNOWN` と明示的Human Returnを保持する
+## Lean 4 Formal Assurance Surface
 
-これらは各限定シナリオに対するexecutable evidenceであり、一般的なproduction correctnessを証明するものではありません。
-
-## Responsibility State Envelope templates
-
-`templates/catalog.json`には、以下の中立ロール向け再利用templateがあります。
-
-- operation proposal
-- Human Gate decision
-- verification contract
-- repair plan
-- resume authorization
-- dependency evidence
-- external evaluation evidence
-- Human Return packet
-
-推奨APIの `rpos.validate_envelope(...)` は、未知フィールド、必須フィールド欠落、未対応template kind/schema version、authority effectを主張するenvelopeを拒否します。
-
-すべてのResponsibility State Envelopeは `authority_effect: "none"` を持ちます。**envelopeを記入・検証しても、operationの承認、dispatch、verification、completion、resumeは発生しません。** 初期alphaの `ResponsibilityPacket`、`validate_packet(...)`、`rpos.packet.v0.1` は下位互換のため維持します。詳細は `docs/ja/responsibility-packet-templates.md` を参照してください。
-
-## Core responsibility states
-
-`PROPOSED`, `HUMAN_GATE`, `AUTHORIZED`, `DISPATCHING`, `EFFECT_UNKNOWN`, `VERIFIED`, `REPAIR_REQUIRED`, `READY_TO_RESUME`, `COMPLETED`, `DENIED`, `ABORTED`。
-
-normative transition modelは、成功receiptだけでcompletionへ進むこと、repair readinessだけでexecution authorityが復元されることを禁止します。
-
-## 限定範囲の Lean 4 formal model
-
-RPOSには、**Lean 4.32.2** にpinされたmachine-checked formal evidence surfaceがあります。formal部分だけでもLake projectとして独立再現できます。
+Formal projectは**Lean 4.32.2**にpinされています。
 
 ```bash
 cd formal/lean
 lake build
 ```
 
-現在のmodule:
+主なmodule:
 
-- `formal/lean/RPOSState.lean` — state、direct transition、local invariant
-- `formal/lean/RPOSReachability.lean` — 限定されたmulti-step reachabilityとdirect shortcut禁止
-- `formal/lean/RPOSEvidenceBoundary.lean` — authorization-relevant evidence、external-effect verification evidence、receipt、evaluation、dependency evidenceの限定的分離
-- `formal/lean/RPOSPacketBoundary.lean` — Responsibility State Envelope / packetがauthority effectを持たないことに関する限定property
-- `formal/lean/RPOSOperationalBoundary.lean` — operational responsibilityに関する限定property
-- `formal/lean/RPOSTransparencyBoundary.lean` — transparency / evidence distinctionに関する限定property
+- `RPOSState.lean` — Human Gate、completion、不確実性、resume authorityを含むstate invariant
+- `RPOSReachability.lean` — bounded multi-step reachabilityとshortcut禁止
+- `RPOSEvidenceBoundary.lean` — authorization/effect verification/receipt/evaluation/dependency evidenceの分離
+- `RPOSPacketBoundary.lean` — Responsibility State Envelope/packetのno-authority-effect property
+- `RPOSOperationalBoundary.lean` — model proposal、human authorization、receipt、external observationの責任境界
+- `RPOSTransparencyBoundary.lean` — transparency/evidence distinction
 
-machine-checkedされたpropertyの例:
-
-- `AUTHORIZED`だけが直接`DISPATCHING`へ入れる
-- `VERIFIED`だけが直接`COMPLETED`へ入れる
-- `EFFECT_UNKNOWN`から直接completionできない
-- `REPAIR_REQUIRED`から直接dispatchできない
-- `READY_TO_RESUME`は直接dispatchせず、`AUTHORIZED`を経由してauthorityを復元する
-- 宣言されたabstract modelでは、execution receipt、evaluation evidence、dependency evidenceはexternal-effect verification evidenceにならない
-
-positive reachability theoremはpathの存在を示すwitnessであり、livenessや必ず完了することを保証しません。
-
-**Formal proof evidenceはPython implementationの正しさを証明しません。** RPOSは、formal proof、executable implementation evidence、operational external-effect evidenceを明示的に分離します。詳細は `formal/lean/README.ja.md` を参照してください。
+Formal Assurance Viewerは、Operational RiskからLean theorem、Python runtime test、source hash、model scope、proof ceilingまで追跡できる公開surfaceです。
 
 ## Evidence boundaries
 
-RPOSは証拠種別を分離し、ある証拠が別の証拠の代わりになることを防ぎます。
+RPOSは次を別々のevidence classとして扱います。
 
 - authority / admission
 - execution / receipt
 - external effect
 - recovery / resume
-- safety / capability evaluation evidence
-- dependency / software-supply-chain evidence
-- guideline evidence matrices
-- engineering provenance と将来のpublic-claim review input
+- safety / capability evaluation
+- dependency / software supply chain
+- guideline evidence
+- engineering provenance
 
-対応する状態遷移契約が明示的に要求しない限り、証拠記録だけでoperational responsibility stateは昇格しません。
+証拠を記録しただけでoperational stateが自動昇格することはありません。
 
-## Defensive provenance
+Formal proofは宣言したabstract modelのnamed propertyを確立しますが、それ単体ではPython implementation全体のconformanceや外部観測の真実性を確立しません。
 
-RPOSは、後日の専門家レビューで機能の導入時期・技術理由・交換可能な実装境界を再構築できるようengineering provenanceを保持します。
+## Responsibility State Envelope
 
-未公開の第三者特許請求項は設計入力にしません。public-claim review recordは実際の公開情報と公開請求項本文の参照がある場合だけ作成できます。
+`templates/catalog.json`にはoperation proposal、Human Gate decision、verification contract、repair plan、resume authorization、dependency evidence、external evaluation evidence、Human Return packetのtemplateがあります。
 
-RPOS自身は、特許非侵害、特許無効、Freedom to Operate、先行技術充足性、請求項の法的範囲を判断しません。
-
-## Japan-first development
-
-初期導入profileはJapan-firstです。現在の限定的evidence workは日本の公的AI・software supply-chain guidanceを参照し、compliance判定ではなくevidence / gapを保持します。
-
-国際mappingは、日本向けprofile / operating layerの安定後に行う予定です。
-
-## 継続開発サイクル
-
-RPOSは単独で閉じず、次のfeedback systemの一層として継続開発します。
-
-```text
-Responsibility Pathway Model / Paper
-  -> Responsibility Pathway Engineering
-  -> Responsibility Pathway Runtime
-  -> RPOS
-  -> formal + executable + operational evidence
-  -> Engineering + Model / Paper
-```
-
-概念を下流へ流して実装・運用証拠にし、その結果を定義、counterexample、engineering obligation、limitation、empirical questionとして上流へ戻します。各層は別層のevidenceを代用してはいけません。
+すべてのEnvelopeは `authority_effect: "none"` を持ちます。**Envelopeの作成やvalidation自体はauthorize、dispatch、verify、complete、resumeを行いません。**
 
 ## Verification
 
-現在のrelease-candidate verificationには以下が含まれます。
+公開alphaのverification routeには次が含まれます。
 
 - Python test suite全体
-- source上で8つのサンプルをすべて実行
-- wheel / source distribution build
-- wheel / sdistのisolated clean install
-- repository working directory外からのinstalled CLI/APIおよびQuick Start確認
-- exact HEADに対するdeterministic public-export reconstruction
-- source-bound CycloneDX SBOMとSHA-256 release-artifact evidence
-- public source boundaryに対するlikely-secret scan
-- Windows上のPython 3.11 / 3.12 field-portability check
-- 宣言された限定Lean 4 projectに対するpin済み `lake build`
+- 8つのsource example実行
+- wheel/sdist buildとisolated clean install
+- repository外からのinstalled CLI/API/Quick Start確認
+- exact-HEAD public-export reconstruction
+- CycloneDX SBOMとSHA-256 artifact evidence
+- public source boundaryのlikely-secret scan
+- Windows Python 3.11/3.12 field-portability check
+- pinned Lean 4 `lake build`
 
-これらの成功は宣言された範囲内のevidenceです。本番適合性、法令適合、外部システムの正しさ、普遍的安全性、implementation全体のformal correctnessを証明しません。
+## Claim boundary と promotion
 
-## 主な製品surface
+RPOSは「今は証拠が足りない主張」と「software単体では越えない恒久責任境界」を分離します。
 
-- `product-status.json` — release stage、verified surface、non-claim、release gateの機械可読状態
-- `CHANGELOG.md` — public alphaの変更と明示的deferred項目
-- `CONTRIBUTING.md` — contributionとEvidence discipline
-- `SUPPORT.md` — alpha supportの期待値
-- `SECURITY.md` — security reportとsupport boundary
-- `docs/ja/public-alpha-evaluation-guide.md` — 第三者向けの短い評価経路
+Evidenceが追加されれば昇格可能な主張には、production readiness、より広いplatform support、implementation-wide formal conformance、software-supply-chain trust、公開scenarioを超えるdomain effectivenessがあります。
 
-## Claim boundary と promotion path
+一方、次は成熟してもRPOS単体では生成しません。
 
-RPOSは、現在のnon-claimをすべて永久的な免責事項として扱いません。公開境界を、**evidenceが揃えば前進できる境界**と、**RPOS単体では越えるべきではない恒久責任境界**に分離します。詳細は [Claim Boundary Promotion](docs/ja/claim-boundary-promotion.md) を参照してください。
+- 法的・組織的authority
+- 任意の外部systemの正しさ
+- verification contractなしでのreceipt→external effect証明
+- 人間/組織からsoftwareへの最終責任移転
+- 任意外部systemに対するuniversal exactly-once guarantee
 
-### Current evidence-limited boundaries
+詳細は `docs/ja/claim-boundary-promotion.md` を参照してください。
 
-次は必要evidenceがまだ十分でないため意図的に主張していない項目です。scopeを明示したreview可能なevidenceが得られ、public claimへ明示採用された場合にのみ昇格できます。
+## 継続開発lineage
 
-- **production readiness** — sustained workload / soak evidence、対応deployment profileでのfault injection、upgrade/rollback/backup/recovery evidence、operational monitoring/SLO evidence、review済みsecurity/deployment controlが必要
-- **より広いplatform support** — 対応OS、Python、container、network、identity、storage profileの宣言されたsupport matrixと再現可能なCI/field resultが必要
-- **implementation-wide formal conformance** — formal modelとexecutable semantics間の明示的refinement/conformance relationと、対象実装surfaceの再現可能なconformance evidenceが必要
-- **より広いsoftware supply-chain trust** — provenance強化、必要箇所のimmutable input、artifact signing/attestation、独立検証、継続的vulnerability-response evidenceが必要
-- **公開scenarioを超えるdomain effectiveness** — 仮説、failure criteria、観測結果、counterexampleを明示したdomain-specific pilotと独立reviewが必要
+```text
+Responsibility Pathway Model / Paper
+ -> Responsibility Pathway Engineering
+ -> Responsibility Pathway Runtime
+ -> RPOS — Responsibility Pathway Operating System
+ -> formal + executable + operational evidence
+ -> Engineering + Model / Paper
+```
 
-Promotionは自動ではありません。新しいevidenceはscopeが明示され、review可能で、必要に応じて再現可能であり、対応public claimへ明示的に採用される必要があります。
-
-### Permanent responsibility boundaries
-
-次は未完成機能ではなく、RPOSが成熟しても単独では越えない責任境界です。
-
-- RPOS単体は法的権限、法解釈、法的責任、認証、規制当局の承認を生成しない
-- RPOSが経路を管理しても、任意外部systemそのものの正しさを生成しない
-- 適切なverification contractとevidence sourceなしにtransport receiptを現実effectの証明へ昇格させない
-- 最終的な組織責任を責任主体である人間・制度からsoftwareへ移転しない
-- 必要なtransaction/idempotency/verification contractを持たない任意外部systemへuniversal exactly-onceを保証しない
-- abstract modelへのformal proofだけでPython実装全体やdeployment environment全体を証明済みと扱わない
-- patent non-infringement / invalidity / freedom to operate / legal claim scopeはRPOSの権限外
-
-可能な範囲で、evidence依存境界は `evidence_collecting` / `review_ready` / `promoted`、恒久境界は `permanently_out_of_scope` として追跡します。
+RPOSは、authority、execution、uncertainty、repair、return、explicitly authorized resumptionを通じてResponsibility Pathwayを保持する独立実装です。
 
 ## License
 
 MIT License.
-
-## Lineage
-
-```text
-Responsibility Pathway Design / Model
- -> Responsibility Pathway Engineering
- -> Responsibility Pathway Runtime
- -> RPOS — Responsibility Pathway Operating System
-```
-
-RPOSはauthority、execution、uncertainty、repair、明示的に承認されたresumptionを通してresponsibility continuityを維持するoperating layerとして独立開発されています。

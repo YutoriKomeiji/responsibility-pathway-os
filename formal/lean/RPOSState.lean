@@ -1,3 +1,20 @@
+/-!
+# RPOS — Responsibility Pathway OS state invariants
+
+This Lean 4 module machine-checks structural invariants of the executable
+Responsibility Pathway OS (RPOS) state model.
+
+The corresponding Python runtime implements the operational state machine;
+this file independently proves selected properties of the declared abstract
+model. In particular, it checks that Human Gate is not dispatch authority,
+completion requires VERIFIED, EFFECT_UNKNOWN is distinct from completion,
+and repair readiness does not silently become execution authority.
+
+These theorems are formal assurance for the named invariants. They are not a
+proof of the complete Python implementation, external systems, or the
+legitimacy of any concrete authorization decision.
+-/
+
 namespace RPOS
 
 /-- Responsibility-relevant states in the RPOS v0.1 normative model. -/
@@ -38,12 +55,14 @@ theorem only_authorized_enters_dispatching {source : State}
   cases h
   rfl
 
-/-- INV-GATE-001: HUMAN_GATE cannot directly enter DISPATCHING. -/
+/-- Machine-checked Human Gate invariant: HUMAN_GATE cannot directly enter
+DISPATCHING, so a pending human decision is not execution authority. -/
 theorem human_gate_cannot_dispatch_directly : ¬ Step .humanGate .dispatching := by
   intro h
   cases h
 
-/-- INV-COMPLETE-001: only VERIFIED may directly enter COMPLETED. -/
+/-- Machine-checked completion invariant: only VERIFIED may directly enter
+COMPLETED in the bounded RPOS state model. -/
 theorem only_verified_enters_completed {source : State}
     (h : Step source .completed) : source = .verified := by
   cases h
@@ -54,7 +73,8 @@ theorem repair_required_cannot_authorize_directly : ¬ Step .repairRequired .aut
   intro h
   cases h
 
-/-- INV-RESUME-001: READY_TO_RESUME and AUTHORIZED are distinct states. -/
+/-- Machine-checked resume-authority invariant: READY_TO_RESUME and AUTHORIZED
+are distinct states. Repair readiness is not operational authority. -/
 theorem ready_to_resume_is_not_authorized :
     State.readyToResume ≠ State.authorized := by
   decide
@@ -64,7 +84,9 @@ theorem resume_does_not_dispatch_directly : ¬ Step .readyToResume .dispatching 
   intro h
   cases h
 
-/-- INV-UNKNOWN-001: EFFECT_UNKNOWN is not a completed state. -/
+/-- Machine-checked external-effect uncertainty invariant: EFFECT_UNKNOWN is
+not COMPLETED. Ambiguous external effect is preserved instead of collapsed
+into success. -/
 theorem effect_unknown_is_not_completed :
     State.effectUnknown ≠ State.completed := by
   decide
