@@ -2,7 +2,32 @@
 
 All notable public-alpha changes to RPOS are recorded here.
 
-RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work.
+RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work and preserve historical release provenance.
+
+## [0.1.0a2] - Unreleased
+
+Release candidate for the next PyPI public alpha.
+
+### Changed
+- Strengthened first-answer public semantics around the project identity: RPOS is an independently engineered Responsibility Pathway OS, not merely a Python helper package or a model wrapper.
+- Made the public Python × Lean 4 architecture explicit across package metadata, README surfaces, GitHub Pages, product status, and Formal Assurance catalog.
+- Added a clear Responsibility Pathway lineage from Model / Paper through Design, Engineering, Runtime, and RPOS, while keeping external authority separate from project evidence.
+- Reframed public wording so implemented and verified facts are stated directly, goals are presented as goals, and proof/evidence ceilings remain adjacent to the claims they constrain.
+- Prepared machine-readable pre-publication state for `0.1.0a2` while preserving `0.1.0a1` as the immutable previously published PyPI artifact.
+- Updated release validation so the exact requested release identity remains fail-closed and re-publication of an already-published version is rejected by publication-state checks.
+
+### Verification carried forward
+- Python/SQLite executable responsibility state and Human Gate paths.
+- Eight executable evaluation scenarios.
+- Exact-HEAD public-export and source-bound release evidence.
+- Windows and Ubuntu compatibility checks on Python 3.11 and 3.12.
+- Lean 4 Formal Assurance Surface with six named machine-checked responsibility invariants cross-linked to Python runtime tests, model scope, and proof ceilings.
+- GitHub Pages validation with machine-checked assurance and verified architecture visuals.
+
+### Release boundary
+- `0.1.0a2` remains an Early Public Alpha / Executable Preview for engineering evaluation and bounded pilots.
+- The named Lean 4 invariants are machine-checked in their declared bounded models; this does not by itself establish complete Python implementation conformance, deployment correctness, legal responsibility, or organizational authority.
+- Production readiness and broader empirical/operational claims remain evidence-limited promotion targets rather than implied outcomes of a version bump.
 
 ## [0.1.0a1] - 2026-08-29
 
