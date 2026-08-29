@@ -25,7 +25,15 @@ def test_product_status_matches_package_identity_and_release_boundary() -> None:
     assert status["release_gate"]["public_repository_migration_complete"] is True
     assert status["release_gate"]["pypi_trusted_publisher_configured"] is False
     assert status["release_gate"]["explicit_human_gate_required"] is True
-    assert "public_product_site_deployment" in status["verified_surfaces"]
+    surfaces = set(status["verified_surfaces"])
+    assert "public_product_site_deployment" in surfaces
+    assert "source_bound_formal_assurance_manifest" in surfaces
+    assert "public_formal_assurance_viewer" in surfaces
+    assurance = status["formal_assurance"]
+    assert assurance["role"] == "public_assurance_not_runtime_authority"
+    assert assurance["requires_machine_checked_lean_build"] is True
+    assert assurance["crosslinks_runtime_tests"] is True
+    assert assurance["includes_proof_ceiling_per_assertion"] is True
 
 
 def test_product_status_keeps_high_impact_non_claims_explicit() -> None:
