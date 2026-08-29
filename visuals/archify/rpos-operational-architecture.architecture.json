@@ -18,10 +18,10 @@
     { "id": "rpos", "type": "backend", "label": "RPOS Core", "sublabel": "service + state machine", "pos": [270, 290], "size": [150, 70], "tag": "owns operation" },
     { "id": "human_authority", "type": "security", "label": "Human Authority", "sublabel": "approve / deny / resume", "pos": [270, 105], "size": [150, 66], "tag": "authority owner" },
     { "id": "sqlite", "type": "database", "label": "SQLite Store", "sublabel": "state + attempts + events", "pos": [520, 105], "size": [150, 66], "tag": "durable facts" },
-    { "id": "adapter", "type": "backend", "label": "Operation Adapter", "sublabel": "external dispatch boundary", "pos": [520, 290], "size": [154, 68], "tag": "effect attempt" },
-    { "id": "external_system", "type": "external", "label": "External System", "sublabel": "effect outside RPOS", "pos": [780, 290], "size": [150, 68], "tag": "third party" },
+    { "id": "adapter", "type": "backend", "label": "Operation Adapter", "sublabel": "external dispatch boundary", "pos": [520, 291], "size": [154, 68], "tag": "effect attempt" },
+    { "id": "external_system", "type": "external", "label": "External System", "sublabel": "effect outside RPOS", "pos": [780, 291], "size": [150, 68], "tag": "third party" },
     { "id": "observer", "type": "backend", "label": "Reconciliation Observer", "sublabel": "independent readback", "pos": [780, 470], "size": [168, 68], "tag": "evidence only" },
-    { "id": "observatory", "type": "cloud", "label": "Responsibility Observatory", "sublabel": "read-only inspection", "pos": [520, 470], "size": [170, 68], "tag": "no mutation" },
+    { "id": "observatory", "type": "cloud", "label": "Responsibility Observatory", "sublabel": "read-only service facade", "pos": [520, 470], "size": [170, 68], "tag": "no mutation" },
     { "id": "formal_assurance", "type": "security", "label": "Formal Assurance Surface", "sublabel": "Lean theorem + test crosswalk", "pos": [270, 470], "size": [176, 70], "tag": "not runtime authority" }
   ],
   "boundaries": [
@@ -30,21 +30,21 @@
   ],
   "connections": [
     { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default", "labelAt": [222, 315] },
-    { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "fromSide": "top", "toSide": "bottom", "via": [[315, 260], [315, 200], [315, 190]], "labelAt": [250, 242] },
-    { "from": "human_authority", "to": "rpos", "label": "approve / deny / resume", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "via": [[375, 190], [375, 240], [375, 260]], "labelAt": [425, 218] },
-    { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "fromSide": "right", "toSide": "bottom", "via": [[470, 325], [470, 205], [595, 205]], "labelAt": [525, 190] },
-    { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "fromSide": "left", "toSide": "top", "via": [[490, 138], [450, 138], [450, 255], [345, 255]], "labelAt": [405, 145] },
+    { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "fromSide": "left", "toSide": "left", "via": [[230, 325], [230, 138]], "labelAt": [170, 235] },
+    { "from": "human_authority", "to": "rpos", "label": "decision / resume", "variant": "emphasis", "fromSide": "right", "toSide": "right", "via": [[450, 138], [450, 325]], "labelAt": [505, 235] },
+    { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "fromSide": "top", "toSide": "bottom", "via": [[345, 230], [595, 230]], "labelAt": [520, 215] },
+    { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "fromSide": "left", "toSide": "top", "via": [[485, 138], [485, 265], [345, 265]], "labelAt": [535, 255] },
     { "from": "rpos", "to": "adapter", "label": "authorized dispatch", "variant": "emphasis", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [470, 345] },
-    { "from": "adapter", "to": "external_system", "label": "effect attempt", "variant": "security", "fromSide": "right", "toSide": "left", "via": [[710, 310], [750, 310]], "labelAt": [720, 292] },
-    { "from": "external_system", "to": "adapter", "label": "transport receipt", "variant": "dashed", "fromSide": "left", "toSide": "right", "via": [[750, 340], [710, 340]], "labelAt": [720, 360] },
-    { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [885, 410] },
-    { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "bottom", "toSide": "bottom", "via": [[864, 575], [470, 575], [470, 400], [345, 400]], "labelAt": [650, 560] },
-    { "from": "sqlite", "to": "observatory", "label": "read-only state/history", "variant": "dashed", "fromSide": "right", "toSide": "top", "via": [[720, 138], [720, 430], [605, 430]], "labelAt": [735, 270] },
-    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "fromSide": "top", "toSide": "left", "via": [[358, 440], [235, 440], [235, 325]], "labelAt": [245, 420] }
+    { "from": "adapter", "to": "external_system", "label": "effect attempt", "variant": "security", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [727, 305] },
+    { "from": "external_system", "to": "adapter", "label": "transport receipt", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "via": [[855, 395], [597, 395]], "labelAt": [727, 410] },
+    { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "via": [[855, 420], [864, 420]], "labelAt": [915, 420] },
+    { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "bottom", "toSide": "bottom", "via": [[864, 575], [345, 575]], "labelAt": [650, 560] },
+    { "from": "observatory", "to": "rpos", "label": "read-only inspect / history", "variant": "dashed", "fromSide": "left", "toSide": "bottom", "via": [[480, 504], [480, 390], [345, 390]], "labelAt": [540, 440] },
+    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "fromSide": "left", "toSide": "left", "via": [[220, 505], [220, 325]], "labelAt": [150, 420] }
   ],
   "cards": [
     { "dot": "cyan", "title": "Operation Ownership", "items": ["RPOS owns the operation pathway, not model intelligence", "Human Authority remains separate from proposal generation and execution", "SQLite persists responsibility before and after external dispatch boundaries"] },
     { "dot": "amber", "title": "Receipt vs Effect", "items": ["Transport receipt is evidence about transport, not proof of external effect", "Required independent readback may reconcile EFFECT_UNKNOWN", "Observer failure stays unresolved rather than manufacturing success"] },
-    { "dot": "emerald", "title": "Assurance Separation", "items": ["Lean checks bounded structural invariants", "Responsibility Observatory is read-only", "Neither formal assurance nor visualization creates Operational Authority"] }
+    { "dot": "emerald", "title": "Assurance Separation", "items": ["Lean checks bounded structural invariants", "Responsibility Observatory reads through RposService and exposes no mutation", "Neither formal assurance nor visualization creates Operational Authority"] }
   ]
 }
