@@ -1,16 +1,67 @@
 <!-- RPOS-DOC-ID: RPOS-PRODUCT-EXPERIENCE-001 -->
 <!-- RPOS-DOC-LANG: en -->
 <!-- RPOS-DOC-VERSION: 0.1 -->
-<!-- RPOS-DOC-STATUS: incubating -->
+<!-- RPOS-DOC-STATUS: normative-product-direction -->
 <!-- RPOS-DOC-COUNTERPART: ../ja/operational-product-experience.md -->
 
 # RPOS Operational Product Experience
 
 ## Purpose
 
-RPOS is developed as an **Operational System**, not as a model, chatbot, or general agent-orchestration framework. Models and agents may propose work. RPOS owns the responsibility-bearing transition from proposal to authorized operation, external-effect verification, recovery, resumption, and completion.
+RPOS is developed as an **Operational System**, not as a model, chatbot, generic library, or general agent-orchestration framework. Models and agents may propose work. RPOS owns the responsibility-bearing transition from proposal to authorized operation, external-effect verification, recovery, resumption, and completion.
 
 The release target is therefore stronger than a developer-installable alpha: a user should be able to install RPOS, start it with safe defaults, understand why work is proceeding or stopped, recover from uncertainty, and return later without losing unresolved responsibility.
+
+This document is the normative product direction. An early Public Alpha may implement only part of this experience, but a partial release does not redefine the product into a generic Python library. Product maturity should move toward this direction while preserving the core invariants below.
+
+## Core invariants — must not drift
+
+These define RPOS even before the complete Product Shell exists:
+
+- **RPOS owns operation, not intelligence.** Models and agents are replaceable proposal sources, not authority sources.
+- A proposal, model statement, or transport receipt is not operational authority or verified external effect.
+- Human Gate, authority, target, effect, evidence, and context remain explicit responsibility-bearing boundaries.
+- Uncertain external effects remain uncertain; they are not converted into false success or blind retry.
+- Restart, reconciliation, repair, and resume preserve unresolved responsibility instead of erasing it.
+- Repair readiness does not silently restore execution authority; resume requires an explicit authorized path.
+- Residual Owner and Human Return Point remain visible when responsibility cannot be closed automatically.
+- Read-only observability does not mutate authority or responsibility state.
+
+A change that violates these invariants is not ordinary product evolution. It requires explicit architectural review because it changes what RPOS is.
+
+## 0.1.0a1 implemented slice
+
+The 0.1.0a1 Public Alpha implements an operational core slice of this direction, including:
+
+- durable responsibility states and event history;
+- Human Gate and authorization boundaries;
+- dispatch-attempt / external-effect separation;
+- `EFFECT_UNKNOWN` uncertainty preservation;
+- crash-consistent state/event persistence and restart recovery;
+- observation-only reconciliation;
+- repair, explicit resume authorization, and Human Return paths;
+- Residual Owner / Human Return Point structures;
+- commit-time authority revalidation for an opt-in exact effect/target binding;
+- evidence/provenance surfaces, executable examples, CLI/package surfaces, and bounded Lean evidence;
+- a public Product Site and browser state-path explorer that explains the lifecycle without pretending simulation is Python-runtime execution.
+
+This slice supports the Public Alpha claim. It is not yet the complete Operational Product Experience.
+
+## Post-alpha product targets
+
+The following remain product-direction targets rather than reasons to redefine the current core as a library:
+
+- Product Shell / Observatory that answers operational questions without requiring internal-code knowledge;
+- safe local-first service/runtime defaults and startup diagnostics;
+- one-click installer, with Windows as the initial target unless later evidence changes priority;
+- normal first use without requiring Git/Python knowledge;
+- operational-evidence backup/export;
+- update, rollback, and uninstall strategy;
+- optional model/provider connections after safe local first boot;
+- broader supported Effect Adapters and field-validated deployment profiles;
+- reusable operational memory across approvals, evidence, unresolved ownership, policy, and recovery history.
+
+Promotion of any of these targets into a public capability claim requires implementation and reviewable evidence; see [Claim Boundary Promotion](claim-boundary-promotion.md).
 
 ## Product promise
 
@@ -151,6 +202,10 @@ Initial product-relevant theorem themes:
 
 Beginner-oriented JA/EN material should explain these proofs using RPOS examples so that users can learn why formal verification is useful before learning advanced theorem-proving techniques.
 
-## Not Proven
+## Claim boundary and promotion
 
-This document does not claim production readiness, universal safety, regulatory compliance, correctness of arbitrary models, exactly-once execution over arbitrary external systems, or correctness of future installer/UI implementations. It defines the intended product and responsibility boundary to be incrementally implemented and verified.
+This product direction does not make future targets current capabilities. Public claims advance only when implementation and scoped evidence support them.
+
+Evidence-limited gaps such as broader deployment support, Product Shell maturity, installer quality, platform coverage, and implementation-wide conformance may move through declared promotion criteria. Permanent responsibility boundaries — legal authority, final organizational responsibility, correctness of arbitrary external systems, and unsupported universal exactly-once guarantees — do not disappear merely because RPOS matures.
+
+See [Claim Boundary Promotion](claim-boundary-promotion.md) for the current evidence boundary, promotion criteria, evidence owners, and permanent responsibility boundaries.
