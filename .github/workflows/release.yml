@@ -6,7 +6,7 @@ on:
       expected_version:
         description: Exact version expected from pyproject.toml
         required: true
-        default: "0.1.0a1"
+        default: "0.1.0a2"
         type: string
       publish:
         description: Publish verified distributions to PyPI
@@ -33,7 +33,7 @@ permissions:
   contents: read
 
 env:
-  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a1' }}
+  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a2' }}
 
 jobs:
   formal-assurance:
