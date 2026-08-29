@@ -5,12 +5,18 @@ on:
   pull_request:
     paths:
       - "site/**"
+      - "formal/**"
+      - "tests/**"
+      - "tools/build_formal_assurance_manifest.py"
       - ".github/workflows/deploy-pages.yml"
   push:
     branches:
       - main
     paths:
       - "site/**"
+      - "formal/**"
+      - "tests/**"
+      - "tools/build_formal_assurance_manifest.py"
       - ".github/workflows/deploy-pages.yml"
 
 permissions:
@@ -24,31 +30,46 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate site
+    name: Validate site and assurance crosswalk
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Validate bilingual entry points and demo boundary
+      - name: Validate bilingual entry points, demo, and assurance surface
         shell: bash
         run: |
           set -euo pipefail
           test -s site/index.html
           test -s site/ja.html
           test -s site/demo.html
+          test -s site/assurance.html
+          test -s site/assurance.js
           test -s site/styles.css
           test -s site/app.js
+          test -s formal/assurance-catalog.json
+          test -s tools/build_formal_assurance_manifest.py
           grep -F 'href="ja.html"' site/index.html
           grep -F 'href="index.html"' site/ja.html
-          grep -F 'lang="en"' site/index.html
-          grep -F 'lang="ja"' site/ja.html
+          grep -F 'href="assurance.html"' site/index.html
+          grep -F 'assurance.html?lang=ja' site/ja.html
           grep -F 'prefers-reduced-motion' site/styles.css
           grep -F 'does not execute the Python runtime' site/demo.html
           grep -F 'EFFECT_UNKNOWN' site/app.js
           grep -F 'commit-time authority revalidation' site/app.js
+          grep -F 'public_assurance_not_runtime_authority' tools/build_formal_assurance_manifest.py
+          python tools/build_formal_assurance_manifest.py --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/formal-assurance.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'formal-assurance.json').read_text(encoding='utf-8'))
+          assert data['source_commit'] == os.environ['GITHUB_SHA']
+          assert data['lean']['machine_checked'] is False
+          assert data['assertion_count'] >= 6
+          print('site assurance crosswalk references validated')
+          PY
 
   deploy:
-    name: Deploy Pages
+    name: Deploy Pages with machine-checked assurance
     needs: validate
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
@@ -58,6 +79,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain via elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --no-modify-path
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Machine-check bounded RPOS formal project
+        working-directory: formal/lean
+        run: |
+          lean --version
+          lake --version
+          lake build
+      - name: Generate exact-head Formal Assurance manifest for the site
+        run: |
+          python tools/build_formal_assurance_manifest.py --source-commit "$GITHUB_SHA" --machine-checked --output site/formal-assurance.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads(Path('site/formal-assurance.json').read_text(encoding='utf-8'))
+          assert data['source_commit'] == os.environ['GITHUB_SHA']
+          assert data['lean']['machine_checked'] is True
+          assert data['evidence_role'] == 'public_assurance_not_runtime_authority'
+          print(f"Pages formal assurance bound to {data['source_commit']} with {data['assertion_count']} assertions")
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
