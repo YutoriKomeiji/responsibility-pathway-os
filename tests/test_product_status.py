@@ -18,22 +18,28 @@ def test_product_status_matches_package_identity_and_release_boundary() -> None:
 
     assert status["package"] == project["name"]
     assert status["version"] == project["version"]
-    assert status["release_stage"] == "early_public_alpha_publishable_freeze"
-    assert status["publication_state"] == "not_published"
+    assert status["release_stage"] == "early_public_alpha_published"
+    assert status["publication_state"] == "pypi_published"
     assert status["production_ready"] is False
-    assert status["release_gate"]["publishable_freeze"] is True
+    assert status["release_gate"]["publishable_freeze"] is False
     assert status["release_gate"]["public_repository_migration_complete"] is True
-    assert status["release_gate"]["pypi_trusted_publisher_configured"] is False
+    assert status["release_gate"]["pypi_trusted_publisher_configured"] is True
     assert status["release_gate"]["explicit_human_gate_required"] is True
     surfaces = set(status["verified_surfaces"])
     assert "public_product_site_deployment" in surfaces
     assert "source_bound_formal_assurance_manifest" in surfaces
     assert "public_formal_assurance_viewer" in surfaces
+    assert "pypi_publication_via_trusted_publisher" in surfaces
     assurance = status["formal_assurance"]
     assert assurance["role"] == "public_assurance_not_runtime_authority"
     assert assurance["requires_machine_checked_lean_build"] is True
     assert assurance["crosslinks_runtime_tests"] is True
     assert assurance["includes_proof_ceiling_per_assertion"] is True
+    signature = status["semantic_signature"]
+    assert signature["product_class"] == "Responsibility Pathway OS"
+    assert signature["executable_runtime"] == "Python/SQLite operational runtime"
+    assert signature["formal_assurance"] == "Lean 4 machine-checked responsibility invariants"
+    assert signature["public_assurance_assertion_count"] == 6
 
 
 def test_product_status_keeps_high_impact_non_claims_explicit() -> None:
