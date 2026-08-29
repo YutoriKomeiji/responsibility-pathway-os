@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RPOS Formal Assurance Viewer: source-bound Lean 4 theorem evidence cross-linked with executable runtime tests and explicit proof ceilings.">
+  <title>RPOS Formal Assurance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="assurance.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">RPOS</span><span>Formal Assurance</span></a><nav><a href="index.html">Product</a><a href="demo.html">Demo</a><a id="language-link" href="assurance.html?lang=ja" lang="ja">日本語</a></nav></header>
+<main id="main" class="assurance-shell">
+<section class="assurance-hero"><p class="eyebrow" id="assurance-eyebrow">Public assurance / source-bound evidence</p><h1 id="assurance-title">See what RPOS machine-checks — and what it does not.</h1><p class="lede" id="assurance-intro">This view connects concrete operational risks to bounded Lean 4 theorems and executable Python tests. Lean evidence is an assurance layer, never runtime authority.</p></section>
+<section class="assurance-summary" aria-live="polite">
+  <article><span class="summary-label" id="summary-check-label">Lean build</span><strong id="summary-check">Loading…</strong></article>
+  <article><span class="summary-label" id="summary-count-label">Assurance assertions</span><strong id="summary-count">—</strong></article>
+  <article><span class="summary-label" id="summary-toolchain-label">Toolchain</span><strong id="summary-toolchain">—</strong></article>
+  <article><span class="summary-label" id="summary-commit-label">Source commit</span><strong><a id="summary-commit" href="#">—</a></strong></article>
+</section>
+<section class="section assurance-section">
+  <div class="section-heading"><div><p class="eyebrow" id="crosswalk-eyebrow">Evidence crosswalk</p><h2 id="crosswalk-title">Risk → theorem → runtime evidence</h2></div><p id="crosswalk-note">Every row is validated against the source tree when the manifest is built.</p></div>
+  <div id="assurance-list" class="assurance-list"></div>
+  <div id="assurance-error" class="notice assurance-error" hidden></div>
+</section>
+<section class="section split"><div><p class="eyebrow" id="ceiling-eyebrow">Proof ceiling</p><h2 id="ceiling-title">Machine-checked does not mean universally proven.</h2><p id="proof-ceiling">Loading proof boundary…</p></div><aside class="boundary-card"><h3 id="authority-title">Evidence is not authority</h3><p id="authority-copy">A passing Lean theorem does not authorize an operation, approve a Human Gate, validate an external effect, or transfer responsibility.</p></aside></section>
+</main>
+<footer><p>Responsibility Pathway OS · Formal Assurance Surface</p><nav><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/formal/lean">Lean sources</a><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os">Repository</a></nav></footer>
+</body>
+</html>
