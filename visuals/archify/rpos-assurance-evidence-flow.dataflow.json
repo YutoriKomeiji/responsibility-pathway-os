@@ -4,7 +4,7 @@
   "meta": {
     "title": "RPOS Formal Assurance Evidence Flow",
     "output": "site/visuals/rpos-assurance-evidence-flow.html",
-    "viewBox": [1160, 760],
+    "viewBox": [980, 760],
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
@@ -37,7 +37,7 @@
     { "from": "machine_check", "to": "manifest", "label": "machine_checked=true", "classification": "bounded theorem evidence", "variant": "emphasis", "route": "vertical-channel" },
     { "from": "tests", "to": "manifest", "label": "test crosswalk + source hashes", "classification": "runtime evidence", "variant": "default", "route": "straight", "labelAt": [423, 470] },
     { "from": "source", "to": "manifest", "label": "source_commit + catalog hashes", "classification": "provenance", "variant": "dashed", "route": "bottom-channel" },
-    { "from": "manifest", "to": "viewer", "label": "public assurance data", "classification": "read-only", "variant": "emphasis", "route": "straight", "labelAt": [638, 428] },
+    { "from": "manifest", "to": "viewer", "label": "public assurance data", "classification": "read-only", "variant": "emphasis", "route": "vertical-channel", "labelAt": [638, 428] },
     { "from": "viewer", "to": "human_authority", "label": "review context only", "classification": "no authority effect", "variant": "dashed", "route": "straight" }
   ],
   "cards": [
