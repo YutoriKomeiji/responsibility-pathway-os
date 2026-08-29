@@ -42,11 +42,11 @@
     { "id": "dispatch-verified", "from": "dispatching", "to": "verified", "variant": "emphasis", "route": "straight" },
     { "id": "verified-completed", "from": "verified", "to": "completed", "variant": "emphasis", "route": "straight" },
     { "id": "dispatch-unknown", "from": "dispatching", "to": "effect_unknown", "variant": "security", "fromSide": "right", "toSide": "top", "via": [[475, 157], [475, 260], [556, 260]] },
-    { "id": "dispatch-repair", "from": "dispatching", "to": "repair_required", "variant": "security", "fromSide": "bottom", "toSide": "top", "via": [[402, 210], [630, 210], [630, 357], [556, 357]] },
+    { "id": "dispatch-repair", "from": "dispatching", "to": "repair_required", "variant": "security", "fromSide": "bottom", "toSide": "right", "via": [[402, 200], [480, 200], [480, 350], [635, 350], [635, 407]] },
     { "id": "unknown-verified", "from": "effect_unknown", "to": "verified", "variant": "emphasis", "fromSide": "right", "toSide": "right", "via": [[640, 307], [640, 157]] },
     { "id": "unknown-repair", "from": "effect_unknown", "to": "repair_required", "variant": "security", "fromSide": "bottom", "toSide": "top", "route": "straight" },
     { "id": "repair-ready", "from": "repair_required", "to": "ready_to_resume", "variant": "default", "route": "straight" },
-    { "id": "resume-authorized", "from": "ready_to_resume", "to": "authorized", "variant": "emphasis", "fromSide": "bottom", "toSide": "left", "via": [[710, 530], [170, 530], [170, 157]] }
+    { "id": "resume-authorized", "from": "ready_to_resume", "to": "authorized", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "via": [[710, 530], [32, 530], [32, 100], [248, 100]] }
   ],
   "cards": [
     { "dot": "cyan", "title": "Authority Boundary", "items": ["A model proposal is not Operational Authority", "Human Gate approval is checked against the declared approval authority", "READY_TO_RESUME still requires explicit resume authority"] },
