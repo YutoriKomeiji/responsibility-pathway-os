@@ -73,8 +73,15 @@ Initial adoption prioritizes Japanese organizations and enterprises, economic an
 
 At the same time, core semantics, formal evidence, security/release engineering, package quality, terminology, and evidence discipline are maintained at a level suitable for international technical review. Even when Japanese material is designed first, product, adoption, operations, profile, review, value, release, and public technical documentation is maintained as synchronized Japanese/English pairs within the same change.
 
-## Claim boundary
+## Claim boundary and promotion
 
 RPOS does not need to understate capabilities that are actually implemented and verified. Where implementation, tests, and formal evidence support them, terms such as `runtime`, `operating system`, `formal`, `verified`, `assurance`, `security`, and `evidence` may be used with their supporting scope.
 
-At the same time, unproven or unverified areas remain visible through the `Not Proven` boundary. That boundary exists so an adopter can distinguish the current evidence-backed capability surface from the next available extension surface, not to negate the product's demonstrated value.
+Public boundaries are classified rather than flattened into one disclaimer list:
+
+- **evidence-limited boundaries** may move when scoped, reviewable evidence satisfies declared promotion criteria and the corresponding public claim is explicitly promoted;
+- **permanent responsibility boundaries** do not disappear merely through product maturity because they belong to qualified humans, institutions, integrators, external systems, or other responsibility layers.
+
+This distinction exists so an adopter can see both the current evidence-backed capability surface and the route by which a temporary boundary can move, without confusing that route with responsibilities RPOS must not appropriate.
+
+See [Claim Boundary Promotion](claim-boundary-promotion.md) for the current criteria, evidence owners, and promotion states. The normative product direction remains [RPOS Operational Product Experience](operational-product-experience.md): the Public Alpha is an implemented core slice of that Operational System direction, not a redefinition of RPOS as a generic library.
