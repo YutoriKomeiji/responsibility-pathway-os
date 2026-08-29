@@ -1,16 +1,67 @@
 <!-- RPOS-DOC-ID: RPOS-PRODUCT-EXPERIENCE-001 -->
 <!-- RPOS-DOC-LANG: ja -->
 <!-- RPOS-DOC-VERSION: 0.1 -->
-<!-- RPOS-DOC-STATUS: incubating -->
+<!-- RPOS-DOC-STATUS: normative-product-direction -->
 <!-- RPOS-DOC-COUNTERPART: ../en/operational-product-experience.md -->
 
 # RPOS Operational Product Experience
 
 ## 目的
 
-RPOSは、モデル、チャットボット、汎用Agent orchestration frameworkではなく、**Operational System**として開発する。モデルやAgentは仕事を提案できるが、提案から権限ある実行、外部効果の検証、回復、再開、完了までの責任を持つ遷移はRPOSが管理する。
+RPOSは、モデル、チャットボット、generic library、汎用Agent orchestration frameworkではなく、**Operational System**として開発する。モデルやAgentは仕事を提案できるが、提案から権限ある実行、外部効果の検証、回復、再開、完了までの責任を持つ遷移はRPOSが管理する。
 
 したがって公開目標は、開発者が導入できるalphaより強い。ユーザーがRPOSをインストールし、安全なdefaultで起動し、なぜ処理が進んでいるのか・止まっているのかを理解し、不確実性から回復し、未解決責任を失わず後から戻れる状態を目指す。
+
+この文書はRPOSのnormativeなproduct directionである。Early Public Alphaではこの体験の一部だけを実装していてもよいが、partial releaseだからといってRPOSをgeneric Python libraryへ再定義してはならない。Product maturityは、以下のcore invariantを保ちながらこの方向へ進める。
+
+## Core invariants — 変えてはいけない中核
+
+完全なProduct Shellが存在する前から、次はRPOSをRPOSとして定義する。
+
+- **RPOSが所有するのは知能ではなく運用である。** Model / Agentは交換可能なproposal sourceであり、authority sourceではない。
+- proposal、model statement、transport receiptだけではOperational Authorityにもverified external effectにもならない。
+- Human Gate、authority、target、effect、evidence、contextは明示的なresponsibility-bearing boundaryとして保持する。
+- 不確実なexternal effectは不確実なまま保持し、false successやblind retryへ変換しない。
+- restart、reconciliation、repair、resumeでも未解決責任を消さない。
+- repair readinessだけでexecution authorityを黙って復元せず、resumeは明示的にauthorizeされた経路を要求する。
+- 自動的に閉じられない責任にはResidual OwnerとHuman Return Pointを残す。
+- read-only observationはAuthorityやResponsibility Stateを変更しない。
+
+これらを壊す変更は通常のproduct evolutionではない。RPOSが何であるかを変えるため、明示的なarchitecture reviewを必要とする。
+
+## 0.1.0a1で実装済みのslice
+
+0.1.0a1 Public Alphaは、このproduct directionのOperational Coreを次の範囲で実装している。
+
+- durableなResponsibility Stateとevent history
+- Human Gateとauthorization boundary
+- dispatch attempt / external effectの分離
+- `EFFECT_UNKNOWN`による不確実性保持
+- crash-consistentなstate/event persistenceとrestart recovery
+- observation-only reconciliation
+- repair、明示的resume authorization、Human Return path
+- Residual Owner / Human Return Point structure
+- exact effect/target bindingを持つopt-in commit-time authority revalidation
+- evidence/provenance surface、実行可能example、CLI/package surface、限定的Lean evidence
+- lifecycleを説明するPublic Product Siteとbrowser state-path explorer。simulationをPython runtime executionとは主張しない
+
+このsliceが支えるのはPublic Alpha claimであり、まだ完全なOperational Product Experienceではない。
+
+## Post-alpha product targets
+
+次は「今は未実装だからlibraryに縮退した」という意味ではなく、Operational Systemとして完成度を上げるproduct-direction targetである。
+
+- RPOS内部を読まなくてもoperational questionへ答えられるProduct Shell / Observatory
+- safe local-first service/runtime defaultとstartup diagnostics
+- 後続evidenceで優先度が変わらない限りWindowsをinitial targetとしたone-click installer
+- 通常の初回利用ではGit/Python知識を要求しないこと
+- Operational Evidenceのbackup/export
+- update / rollback / uninstall strategy
+- safe local first boot後のoptional model/provider connection
+- より広いsupported Effect Adapterとfield-validated deployment profile
+- approval、evidence、unresolved ownership、policy、recovery historyを横断するreusable operational memory
+
+これらをpublic capability claimへ昇格するには実装とreview可能なevidenceが必要である。詳細は [Claim Boundary Promotion](claim-boundary-promotion.md) を参照する。
 
 ## Product promise
 
@@ -151,6 +202,10 @@ Lean 4は飾りのassurance badgeではなく、小さく重要な境界をユ�
 
 JA/ENの初心者向け資料では、advanced theorem provingより先に、RPOSの実例から「形式検証がなぜ役立つか」を理解できるようにする。
 
-## Not Proven
+## Claim boundary と promotion
 
-この文書はproduction readiness、universal safety、regulatory compliance、任意モデルのcorrectness、任意外部システムに対するexactly-once execution、将来のinstaller/UI implementationのcorrectnessを主張しない。段階的に実装・検証するproduct boundaryとresponsibility boundaryを定義する。
+このproduct directionに書かれた将来targetは、それだけではcurrent capabilityにならない。Public claimは、実装とscopeを明示したevidenceが支える場合だけ前進する。
+
+broader deployment support、Product Shell maturity、installer quality、platform coverage、implementation-wide conformance等のevidence-limited gapは宣言済みpromotion criteriaによって前進できる。一方、legal authority、final organizational responsibility、任意external systemのcorrectness、必要contractを持たないsystemへのuniversal exactly-once等のpermanent responsibility boundaryは、RPOSが成熟しても自動的には消えない。
+
+現在のEvidence Boundary、Promotion Criteria、Evidence Owner、Permanent Responsibility Boundaryは [Claim Boundary Promotion](claim-boundary-promotion.md) を参照する。
