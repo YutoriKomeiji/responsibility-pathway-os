@@ -2,10 +2,17 @@
   "product": "RPOS — Responsibility Pathway Operating System",
   "package": "responsibility-pathway-os",
   "version": "0.1.0a1",
-  "release_stage": "early_public_alpha_publishable_freeze",
-  "publication_state": "not_published",
+  "release_stage": "early_public_alpha_published",
+  "publication_state": "pypi_published",
   "production_ready": false,
   "release_claim": "engineering evaluation and bounded pilots",
+  "semantic_signature": {
+    "product_class": "Responsibility Pathway OS",
+    "executable_runtime": "Python/SQLite operational runtime",
+    "formal_assurance": "Lean 4 machine-checked responsibility invariants",
+    "public_assurance_assertion_count": 6,
+    "assurance_crosswalk": "operational risk -> Lean theorem -> Python runtime test -> model scope -> proof ceiling"
+  },
   "verified_surfaces": [
     "standalone_python_tests",
     "source_examples",
@@ -18,7 +25,8 @@
     "bounded_lean4_compilation",
     "source_bound_formal_assurance_manifest",
     "public_formal_assurance_viewer",
-    "public_product_site_deployment"
+    "public_product_site_deployment",
+    "pypi_publication_via_trusted_publisher"
   ],
   "formal_assurance": {
     "role": "public_assurance_not_runtime_authority",
@@ -99,9 +107,9 @@
     "broader_field_os_and_environment_evidence"
   ],
   "release_gate": {
-    "publishable_freeze": true,
+    "publishable_freeze": false,
     "public_repository_migration_complete": true,
-    "pypi_trusted_publisher_configured": false,
+    "pypi_trusted_publisher_configured": true,
     "explicit_human_gate_required": true
   }
 }
