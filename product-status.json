@@ -16,8 +16,20 @@
     "deterministic_public_export_boundary",
     "cyclonedx_sbom_generation",
     "bounded_lean4_compilation",
+    "source_bound_formal_assurance_manifest",
+    "public_formal_assurance_viewer",
     "public_product_site_deployment"
   ],
+  "formal_assurance": {
+    "role": "public_assurance_not_runtime_authority",
+    "catalog": "formal/assurance-catalog.json",
+    "manifest_builder": "tools/build_formal_assurance_manifest.py",
+    "viewer": "site/assurance.html",
+    "release_evidence": "formal-assurance.json",
+    "requires_machine_checked_lean_build": true,
+    "crosslinks_runtime_tests": true,
+    "includes_proof_ceiling_per_assertion": true
+  },
   "explicit_non_claims": [
     "production_availability_or_slo",
     "legal_or_compliance_certification",

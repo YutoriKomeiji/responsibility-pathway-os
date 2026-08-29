@@ -1,0 +1,68 @@
+name: RPOS formal assurance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "formal/**"
+      - "tests/**"
+      - "tools/build_formal_assurance_manifest.py"
+      - "site/assurance.html"
+      - "site/assurance.js"
+      - ".github/workflows/formal-assurance.yml"
+  pull_request:
+    paths:
+      - "formal/**"
+      - "tests/**"
+      - "tools/build_formal_assurance_manifest.py"
+      - "site/assurance.html"
+      - "site/assurance.js"
+      - ".github/workflows/formal-assurance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  assurance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate catalog-to-source crosswalk
+        run: |
+          python tools/build_formal_assurance_manifest.py --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/precheck.json"
+      - name: Install pinned Lean toolchain via elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --no-modify-path
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Machine-check bounded Lean project
+        working-directory: formal/lean
+        run: |
+          lean --version
+          lake --version
+          lake build
+      - name: Build source-bound public assurance evidence
+        run: |
+          python tools/build_formal_assurance_manifest.py --source-commit "$GITHUB_SHA" --machine-checked --output "$RUNNER_TEMP/formal-assurance.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'formal-assurance.json').read_text(encoding='utf-8'))
+          assert data['schema_version'] == 'rpos.formal-assurance.manifest.v0.1'
+          assert data['source_commit'] == os.environ['GITHUB_SHA']
+          assert data['lean']['machine_checked'] is True
+          assert data['assertion_count'] >= 6
+          assert data['evidence_role'] == 'public_assurance_not_runtime_authority'
+          print('formal assurance manifest validated')
+          PY
+      - name: Upload exact-head formal assurance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpos-formal-assurance-${{ github.sha }}
+          path: ${{ runner.temp }}/formal-assurance.json
+          if-no-files-found: error
+          retention-days: 30
