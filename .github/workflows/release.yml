@@ -20,9 +20,14 @@ on:
       - "README.md"
       - "README.ja.md"
       - "product-status.json"
+      - "formal/**"
+      - "tests/**"
+      - "site/assurance.html"
+      - "site/assurance.js"
       - "src/rpos/sbom.py"
       - "src/rpos/hash_bundle.py"
       - "tools/build_public_export_manifest.py"
+      - "tools/build_formal_assurance_manifest.py"
 
 permissions:
   contents: read
@@ -31,7 +36,49 @@ env:
   RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a1' }}
 
 jobs:
+  formal-assurance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate assurance catalog references
+        run: python tools/build_formal_assurance_manifest.py --source-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/precheck.json"
+      - name: Install pinned Lean toolchain via elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --no-modify-path
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Machine-check bounded Lean project
+        working-directory: formal/lean
+        run: |
+          lean --version
+          lake --version
+          lake build
+      - name: Generate exact-head formal assurance manifest
+        run: |
+          python tools/build_formal_assurance_manifest.py --source-commit "$GITHUB_SHA" --machine-checked --output "$RUNNER_TEMP/formal-assurance.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'formal-assurance.json').read_text(encoding='utf-8'))
+          assert data['source_commit'] == os.environ['GITHUB_SHA']
+          assert data['lean']['machine_checked'] is True
+          assert data['evidence_role'] == 'public_assurance_not_runtime_authority'
+          assert data['assertion_count'] >= 6
+          print('release formal assurance is machine-checked and exact-head bound')
+          PY
+      - name: Upload exact-head formal assurance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpos-formal-assurance-${{ github.sha }}
+          path: ${{ runner.temp }}/formal-assurance.json
+          if-no-files-found: error
+          retention-days: 30
+
   build-and-verify:
+    needs: formal-assurance
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -112,28 +159,37 @@ jobs:
               raise SystemExit(f'sdist metadata mismatch: Name={metadata["Name"]!r}, Version={metadata["Version"]!r}')
           print('wheel and sdist metadata agree with requested release identity')
           PY
+      - name: Download exact-head formal assurance evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: rpos-formal-assurance-${{ github.sha }}
+          path: release-evidence/
       - name: Generate exact-head release evidence
         run: |
           mkdir -p release-evidence
           python tools/build_public_export_manifest.py --source-commit "$GITHUB_SHA" --output release-evidence/public-export-manifest.json
           python -m rpos.sbom pyproject.toml --source-commit "$GITHUB_SHA" --output release-evidence/sbom.cdx.json
-          python -m rpos.hash_bundle dist/* release-evidence/public-export-manifest.json release-evidence/sbom.cdx.json --source-commit "$GITHUB_SHA" --output release-evidence/release-hashes.json
+          python -m rpos.hash_bundle dist/* release-evidence/public-export-manifest.json release-evidence/sbom.cdx.json release-evidence/formal-assurance.json --source-commit "$GITHUB_SHA" --output release-evidence/release-hashes.json
           python - <<'PY'
           import json, os
           from pathlib import Path
           expected = os.environ['GITHUB_SHA']
           manifest = json.loads(Path('release-evidence/public-export-manifest.json').read_text(encoding='utf-8'))
           sbom = json.loads(Path('release-evidence/sbom.cdx.json').read_text(encoding='utf-8'))
+          assurance = json.loads(Path('release-evidence/formal-assurance.json').read_text(encoding='utf-8'))
           hashes = json.loads(Path('release-evidence/release-hashes.json').read_text(encoding='utf-8'))
           assert manifest['source_commit'] == expected
           props = {x['name']: x['value'] for x in sbom['metadata']['component']['properties']}
           assert props['rpos:source-commit'] == expected
+          assert assurance['source_commit'] == expected
+          assert assurance['lean']['machine_checked'] is True
+          assert assurance['evidence_role'] == 'public_assurance_not_runtime_authority'
           assert hashes['source_commit'] == expected
           names = {item['name'] for item in hashes['artifacts']}
           assert any(name.endswith('.whl') for name in names)
           assert any(name.endswith('.tar.gz') for name in names)
-          assert {'public-export-manifest.json', 'sbom.cdx.json'} <= names
-          print('release evidence is source-bound to exact workflow HEAD')
+          assert {'public-export-manifest.json', 'sbom.cdx.json', 'formal-assurance.json'} <= names
+          print('release evidence, including machine-checked formal assurance, is source-bound to exact workflow HEAD')
           PY
       - name: Upload verified distributions
         uses: actions/upload-artifact@v4
