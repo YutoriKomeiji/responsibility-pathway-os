@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "RPOS Operational Architecture",
+    "output": "site/visuals/rpos-operational-architecture.html",
+    "visual_preset": "blueprint",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "authority-path", "label": "Authority to dispatch", "focus": ["requester", "rpos", "human_authority", "adapter", "external_system"], "note": "Follow proposal, explicit authority, and the bounded dispatch boundary." },
+      { "id": "evidence-path", "label": "Evidence and reconciliation", "focus": ["external_system", "observer", "rpos", "sqlite", "observatory"], "note": "Follow readback and unresolved responsibility back into durable state and human-visible inspection." },
+      { "id": "assurance-separation", "label": "Assurance is not authority", "focus": ["formal_assurance", "rpos", "human_authority"], "note": "Formal assurance explains structural invariants but does not authorize runtime operations." }
+    ]
+  },
+  "components": [
+    { "id": "requester", "type": "external", "label": "Requester / Model", "sublabel": "proposal source", "pos": [40, 290], "size": [138, 64], "tag": "proposal ≠ authority" },
+    { "id": "rpos", "type": "backend", "label": "RPOS Core", "sublabel": "service + state machine", "pos": [270, 290], "size": [150, 70], "tag": "owns operation" },
+    { "id": "human_authority", "type": "security", "label": "Human Authority", "sublabel": "approve / deny / resume", "pos": [270, 105], "size": [150, 66], "tag": "authority owner" },
+    { "id": "sqlite", "type": "database", "label": "SQLite Store", "sublabel": "state + attempts + events", "pos": [520, 105], "size": [150, 66], "tag": "durable facts" },
+    { "id": "adapter", "type": "backend", "label": "Operation Adapter", "sublabel": "external dispatch boundary", "pos": [520, 290], "size": [154, 68], "tag": "effect attempt" },
+    { "id": "external_system", "type": "external", "label": "External System", "sublabel": "effect outside RPOS", "pos": [780, 290], "size": [150, 68], "tag": "third party" },
+    { "id": "observer", "type": "backend", "label": "Reconciliation Observer", "sublabel": "independent readback", "pos": [780, 470], "size": [168, 68], "tag": "evidence only" },
+    { "id": "observatory", "type": "cloud", "label": "Responsibility Observatory", "sublabel": "read-only inspection", "pos": [520, 470], "size": [170, 68], "tag": "no mutation" },
+    { "id": "formal_assurance", "type": "security", "label": "Formal Assurance Surface", "sublabel": "Lean theorem + test crosswalk", "pos": [270, 470], "size": [176, 70], "tag": "not runtime authority" }
+  ],
+  "boundaries": [
+    { "kind": "security-group", "label": "RPOS operational boundary", "wraps": ["rpos", "sqlite", "adapter", "observatory"], "pad": 22 },
+    { "kind": "region", "label": "External-effect domain", "wraps": ["external_system", "observer"], "pad": 18 }
+  ],
+  "connections": [
+    { "from": "requester", "to": "rpos", "label": "proposal", "variant": "default" },
+    { "from": "rpos", "to": "human_authority", "label": "Human Gate / return", "variant": "security", "route": "orthogonal-v" },
+    { "from": "human_authority", "to": "rpos", "label": "approve / deny / resume", "variant": "emphasis", "route": "orthogonal-v" },
+    { "from": "rpos", "to": "sqlite", "label": "atomic state + event", "variant": "default", "route": "orthogonal-v" },
+    { "from": "sqlite", "to": "rpos", "label": "restart recovery", "variant": "dashed", "route": "orthogonal-v" },
+    { "from": "rpos", "to": "adapter", "label": "authorized dispatch", "variant": "emphasis" },
+    { "from": "adapter", "to": "external_system", "label": "effect attempt", "variant": "security" },
+    { "from": "external_system", "to": "adapter", "label": "transport receipt", "variant": "dashed" },
+    { "from": "external_system", "to": "observer", "label": "independent readback", "variant": "emphasis", "route": "orthogonal-v" },
+    { "from": "observer", "to": "rpos", "label": "reconciliation evidence", "variant": "emphasis", "fromSide": "left", "toSide": "bottom", "via": [[700, 505], [345, 505], [345, 360]] },
+    { "from": "sqlite", "to": "observatory", "label": "read-only state/history", "variant": "dashed", "route": "orthogonal-v" },
+    { "from": "formal_assurance", "to": "rpos", "label": "public structural assurance", "variant": "dashed", "route": "orthogonal-v" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Operation Ownership", "items": ["RPOS owns the operation pathway, not model intelligence", "Human Authority remains separate from proposal generation and execution", "SQLite persists responsibility before and after external dispatch boundaries"] },
+    { "dot": "amber", "title": "Receipt vs Effect", "items": ["Transport receipt is evidence about transport, not proof of external effect", "Required independent readback may reconcile EFFECT_UNKNOWN", "Observer failure stays unresolved rather than manufacturing success"] },
+    { "dot": "emerald", "title": "Assurance Separation", "items": ["Lean checks bounded structural invariants", "Responsibility Observatory is read-only", "Neither formal assurance nor visualization creates Operational Authority"] }
+  ]
+}
