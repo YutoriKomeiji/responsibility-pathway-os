@@ -21,24 +21,15 @@ HERE = Path(__file__).resolve().parent
 
 
 class HttpEffectAdapter:
-    def __init__(
-        self,
-        base_url: str,
-        *,
-        kind: str,
-        external_id: str,
-        payload: dict[str, object],
-        mode: str = "normal",
-    ) -> None:
+    def __init__(self, base_url: str, *, kind: str, external_id: str, payload: dict[str, object], mode: str = "normal") -> None:
         self.url = f"{base_url}/effects/{kind}/{external_id}"
         self.payload = payload
         self.mode = mode
 
     def execute(self, *, operation_id: str, attempt_id: str, idempotency_key: str) -> AdapterResult:
-        body = json.dumps(self.payload, sort_keys=True).encode("utf-8")
         request = urllib.request.Request(
             self.url,
-            data=body,
+            data=json.dumps(self.payload, sort_keys=True).encode("utf-8"),
             method="POST",
             headers={
                 "Content-Type": "application/json",
@@ -102,13 +93,7 @@ class HttpReadbackObserver:
         )
 
 
-def definition(
-    operation_id: str,
-    action_name: str,
-    *,
-    approval_authority: str,
-    residual_owner: str = "operations_team",
-) -> OperationDefinition:
+def definition(operation_id: str, action_name: str, *, approval_authority: str) -> OperationDefinition:
     return OperationDefinition(
         operation_id=operation_id,
         action_name=action_name,
@@ -116,7 +101,7 @@ def definition(
         execution_actor="integration_worker",
         approval_authority=approval_authority,
         human_return_point=f"{approval_authority}-review",
-        residual_owner=residual_owner,
+        residual_owner="operations_team",
         resume_authority=approval_authority,
         requires_human_gate=True,
         verification_required=True,
@@ -167,7 +152,7 @@ def deployment_repair(workdir: Path, base_url: str) -> dict[str, object]:
     rejected = service.dispatch(
         operation_id,
         attempt_id="deploy-attempt-1",
-        idempotency_key="deploy-release-2026.08.30",
+        idempotency_key="deploy-rejected-attempt-1",
         adapter=HttpEffectAdapter(
             base_url,
             kind="deployment",
@@ -210,9 +195,7 @@ def deployment_repair(workdir: Path, base_url: str) -> dict[str, object]:
 def access_denied(workdir: Path, base_url: str) -> dict[str, object]:
     service = RposService(str(workdir / "access-rpos.db"))
     operation_id = "privileged-access-revoke-2026-001"
-    proposed = service.propose(
-        definition(operation_id, "revoke_privileged_access", approval_authority="security_duty_manager")
-    )
+    proposed = service.propose(definition(operation_id, "revoke_privileged_access", approval_authority="security_duty_manager"))
     denied = service.deny(
         operation_id,
         actor="security_duty_manager",
@@ -237,7 +220,12 @@ def _run_worker(name: str, workdir: Path, base_url: str) -> dict[str, object]:
         "--base-url",
         base_url,
     ]
-    completed = subprocess.run(command, check=True, text=True, capture_output=True)
+    completed = subprocess.run(command, check=False, text=True, capture_output=True)
+    if completed.returncode != 0:
+        raise RuntimeError(
+            f"worker {name!r} failed with code {completed.returncode}; "
+            f"stdout={completed.stdout!r}; stderr={completed.stderr!r}"
+        )
     return json.loads(completed.stdout)
 
 
@@ -248,9 +236,15 @@ def _read_json(url: str) -> dict[str, object]:
 
 def run_suite(workdir: Path) -> dict[str, object]:
     ready = workdir / "external-ready.json"
-    external_db = workdir / "external-effects.db"
     process = subprocess.Popen(
-        [sys.executable, str(HERE / "external_service.py"), "--db", str(external_db), "--ready", str(ready)],
+        [
+            sys.executable,
+            str(HERE / "external_service.py"),
+            "--db",
+            str(workdir / "external-effects.db"),
+            "--ready",
+            str(ready),
+        ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         text=True,
@@ -264,8 +258,7 @@ def run_suite(workdir: Path) -> dict[str, object]:
             if time.monotonic() > deadline:
                 raise TimeoutError("external service did not become ready")
             time.sleep(0.05)
-        port = json.loads(ready.read_text(encoding="utf-8"))["port"]
-        base_url = f"http://127.0.0.1:{port}"
+        base_url = f"http://127.0.0.1:{json.loads(ready.read_text(encoding='utf-8'))['port']}"
 
         payment_first = _run_worker("payment-dispatch", workdir, base_url)
         payment_after_restart = _run_worker("payment-reconcile", workdir, base_url)
@@ -326,14 +319,13 @@ def main() -> int:
     if args.worker:
         if not args.workdir or not args.base_url:
             parser.error("--worker requires --workdir and --base-url")
-        workdir = Path(args.workdir)
         workers = {
             "payment-dispatch": payment_dispatch,
             "payment-reconcile": payment_reconcile,
             "deployment-repair": deployment_repair,
             "access-denied": access_denied,
         }
-        print(json.dumps(workers[args.worker](workdir, args.base_url), sort_keys=True))
+        print(json.dumps(workers[args.worker](Path(args.workdir), args.base_url), sort_keys=True))
         return 0
 
     if args.workdir:
