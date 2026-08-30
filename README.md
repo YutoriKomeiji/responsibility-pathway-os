@@ -6,6 +6,13 @@
 
 # RPOS — Responsibility Pathway Operating System
 
+[![Standalone Verification](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/standalone-verify.yml/badge.svg?branch=main)](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/standalone-verify.yml)
+[![Formal Assurance](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/formal-assurance.yml/badge.svg?branch=main)](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/formal-assurance.yml)
+[![Field Portability](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/field-portability.yml/badge.svg?branch=main)](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/field-portability.yml)
+[![PyPI](https://img.shields.io/pypi/v/responsibility-pathway-os?label=PyPI)](https://pypi.org/project/responsibility-pathway-os/)
+[![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
+[![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
+
 **Executable responsibility pathways in Python, with critical responsibility invariants machine-checked in Lean 4.**
 
 RPOS is an independently engineered, open-source Responsibility Pathway OS for consequential AI and automation workflows. It combines a Python/SQLite executable runtime with a Lean 4 Formal Assurance Surface for selected invariants covering Human Gate, operational authority, dispatch, external-effect verification, uncertainty, recovery, resumption, and completion.
