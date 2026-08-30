@@ -1,7 +1,7 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: ja -->
 <!-- RPOS-DOC-VERSION: 0.1.0a2 -->
-<!-- RPOS-DOC-STATUS: public-alpha-release-candidate -->
+<!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: README.md -->
 
 # RPOS — Responsibility Pathway Operating System
@@ -9,6 +9,8 @@
 **Pythonで実行可能な責任経路と、Lean 4でmachine-checkされた重要な責任不変条件を統合するResponsibility Pathway OSです。**
 
 RPOSは、影響を伴うAI・自動化ワークフローのために独立開発されているオープンソースのResponsibility Pathway OSです。Python/SQLiteによる実行runtimeと、Human Gate、Operational Authority、dispatch、外部作用検証、不確実性、修復、再開、完了に関する選択された不変条件をLean 4で機械検証するFormal Assurance Surfaceを組み合わせます。
+
+> **Project identity / 帰属について:** RPOSは `YutoriKomeiji/responsibility-pathway-os` において、Responsibility Pathway lineageの中で独立開発されています。株式会社GhostDrift数理研究所の開発物・関連プロジェクト・同社「責任OS」の実装ではありません。用語の類似は、共通の著者・所有者・開発系譜を意味しません。
 
 RPOSはmodel wrapperでも、policy documentでも、logging layerでもありません。責任を伴う状態を次の経路として実行可能に保持します。
 
@@ -73,16 +75,14 @@ Modelは交換可能なproposal sourceであり、proposalを出しただけで�
 
 Version: **0.1.0a2 — Early Public Alpha / Executable Preview**
 
-`responsibility-pathway-os==0.1.0a2` は現在のrelease candidateです。前版 `0.1.0a1` はPyPIで公開済みです。`0.1.0a2` はexact source commitが宣言済みrelease routeを通過した後にのみ公開します。
-
-Python 3.11+ が必要です。
+`responsibility-pathway-os==0.1.0a2` は **2026-08-29** にPyPI Trusted Publishing経由で公開済みで、現在のPublic Alpha releaseです。Python 3.11+ が必要です。
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
 rpos --db rpos.db boot
 ```
 
-上のinstall commandは `0.1.0a2` のPyPI公開後に有効になります。それまではsource checkoutで評価できます。
+現在のrepository sourceから評価する場合:
 
 ```bash
 python -m pip install -e .
@@ -111,7 +111,7 @@ RPOSはそれを状態として消しません。
 
 ## 実行可能サンプル
 
-8つの公開scenarioがあります。
+8つのcompactな公開scenarioがあります。
 
 ```bash
 python examples/happy_path_verified.py
@@ -125,6 +125,24 @@ python examples/reconciliation_unresolved_human_return.py
 ```
 
 Human Gate承認/拒否、`EFFECT_UNKNOWN`、restart、reconciliation、repair、explicit resume authority、replay guard、adapter exception、Human Returnを確認できます。これは各限定scenarioについてのexecutable evidenceです。
+
+## Production-grade operational demo suite
+
+現在の `main` には `examples/production_grade_demos/` 以下に、より実運用へ近いexecutable integration scenarioもあります。これはPyPI `0.1.0a2` artifactの**公開後**に追加されたため、demo sourceそのものが公開済み `0.1.0a2` wheel/sdistへ含まれているとは主張しません。current source checkoutから実行してください。
+
+```bash
+python examples/production_grade_demos/run_demo.py
+```
+
+このsuiteは製品の `RposService` とRPOS SQLite persistence/transition logicを使用し、別processのlocalhost HTTP serviceが別SQLiteへ外部effectを書き込みます。RPOS state machineをdemo側でコピー・再実装していません。
+
+3つのscenarioがあります。
+
+- **仕入先支払の曖昧性** — 外部serviceが支払effectをcommitした直後にconnectionを切断し、RPOSは `EFFECT_UNKNOWN` を保持します。実際にPython processを再起動した後、独立readbackでeffectを確認し、重複dispatchなしで完了します。
+- **production deploymentの拒否・修復・再承認** — 外部controllerの拒否で `REPAIR_REQUIRED` に入り、修復後も明示的なhuman resume authorityを必要とします。fresh dispatch identityを使用し、receiptだけでは完了せず、独立readback後にcompletionへ進みます。
+- **特権access剥奪のHuman Gate拒否** — Human Gateがdenyした場合、外部side effect countが0のままであることを確認します。
+
+localhost serviceは再現可能なintegration fixtureであり、実際の決済事業者、本番deployment controller、IAM providerではありません。これらのpassは宣言されたscenarioをtested environmentで確認するもので、production readinessや任意外部systemの正しさを確立しません。
 
 ## Lean 4 Formal Assurance Surface
 
@@ -157,7 +175,7 @@ Formal Assurance Viewerはexact site commitから生成され、Lean projectのm
 Release routeには次が含まれます。
 
 - Python test suite全体
-- 8つのsource example実行
+- 8つのcompact source example実行
 - wheel/sdist buildとclean install
 - repository外からのinstalled CLI/API check
 - exact-HEAD public-export reconstruction
@@ -167,6 +185,8 @@ Release routeには次が含まれます。
 - pinned Lean 4 `lake build`
 - exact-head Formal Assurance manifest
 - machine-checked assuranceとverified architecture visualを含むGitHub Pages validation/deployment
+
+current-mainのproduction-grade demo suiteは、その追加後のrepository test/CI routeでも実行されます。
 
 これらのpassは宣言されたscope内のengineering evidenceです。production readiness、法令compliance、universal safety、組織authority、任意外部systemの正しさ、implementation-wide formal correctnessを自動的に確立しません。
 
@@ -191,10 +211,12 @@ Permanent boundaryには、法的/規制authority、任意外部systemの正し�
 
 ## Project surfaces
 
+- PyPI: `responsibility-pathway-os==0.1.0a2`
 - GitHub Pages product site / architecture maps
 - `site/assurance.html` — Formal Assurance Viewer
 - `formal/assurance-catalog.json` — theorem/runtime-test crosswalk
 - `product-status.json` — machine-readable release / claim state
+- `examples/production_grade_demos/` — current-main executable integration suite
 - `docs/ja/public-alpha-evaluation-guide.md` — evaluation route
 - `CHANGELOG.md`
 - `SECURITY.md`, `SUPPORT.md`, `CONTRIBUTING.md`

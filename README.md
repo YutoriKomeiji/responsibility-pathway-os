@@ -1,7 +1,7 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: en -->
 <!-- RPOS-DOC-VERSION: 0.1.0a2 -->
-<!-- RPOS-DOC-STATUS: public-alpha-release-candidate -->
+<!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: README.ja.md -->
 
 # RPOS — Responsibility Pathway Operating System
@@ -9,6 +9,8 @@
 **Executable responsibility pathways in Python, with critical responsibility invariants machine-checked in Lean 4.**
 
 RPOS is an independently engineered, open-source Responsibility Pathway OS for consequential AI and automation workflows. It combines a Python/SQLite executable runtime with a Lean 4 Formal Assurance Surface for selected invariants covering Human Gate, operational authority, dispatch, external-effect verification, uncertainty, recovery, resumption, and completion.
+
+> **Project identity / attribution:** RPOS is independently developed within the Responsibility Pathway lineage by the `YutoriKomeiji/responsibility-pathway-os` project. It is **not** developed by, affiliated with, or an implementation of GhostDrift Mathematical Institute or its "Responsibility OS" work. Similar terminology does not imply common authorship, ownership, or lineage.
 
 RPOS is not a model wrapper, a policy document, or a logging layer. It keeps responsibility-bearing state executable across:
 
@@ -69,16 +71,14 @@ The lineage centers on responsibility continuity across judgment, authorization,
 
 Version: **0.1.0a2 — Early Public Alpha / Executable Preview**
 
-`responsibility-pathway-os==0.1.0a2` is the current release candidate. The previous `0.1.0a1` alpha is publicly available on PyPI; `0.1.0a2` will be published only after its exact source commit passes the declared release route.
-
-Python 3.11+ is required.
+`responsibility-pathway-os==0.1.0a2` was published to PyPI on **2026-08-29** through PyPI Trusted Publishing and is the current public alpha release. Python 3.11+ is required.
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
 rpos --db rpos.db boot
 ```
 
-The installation command above becomes valid when `0.1.0a2` is published to PyPI. Until then, use a source checkout for evaluation.
+For evaluation from the current repository source:
 
 ```bash
 python -m pip install -e .
@@ -107,7 +107,7 @@ RPOS keeps those cases explicit:
 
 ## Executable examples
 
-The repository includes eight executable scenarios:
+The repository includes eight compact executable scenarios:
 
 ```bash
 python examples/happy_path_verified.py
@@ -121,6 +121,24 @@ python examples/reconciliation_unresolved_human_return.py
 ```
 
 They exercise bounded paths for approval/denial, `EFFECT_UNKNOWN`, restart, reconciliation, repair, explicit resume authority, replay protection, adapter exceptions, and Human Return. They are executable evidence for those scenarios only.
+
+## Production-grade operational demo suite
+
+Current `main` also includes executable integration scenarios under `examples/production_grade_demos/`. These were added **after** the PyPI `0.1.0a2` artifacts were published, so the demo source itself is not claimed to be contained in the published `0.1.0a2` wheel/sdist. Run it from a current source checkout:
+
+```bash
+python examples/production_grade_demos/run_demo.py
+```
+
+The suite uses the shipped `RposService` and RPOS SQLite persistence/transition logic while a separate localhost HTTP process writes effects to a separate SQLite database. It does not copy or reimplement the RPOS state machine.
+
+The three scenarios cover:
+
+- **supplier payment ambiguity** — the external service commits a payment and drops the connection; RPOS enters `EFFECT_UNKNOWN`, a real Python process restart occurs, independent readback confirms the effect, and no duplicate dispatch is required;
+- **production deployment rejection and repair** — external rejection enters `REPAIR_REQUIRED`, explicit human resume authority is required, a fresh dispatch identity is used, and completion follows independent readback rather than receipt alone;
+- **privileged-access revocation denial** — Human Gate denial leaves the external side-effect count at zero.
+
+The localhost service is a deterministic integration fixture, not a real payment processor, production controller, or IAM provider. Passing these demos verifies the declared paths in the tested environment; it does not establish production readiness or arbitrary external-system correctness.
 
 ## Lean 4 Formal Assurance Surface
 
@@ -153,7 +171,7 @@ Every envelope has `authority_effect: "none"`: **creating or validating an envel
 The release route includes:
 
 - the complete Python test suite;
-- all eight source examples;
+- all eight compact source examples;
 - wheel and sdist build and clean-install checks;
 - installed CLI/API checks outside the repository working directory;
 - exact-HEAD public-export reconstruction;
@@ -163,6 +181,8 @@ The release route includes:
 - pinned Lean 4 `lake build`;
 - exact-head Formal Assurance manifest generation; and
 - GitHub Pages validation and deployment with machine-checked assurance and verified architecture visuals.
+
+The current-main production-grade demo suite is additionally exercised by the repository test/CI route after its introduction.
 
 Passing those checks establishes the named engineering evidence within their declared scope. It does not automatically establish production readiness, legal compliance, universal safety, organizational authority, arbitrary external-system correctness, or implementation-wide formal correctness.
 
@@ -187,10 +207,12 @@ That is a goal, not a claim of completion. Each stronger public claim must earn 
 
 ## Project surfaces
 
+- PyPI: `responsibility-pathway-os==0.1.0a2`
 - GitHub Pages product site and architecture maps
 - `site/assurance.html` — Formal Assurance Viewer
 - `formal/assurance-catalog.json` — canonical theorem/runtime-test crosswalk
 - `product-status.json` — machine-readable release and claim state
+- `examples/production_grade_demos/` — current-main executable integration suite
 - `docs/en/public-alpha-evaluation-guide.md` — third-party evaluation route
 - `CHANGELOG.md` — release history
 - `SECURITY.md`, `SUPPORT.md`, `CONTRIBUTING.md`
