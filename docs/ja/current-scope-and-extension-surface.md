@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: ja -->
 <!-- RPOS-DOC-VERSION: 0.1.0a2 -->
-<!-- RPOS-DOC-STATUS: public-alpha-release-candidate -->
+<!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: ../en/current-scope-and-extension-surface.md -->
 
 # 現在の対応範囲と拡張面
 
-RPOS 0.1.0a2 は、責任経路を実行可能な形で保持するための early public-alpha release candidate です。現在できることを明確に示しつつ、未対応領域を閉じた「できないこと」ではなく、検証可能な拡張面として扱います。
+RPOS 0.1.0a2 は、責任経路を実行可能な形で保持するために公開済みの Early Public Alpha / Executable Preview です。現在できることを明確に示しつつ、未対応領域を閉じた「できないこと」ではなく、検証可能な拡張面として扱います。
 
 ## 現在できること
 
@@ -25,6 +25,9 @@ RPOS は現在、少なくとも次の機能を提供します。
 - wheel / sdist build と clean-install verification
 - CycloneDX 1.6 SBOM、artifact hash bundle、dependency audit、secret scan
 - 宣言された限定model上でmachine-checkされ、Python runtime testへcross-linkされた6件のLean 4責任不変条件
+- shipped RPOS service、別localhost HTTP process、別external-effect SQLite、実process restart、reconciliation、repair/resume、Human Gate denyを使うcurrent-mainのproduction-grade operational demo suite
+
+production-grade demo suiteは、公開済み`0.1.0a2` wheel/sdistの公開後に`main`へ追加されました。したがってcurrent source treeのexecutable evidenceであり、既に公開済みのpackage artifactへ遡及的に含まれるとは主張しません。
 
 ## 現在の制約は拡張面として扱う
 
