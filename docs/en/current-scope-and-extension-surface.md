@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: en -->
 <!-- RPOS-DOC-VERSION: 0.1.0a2 -->
-<!-- RPOS-DOC-STATUS: public-alpha-release-candidate -->
+<!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: ../ja/current-scope-and-extension-surface.md -->
 
 # Current Scope and Extension Surface
 
-RPOS 0.1.0a2 is an early public-alpha release candidate for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
+RPOS 0.1.0a2 is a published Early Public Alpha / Executable Preview for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
 
 ## What works today
 
@@ -24,7 +24,10 @@ RPOS currently provides at least:
 - CLI and runnable examples;
 - wheel / sdist build and clean-install verification;
 - CycloneDX 1.6 SBOM, artifact hash bundle, dependency audit, and secret scan;
-- six published Lean 4 responsibility invariants machine-checked in declared bounded models and cross-linked to Python runtime tests.
+- six published Lean 4 responsibility invariants machine-checked in declared bounded models and cross-linked to Python runtime tests; and
+- current-main production-grade operational demos using the shipped RPOS service, separate localhost HTTP process, separate external-effect SQLite store, real process restart, reconciliation, repair/resume, and Human Gate denial paths.
+
+The production-grade demo suite was added to `main` after the published `0.1.0a2` wheel/sdist. It is executable evidence for the current source tree and does not retroactively become part of the already-published package artifact.
 
 ## Current constraints are extension surfaces
 
