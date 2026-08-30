@@ -13,17 +13,55 @@
 [![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
 [![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
 
-**Executable responsibility pathways in Python, with critical responsibility invariants machine-checked in Lean 4.**
+An AI agent calls an external API. The connection drops before the result is known.
 
-RPOS is an independently engineered, open-source Responsibility Pathway OS for consequential AI and automation workflows. It combines a Python/SQLite executable runtime with a Lean 4 Formal Assurance Surface for selected invariants covering Human Gate, operational authority, dispatch, external-effect verification, uncertainty, recovery, resumption, and completion.
+**Should it retry?**
 
-> **Project identity / attribution:** RPOS is independently developed within the Responsibility Pathway lineage by the `YutoriKomeiji/responsibility-pathway-os` project. It is **not** developed by, affiliated with, or an implementation of GhostDrift Mathematical Institute or its "Responsibility OS" work. Similar terminology does not imply common authorship, ownership, or lineage.
+Maybe the first call already changed the external system. Retrying could duplicate a payment, deployment, message, permission change, or other real-world effect. Calling it a failure could be just as wrong if the effect already happened.
 
-RPOS is not a model wrapper, a policy document, or a logging layer. It keeps responsibility-bearing state executable across:
+**RPOS keeps that uncertainty explicit instead of silently turning it into success, failure, or another dispatch.** It is an open-source Python/SQLite runtime for keeping authorization, execution, external effect, verification, repair, resumption, and Human Return connected as executable responsibility-bearing state.
 
-`proposal -> Human Gate -> authorization -> dispatch -> effect verification -> uncertainty -> repair -> explicit resumption -> completion`
+> **If the effect is unknown, responsibility must not disappear.**
+
+RPOS calls this approach the **Responsibility Pathway Operating System**: responsibility is treated as a path across decisions and real-world effects, not as a single approval flag or log entry.
+
+## Quick start
+
+Install the published Public Alpha:
+
+```bash
+python -m pip install responsibility-pathway-os==0.1.0a2
+rpos --db rpos.db boot
+```
+
+- **Try the published runtime:** [PyPI 0.1.0a2](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
+- **Inspect source, tests, Lean, CI, and current demos:** this repository
+- **See the product surface:** [GitHub Pages](https://yutorikomeiji.github.io/responsibility-pathway-os/)
+- **Read the Japanese launch article:** [Zenn — RPOS 0.1.0a2](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
+
+The published PyPI `0.1.0a2` artifacts contain the released runtime. The three production-grade integration demos were added **after** that release and live on current `main`; use a source checkout for those demos.
+
+## What RPOS does
+
+RPOS keeps distinctions that are easy to collapse in agent and automation systems:
+
+- **human approval is not execution authority forever** — repair readiness does not silently restore permission to act;
+- **dispatch is not verified effect** — sending a request does not prove the outside world changed;
+- **a successful receipt is not external-effect verification** — API/tool success is not treated as proof of reality;
+- **unknown stays unknown** — `EFFECT_UNKNOWN` preserves post-dispatch ambiguity instead of triggering blind retry or false completion;
+- **recovery keeps an owner** — restart, reconciliation, repair, explicit resumption, and Human Return remain connected to the unresolved responsibility pathway.
+
+The executable path is:
+
+`proposal -> Human Gate -> authorization -> dispatch -> effect verification -> uncertainty -> repair -> explicit resumption -> completion / Human Return`
 
 Its core rule is simple: **authorization is not execution, an execution receipt is not proof of external effect, and failure or uncertainty must not erase responsibility.**
+
+## Project identity / attribution
+
+RPOS is independently developed within the Responsibility Pathway lineage by the `YutoriKomeiji/responsibility-pathway-os` project. It is **not** developed by, affiliated with, or an implementation of GhostDrift Mathematical Institute or its "Responsibility OS" work. Similar terminology does not imply common authorship, ownership, or lineage.
+
+RPOS is not a model wrapper, a policy document, or a logging layer. It owns operation, not intelligence: models remain replaceable proposal sources and do not become authority merely by proposing an action.
 
 ## What is implemented now
 
@@ -216,6 +254,7 @@ That is a goal, not a claim of completion. Each stronger public claim must earn 
 
 - PyPI: `responsibility-pathway-os==0.1.0a2`
 - GitHub Pages product site and architecture maps
+- Japanese launch article: https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2
 - `site/assurance.html` — Formal Assurance Viewer
 - `formal/assurance-catalog.json` — canonical theorem/runtime-test crosswalk
 - `product-status.json` — machine-readable release and claim state
