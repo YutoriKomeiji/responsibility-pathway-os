@@ -17,10 +17,15 @@ def test_production_grade_operational_demo_suite() -> None:
     completed = subprocess.run(
         [sys.executable, str(DEMO)],
         cwd=ROOT,
-        check=True,
+        check=False,
         text=True,
         capture_output=True,
         timeout=30,
+    )
+    assert completed.returncode == 0, (
+        f"operational demo failed with code {completed.returncode}\n"
+        f"stdout:\n{completed.stdout}\n"
+        f"stderr:\n{completed.stderr}"
     )
     result = json.loads(completed.stdout)
 
