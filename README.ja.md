@@ -59,7 +59,7 @@ AI agent / automationでは、別々の出来事が一つの「成功」に潰�
 
 ## Project identity / 帰属について
 
-RPOSは `YutoriKomeiji/responsibility-pathway-os` において、Responsibility Pathway lineageの中で独立開発されています。株式会社GhostDrift数理研究所の開発物・関連プロジェクト・同社「責任OS」の実装ではありません。用語の類似は、共通の著者・所有者・開発系譜を意味しません。
+RPOSは `YutoriKomeiji/responsibility-pathway-os` において、Responsibility Pathway lineageの中で独立開発されています。
 
 RPOSはmodel wrapperでも、policy documentでも、logging layerでもありません。**RPOS owns operation, not intelligence.** Modelは交換可能なproposal sourceであり、proposalを出しただけではauthorityになりません。
 

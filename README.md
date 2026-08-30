@@ -57,9 +57,9 @@ The executable path is:
 
 Its core rule is simple: **authorization is not execution, an execution receipt is not proof of external effect, and failure or uncertainty must not erase responsibility.**
 
-## Project identity / attribution
+## Project identity
 
-RPOS is independently developed within the Responsibility Pathway lineage by the `YutoriKomeiji/responsibility-pathway-os` project. It is **not** developed by, affiliated with, or an implementation of GhostDrift Mathematical Institute or its "Responsibility OS" work. Similar terminology does not imply common authorship, ownership, or lineage.
+RPOS is independently developed within the Responsibility Pathway lineage by the `YutoriKomeiji/responsibility-pathway-os` project.
 
 RPOS is not a model wrapper, a policy document, or a logging layer. It owns operation, not intelligence: models remain replaceable proposal sources and do not become authority merely by proposing an action.
 
