@@ -13,17 +13,55 @@
 [![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
 [![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
 
-**Pythonで実行可能な責任経路と、Lean 4でmachine-checkされた重要な責任不変条件を統合するResponsibility Pathway OSです。**
+AIエージェントが外部APIを実行した直後に、通信が切れた。
 
-RPOSは、影響を伴うAI・自動化ワークフローのために独立開発されているオープンソースのResponsibility Pathway OSです。Python/SQLiteによる実行runtimeと、Human Gate、Operational Authority、dispatch、外部作用検証、不確実性、修復、再開、完了に関する選択された不変条件をLean 4で機械検証するFormal Assurance Surfaceを組み合わせます。
+**もう一度実行してよいでしょうか。**
 
-> **Project identity / 帰属について:** RPOSは `YutoriKomeiji/responsibility-pathway-os` において、Responsibility Pathway lineageの中で独立開発されています。株式会社GhostDrift数理研究所の開発物・関連プロジェクト・同社「責任OS」の実装ではありません。用語の類似は、共通の著者・所有者・開発系譜を意味しません。
+最初の要求で、外部systemはすでに変わっているかもしれません。blind retryすれば、二重決済、二重deploy、二重通知、権限変更の重複などが起きるかもしれない。反対に「失敗した」と閉じれば、すでに起きた現実の変更を見失うかもしれません。
 
-RPOSはmodel wrapperでも、policy documentでも、logging layerでもありません。責任を伴う状態を次の経路として実行可能に保持します。
+**RPOSは、この「分からない」を成功・失敗・再実行のどれかへ勝手に潰さず、そのまま責任を伴う状態として保持するOpen SourceのPython/SQLite runtimeです。** 承認、実行、外部作用、検証、修復、再開、人への責任返却を、切れない経路として扱います。
 
-`提案 -> Human Gate -> 承認 -> dispatch -> 外部作用検証 -> 不確実性 -> 修復 -> 明示的再開 -> 完了`
+> **分からないとき、責任まで消してはいけない。**
+
+この考え方を **Responsibility Pathway Operating System（責任経路OS / RPOS）** と呼んでいます。責任を一つの承認フラグやログではなく、判断から現実の作用まで続く「経路」として扱うための仕組みです。
+
+## Quick start
+
+公開済みPublic Alphaを入れるだけなら:
+
+```bash
+python -m pip install responsibility-pathway-os==0.1.0a2
+rpos --db rpos.db boot
+```
+
+- **公開済みruntimeを試す:** [PyPI 0.1.0a2](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
+- **source・test・Lean・CI・最新demoを見る:** このrepository
+- **ブラウザで全体像を見る:** [Product site](https://yutorikomeiji.github.io/responsibility-pathway-os/)
+- **問題設定から読む:** [Zenn — RPOS 0.1.0a2公開記事](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
+
+PyPI `0.1.0a2` には公開済みruntimeが入っています。3本のproduction-grade integration demoは、そのrelease後にcurrent `main`へ追加したものなので、demoを動かす場合はsource checkoutを使ってください。
+
+## RPOSで何を分けるのか
+
+AI agent / automationでは、別々の出来事が一つの「成功」に潰れやすくなります。RPOSは次を分けて保持します。
+
+- **人間の承認と実行権限は同じではない** — 修復準備ができても、古い許可を自動復元しない
+- **実行要求と現実の作用は同じではない** — dispatchしただけでは外部systemが変わったとは断定しない
+- **成功応答と外部作用の検証は同じではない** — receiptを現実の証明にしない
+- **不明は不明のまま残す** — `EFFECT_UNKNOWN` で結果不明を保持し、blind retryやfalse completionへ進めない
+- **回復後も責任の引受先を消さない** — restart、reconciliation、repair、明示的再開、Human Returnを同じ責任経路へ接続する
+
+実行可能な経路は次の形です。
+
+`提案 -> Human Gate -> 承認 -> dispatch -> 外部作用検証 -> 不確実性 -> 修復 -> 明示的再開 -> 完了 / Human Return`
 
 基本原則は、**承認は実行ではなく、実行receiptは外部作用の証明ではなく、失敗や不確実性によって責任を消してはいけない**、です。
+
+## Project identity / 帰属について
+
+RPOSは `YutoriKomeiji/responsibility-pathway-os` において、Responsibility Pathway lineageの中で独立開発されています。株式会社GhostDrift数理研究所の開発物・関連プロジェクト・同社「責任OS」の実装ではありません。用語の類似は、共通の著者・所有者・開発系譜を意味しません。
+
+RPOSはmodel wrapperでも、policy documentでも、logging layerでもありません。**RPOS owns operation, not intelligence.** Modelは交換可能なproposal sourceであり、proposalを出しただけではauthorityになりません。
 
 ## 現在実装されているもの
 
@@ -220,6 +258,7 @@ Permanent boundaryには、法的/規制authority、任意外部systemの正し�
 
 - PyPI: `responsibility-pathway-os==0.1.0a2`
 - GitHub Pages product site / architecture maps
+- Zenn公開記事: https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2
 - `site/assurance.html` — Formal Assurance Viewer
 - `formal/assurance-catalog.json` — theorem/runtime-test crosswalk
 - `product-status.json` — machine-readable release / claim state
