@@ -6,6 +6,13 @@
 
 # RPOS — Responsibility Pathway Operating System
 
+[![Standalone Verification](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/standalone-verify.yml/badge.svg?branch=main)](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/standalone-verify.yml)
+[![Formal Assurance](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/formal-assurance.yml/badge.svg?branch=main)](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/formal-assurance.yml)
+[![Field Portability](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/field-portability.yml/badge.svg?branch=main)](https://github.com/YutoriKomeiji/responsibility-pathway-os/actions/workflows/field-portability.yml)
+[![PyPI](https://img.shields.io/pypi/v/responsibility-pathway-os?label=PyPI)](https://pypi.org/project/responsibility-pathway-os/)
+[![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
+[![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
+
 **Pythonで実行可能な責任経路と、Lean 4でmachine-checkされた重要な責任不変条件を統合するResponsibility Pathway OSです。**
 
 RPOSは、影響を伴うAI・自動化ワークフローのために独立開発されているオープンソースのResponsibility Pathway OSです。Python/SQLiteによる実行runtimeと、Human Gate、Operational Authority、dispatch、外部作用検証、不確実性、修復、再開、完了に関する選択された不変条件をLean 4で機械検証するFormal Assurance Surfaceを組み合わせます。
