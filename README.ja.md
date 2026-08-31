@@ -15,7 +15,7 @@
 
 AIエージェントが外部APIを実行した直後に、通信が切れた。
 
-**さて、もう一度実行してよいでしょうか。**
+**このまま、もう一度実行しても大丈夫でしょうか。**
 
 最初の要求で、外部systemはすでに変わっているかもしれません。すぐ再実行すると二重決済、二重deploy、二重通知、権限変更の重複につながることがあります。反対に、すぐ「失敗」と決めると、すでに起きた現実の変更を見失うかもしれません。
 
@@ -186,10 +186,10 @@ python examples/production_grade_demos/run_demo.py
 3つのscenarioがあります。
 
 - **仕入先支払の曖昧性** — 外部serviceが支払effectをcommitした直後にconnectionを切断し、RPOSは `EFFECT_UNKNOWN` を保持します。実際にPython processを再起動した後、独立readbackでeffectを確認し、重複dispatchなしで完了します。
-- **production deploymentの受理見送り・修復・再確認** — 外部controllerが要求を受理しなかった場合は `REPAIR_REQUIRED` に入り、修復後も明示的なhuman resume authorityを確認します。fresh dispatch identityを使用し、receiptだけでは完了せず、独立readback後にcompletionへ進みます。
-- **特権access剥奪をHuman Gateで見送るケース** — Human Gateで実行しない判断になった場合、external side effect countが0のままであることを確認します。
+- **本番デプロイをいったん見送り、修復後に再確認** — 外部controllerが要求を受理しなかった場合は `REPAIR_REQUIRED` に入り、修復後も明示的なhuman resume authorityを確認します。fresh dispatch identityを使用し、receiptだけでは完了せず、独立readback後にcompletionへ進みます。
+- **特権アクセスの削除を、人の判断で見送るケース** — Human Gateで実行しない判断になった場合、external side effect countが0のままであることを確認します。
 
-localhost serviceは再現可能なintegration fixtureであり、実際の決済事業者、本番deployment controller、IAM providerではありません。これらのpassは宣言されたscenarioをtested environmentで確認するもので、production readinessや任意外部systemの正しさを確立しません。
+localhost serviceは再現可能なintegration fixtureであり、実際の決済事業者、本番deployment controller、IAM providerではありません。これらのpassは宣言されたscenarioをtested environmentで確認するもので、production readinessや任意external systemの正しさを確立しません。
 
 ## Lean 4 Formal Assurance Surface
 
@@ -235,7 +235,7 @@ Release routeには次が含まれます。
 
 current-mainのproduction-grade demo suiteは、その追加後のrepository test/CI routeでも実行されます。
 
-これらのpassは宣言されたscope内のengineering evidenceです。production readiness、法令compliance、universal safety、組織authority、任意外部systemの正しさ、implementation-wide formal correctnessまで自動的に広げて扱うものではありません。
+これらのpassは宣言されたscope内のengineering evidenceです。production readiness、法令compliance、universal safety、組織authority、任意external systemの正しさ、implementation-wide formal correctnessまで自動的に広げて扱うものではありません。
 
 ## Claim boundary と promotion
 
