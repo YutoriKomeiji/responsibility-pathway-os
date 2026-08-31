@@ -4,23 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Interactive RPOS state-path explorer for verified, denied, ambiguous, restart, reconciliation, and authority-revalidation scenarios.">
-  <title>RPOS State-Path Explorer</title>
+  <title id="page-title">RPOS State-Path Explorer</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body data-page="demo">
-<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">RPOS</span><span>State-Path Explorer</span></a><nav><a href="index.html">Product site</a><a href="ja.html">日本語</a><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os">GitHub</a></nav></header>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">RPOS</span><span id="brand-subtitle">State-Path Explorer</span></a><nav><a id="nav-product" href="index.html">Product site</a><a href="ja.html">日本語</a><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os">GitHub</a></nav></header>
 <main class="demo-shell">
-<p class="eyebrow">Interactive state-path simulation</p>
-<h1>What should happen when the effect is uncertain?</h1>
+<p class="eyebrow" id="demo-eyebrow">Interactive state-path simulation</p>
+<h1 id="demo-heading">What should happen when the effect is uncertain?</h1>
 <p class="lede" id="demo-intro">Choose a scenario. The explorer visualizes the documented RPOS responsibility pathway. This page does not execute the Python runtime; it is a transparent state-path simulation.</p>
 <p class="notice" id="demo-notice">Simulation only — use the repository examples and test suite for executable runtime evidence.</p>
 <div class="demo-grid">
 <section class="demo-panel" aria-labelledby="scenario-heading"><h2 id="scenario-heading">Scenario</h2><div class="scenario-list" id="scenario-list"></div></section>
-<section class="state-card" aria-live="polite"><p class="eyebrow" id="scenario-label">Selected scenario</p><h2 id="scenario-title">Verified happy path</h2><p id="scenario-summary"></p><p>Final state: <span class="state-badge" id="state-badge">COMPLETED</span></p><div class="flow" id="state-flow"></div><div class="event-log"><strong>Responsibility log</strong><ol id="event-list"></ol></div></section>
+<section class="state-card" aria-live="polite"><p class="eyebrow" id="scenario-label">Selected scenario</p><h2 id="scenario-title">Verified happy path</h2><p id="scenario-summary"></p><p><span id="final-state-label">Final state</span>: <span class="state-badge" id="state-badge">COMPLETED</span></p><div class="flow" id="state-flow"></div><div class="event-log"><strong id="responsibility-log-label">Responsibility log</strong><ol id="event-list"></ol></div></section>
 </div>
-<section class="section split"><div><p class="eyebrow">Interpretation boundary</p><h2>The point is not to make failure look good.</h2><p>RPOS keeps a consequential operation unresolved when evidence is insufficient. A visible stop, repair route, or Human Return is often the correct outcome.</p></div><aside class="boundary-card"><h3>Runtime evidence lives elsewhere</h3><ul><li><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/examples">Executable examples</a></li><li><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/tests">Python tests</a></li><li><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/formal/lean">Bounded Lean project</a></li></ul></aside></section>
+<section class="section split"><div><p class="eyebrow" id="boundary-eyebrow">Interpretation boundary</p><h2 id="boundary-heading">The point is not to make failure look good.</h2><p id="boundary-copy">RPOS keeps a consequential operation unresolved when evidence is insufficient. A visible stop, repair route, or Human Return is often the correct outcome.</p></div><aside class="boundary-card"><h3 id="runtime-evidence-heading">Runtime evidence lives elsewhere</h3><ul><li><a id="runtime-example-link" href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/examples">Executable examples</a></li><li><a id="runtime-test-link" href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/tests">Python tests</a></li><li><a id="runtime-lean-link" href="https://github.com/YutoriKomeiji/responsibility-pathway-os/tree/main/formal/lean">Bounded Lean project</a></li></ul></aside></section>
 </main>
-<footer><p>Responsibility Pathway OS · Public Alpha</p><nav><a href="index.html">Home</a><a href="https://github.com/YutoriKomeiji/responsibility-pathway-os">Repository</a></nav></footer>
+<footer><p>Responsibility Pathway OS · Public Alpha</p><nav><a id="footer-home" href="index.html">Home</a><a id="footer-repository" href="https://github.com/YutoriKomeiji/responsibility-pathway-os">Repository</a></nav></footer>
 </body>
 </html>
