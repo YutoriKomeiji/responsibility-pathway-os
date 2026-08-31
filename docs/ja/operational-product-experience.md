@@ -12,7 +12,7 @@ RPOSは、モデル、チャットボット、generic library、汎用Agent orch
 
 目指しているのは、開発者だけが扱えるalphaで終わることではありません。ユーザーがRPOSをインストールし、安全なdefaultで起動し、「なぜ今進んでいるのか」「なぜここで確認が必要なのか」「次に何をすればよいか」を理解しながら使える状態を目指します。
 
-日本語のpublic surfaceでは、英語のsecurity/contract表現をそのまま強い命令口調へ変換しません。責任境界は厳密に保ちつつ、人に向けた説明は、確認・保留・Human Return・再開の流れが自然に分かるようにします。詳細は [日本語Public Communication Principles](japanese-public-communication-principles.md) を参照してください。
+日本語のpublic surfaceでは、英語のsecurity/contract表現をそのまま強い命令口調へ変換しません。責任境界は厳密に保ちつつ、人に向けた説明は、確認・保留・Human Return・再開の流れが自然に分かるようにします。
 
 この文書はRPOSのnormativeなproduct directionです。Early Public Alphaではこの体験の一部だけを実装していても構いませんが、partial releaseだからといってRPOSをgeneric Python libraryとして扱うことはしません。Product maturityは、以下のcore invariantを保ちながらこの方向へ進めます。
 
