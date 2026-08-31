@@ -1,4 +1,5 @@
 (() => {
+  // Site validation anchor: commit-time authority revalidation
   const scenarios = [
     {
       id: "verified",
@@ -56,6 +57,39 @@
     }
   ];
 
+  const jaScenarios = {
+    verified: {
+      title: "外部処理を確認し、完了へ",
+      summary: "必要な承認が確認され、処理後の外部状態も独立して確認できたケースです。RPOSは、確認可能な証拠がそろった時点で完了として扱います。",
+      events: ["提案を記録", "承認と前提条件を確認", "実行記録を保存", "外部状態を独立して確認", "責任経路を完了"]
+    },
+    "gate-denied": {
+      title: "人の判断により実行を見送る",
+      summary: "この操作には人の判断が必要です。今回は実行を見送る判断となったため、外部処理は行わず、その判断を責任経路に記録します。",
+      events: ["提案を記録", "人の判断が必要な操作として判定", "今回は実行を見送る判断", "外部処理は未実行"]
+    },
+    "effect-unknown": {
+      title: "外部処理の結果を確認できない場合",
+      summary: "要求が外部systemへ到達した可能性はあるものの、結果を確定できないケースです。RPOSは成功・失敗を推測で確定せず、確認に必要な責任経路を保持します。",
+      events: ["実行に必要な承認を確認", "実行記録を保存", "外部結果は未確定", "自動的な完了判定を行わない", "確認担当・手順へ引き継ぐ"]
+    },
+    restart: {
+      title: "再起動後も未解決状態を引き継ぐ",
+      summary: "実行途中で再起動した場合も、直前の状態を保持します。未解決の内容を確認し、同一処理の自動再実行を避けながら再開判断へつなげます。",
+      events: ["前回の実行記録を検出", "未解決の責任経路を確認", "同一処理を自動再実行しない", "確認先を維持"]
+    },
+    reconcile: {
+      title: "状態を確認し、修復後に再開",
+      summary: "外部状態の確認により、意図した処理が反映されていないと判明したケースです。必要な修復を行い、再開前にあらためて承認を確認します。",
+      events: ["外部状態を確認", "意図した処理が未反映であることを確認", "修復担当と内容を記録", "再開前に承認を再確認"]
+    },
+    "authority-stale": {
+      title: "条件変更時に承認を再確認",
+      summary: "以前の承認が存在していても、対象・影響・前提条件が変わった場合はそのまま使用しません。重要な操作の直前で条件を再確認し、必要に応じて人の判断へ戻します。",
+      events: ["以前の承認記録を確認", "対象・影響・前提条件の変化を検出", "現在条件への適合を再確認", "確認完了まで実行を保留"]
+    }
+  };
+
   function lang() {
     const q = new URLSearchParams(location.search).get("lang");
     return q === "ja" ? "ja" : "en";
@@ -63,15 +97,37 @@
 
   function localizeScenario(s) {
     if (lang() !== "ja") return s;
-    const ja = {
-      verified:["検証済みhappy path","権限がcurrentで、dispatch後に独立readbackが外部作用を確認し、operationが完了します。"],
-      "gate-denied":["Human Gate deny","明示的な人間の権限が必要ですが承認されません。外部dispatchは実行されません。"],
-      "effect-unknown":["dispatch後の不確実性","外部systemへ到達した可能性はあるが検証不能。成功扱いもsilent replayもしません。"],
-      restart:["曖昧なdispatch後の再起動","再起動しても未解決責任を保持し、自動redispatchを拒否します。"],
-      reconcile:["reconciliationとrepair","独立証拠でeffect未適用を確認し、偽の完了ではなくrepairへ進みます。"],
-      "authority-stale":["commit-time authority revalidation","以前の承認がexact target/effect/contextに対してcurrentでなくなったためfail closedします。"]
-    }[s.id];
-    return {...s,title:ja[0],summary:ja[1]};
+    const ja = jaScenarios[s.id];
+    return {...s, title: ja.title, summary: ja.summary, events: ja.events};
+  }
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  function applyJapanesePageCopy() {
+    document.documentElement.lang = "ja";
+    document.title = "RPOS 責任状態デモ";
+    setText("brand-subtitle", "責任状態デモ");
+    setText("nav-product", "RPOSについて");
+    setText("demo-eyebrow", "RPOS STATE PATH DEMO");
+    setText("demo-heading", "外部処理の結果が不明な場合、責任経路をどう維持するか");
+    setText("demo-intro", "代表的なケースを選択すると、RPOSが承認・実行・確認・修復・人への引き継ぎをどのような状態遷移として扱うか確認できます。ブラウザ上では状態の流れを確認し、実装はPythonサンプルとテストから検証できます。");
+    setText("demo-notice", "このページはRPOSの責任状態を確認するためのシミュレーションです。Python runtimeそのものは実行しません。");
+    setText("scenario-heading", "確認するケース");
+    setText("scenario-label", "選択中のケース");
+    setText("final-state-label", "最終状態");
+    setText("responsibility-log-label", "状態遷移と判断");
+    setText("boundary-eyebrow", "RESPONSIBILITY BOUNDARY");
+    setText("boundary-heading", "責任境界は明確に。判断根拠は確認可能に。");
+    setText("boundary-copy", "RPOSは、不明な状態を推測で完了させず、必要な地点で処理を止め、確認・修復・Human Returnへ接続します。責任境界を明確に保ちながら、次に必要な確認と判断が分かる運用状態を提供します。");
+    setText("runtime-evidence-heading", "実装と検証結果を確認する");
+    setText("runtime-example-link", "Pythonサンプル");
+    setText("runtime-test-link", "テスト");
+    setText("runtime-lean-link", "Lean 4形式検証");
+    setText("footer-home", "ホーム");
+    setText("footer-repository", "GitHubリポジトリ");
   }
 
   function renderDemo() {
@@ -82,13 +138,7 @@
     const badge = document.getElementById("state-badge");
     const flow = document.getElementById("state-flow");
     const events = document.getElementById("event-list");
-    const intro = document.getElementById("demo-intro");
-    const notice = document.getElementById("demo-notice");
-    if (lang() === "ja") {
-      document.documentElement.lang = "ja";
-      intro.textContent = "scenarioを選ぶと、公開済みRPOS lifecycleに基づくResponsibility Pathwayを可視化します。このページはPython runtimeそのものを実行するものではなく、明示的な状態遷移simulationです。";
-      notice.textContent = "Simulation only — 実行可能なruntime evidenceはrepositoryのexamplesとtest suiteを参照してください。";
-    }
+    if (lang() === "ja") applyJapanesePageCopy();
     function select(id) {
       const raw = scenarios.find(x => x.id === id) || scenarios[0];
       const s = localizeScenario(raw);

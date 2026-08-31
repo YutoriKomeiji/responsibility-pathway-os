@@ -13,49 +13,47 @@
 [![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
 [![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
 
-AIエージェントが外部APIを実行した直後に、通信が切れた。
+AIエージェントが外部APIを実行した直後に通信が切れた場合、外部処理が完了しているかどうかを即座に判断できないことがあります。
 
-**もう一度実行してよいでしょうか。**
+この状態で再実行すると、二重決済、二重deploy、二重通知、権限変更の重複につながる可能性があります。一方で、単純に「失敗」と判断すると、実際には発生済みの変更を見失う可能性があります。
 
-最初の要求で、外部systemはすでに変わっているかもしれません。blind retryすれば、二重決済、二重deploy、二重通知、権限変更の重複などが起きるかもしれない。反対に「失敗した」と閉じれば、すでに起きた現実の変更を見失うかもしれません。
+RPOSは、こうした**外部処理の不確実性を責任状態として保持し、承認・実行・確認・修復・再開・Human Returnを一つの責任経路として扱う**Open SourceのPython/SQLite runtimeです。
 
-**RPOSは、この「分からない」を成功・失敗・再実行のどれかへ勝手に潰さず、そのまま責任を伴う状態として保持するOpen SourceのPython/SQLite runtimeです。** 承認、実行、外部作用、検証、修復、再開、人への責任返却を、切れない経路として扱います。
-
-> **分からないとき、責任まで消してはいけない。**
+> **確認できないものを、確認済みとして扱わない。そのうえで、次に必要な判断へつなげる。**
 
 この考え方を **Responsibility Pathway Operating System（責任経路OS / RPOS）** と呼んでいます。責任を一つの承認フラグやログではなく、判断から現実の作用まで続く「経路」として扱うための仕組みです。
 
-## Quick start
+## Quick Start
 
-公開済みPublic Alphaを入れるだけなら:
+公開済みPublic Alphaは、次のコマンドで評価できます。
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
 rpos --db rpos.db boot
 ```
 
-- **公開済みruntimeを試す:** [PyPI 0.1.0a2](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
-- **source・test・Lean・CI・最新demoを見る:** このrepository
-- **ブラウザで全体像を見る:** [Product site](https://yutorikomeiji.github.io/responsibility-pathway-os/)
-- **問題設定から読む:** [Zenn — RPOS 0.1.0a2公開記事](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
+- **PyPI 0.1.0a2:** [公開済みpackage](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
+- **Product Site:** [状態遷移と製品概要](https://yutorikomeiji.github.io/responsibility-pathway-os/)
+- **Repository:** source・test・Lean・CI・current demo
+- **背景記事:** [Zenn — RPOS 0.1.0a2公開記事](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
 
 PyPI `0.1.0a2` には公開済みruntimeが入っています。3本のproduction-grade integration demoは、そのrelease後にcurrent `main`へ追加したものなので、demoを動かす場合はsource checkoutを使ってください。
 
-## RPOSで何を分けるのか
+## RPOSの基本原則
 
-AI agent / automationでは、別々の出来事が一つの「成功」に潰れやすくなります。RPOSは次を分けて保持します。
+AI agent / automationでは、別々の出来事が一つの「成功」にまとめられやすくなります。RPOSは、その間を明示的に分離して保持します。
 
-- **人間の承認と実行権限は同じではない** — 修復準備ができても、古い許可を自動復元しない
-- **実行要求と現実の作用は同じではない** — dispatchしただけでは外部systemが変わったとは断定しない
-- **成功応答と外部作用の検証は同じではない** — receiptを現実の証明にしない
-- **不明は不明のまま残す** — `EFFECT_UNKNOWN` で結果不明を保持し、blind retryやfalse completionへ進めない
-- **回復後も責任の引受先を消さない** — restart、reconciliation、repair、明示的再開、Human Returnを同じ責任経路へ接続する
+- **人間の承認と実行権限は同じではない** — 修復準備ができても、そのまま古い許可で自動再開しません
+- **実行要求と現実の作用は同じではない** — dispatchしただけでは外部systemが変わったとは判断しません
+- **成功応答と外部作用の確認は同じではない** — receiptだけを現実の証明にはしません
+- **不確実性は不確実性として保持する** — `EFFECT_UNKNOWN` で結果不明を保持し、確認なしの自動retryやfalse completionへ進めません
+- **停止後も責任の引受先を保持する** — restart、reconciliation、repair、明示的再開、Human Returnを同じ責任経路へ接続します
 
 実行可能な経路は次の形です。
 
-`提案 -> Human Gate -> 承認 -> dispatch -> 外部作用検証 -> 不確実性 -> 修復 -> 明示的再開 -> 完了 / Human Return`
+`提案 -> Human Gate -> 承認 -> dispatch -> 外部作用確認 -> 不確実性 -> 修復 -> 明示的再開 -> 完了 / Human Return`
 
-基本原則は、**承認は実行ではなく、実行receiptは外部作用の証明ではなく、失敗や不確実性によって責任を消してはいけない**、です。
+基本原則は、**承認は実行ではなく、実行receiptは外部作用の証明ではなく、失敗や不確実性によって責任を消さない**、です。
 
 ## Project identity / 帰属について
 
@@ -140,19 +138,21 @@ python examples/quick_start_end_to_end.py
 
 Agentや自動化システムでは、APIやtoolがsuccess receiptを返しても、現実の作用が未発生・部分的・重複・曖昧・検証不能である場合があります。また、障害後のretryやrepairで、誰が再実行を許可したかというHuman Gate境界を失うことがあります。
 
-RPOSはそれを状態として消しません。
+RPOSは、それぞれを別の状態として残します。
 
-- `AUTHORIZED` は実行開始や成功ではない。
-- `DISPATCHING` は発行済みだが未解決のattemptを保持する。
-- `EFFECT_UNKNOWN` は不確実性をfalse successへ変換しない。
-- `REPAIR_REQUIRED` は修復責任を明示する。
-- `READY_TO_RESUME` は修復準備完了であり実行許可ではない。
-- explicit resumeはfresh dispatchの前にauthorityを復元する。
-- `COMPLETED` はtransport receiptではなく限定verificationの後に成立する。
+- `AUTHORIZED` — 実行してよい条件が整っている。まだ実行開始や成功そのものではない。
+- `DISPATCHING` — 要求を出したが、外部で何が起きたかはまだ確認途中。
+- `EFFECT_UNKNOWN` — 外部作用が起きた可能性はあるが、まだ確認できていない。
+- `REPAIR_REQUIRED` — 続ける前に修復や確認が必要。
+- `READY_TO_RESUME` — 修復準備は整ったが、再開の確認はまだ必要。
+- explicit resume — fresh dispatchの前に、もう一度必要なauthorityを確認する。
+- `COMPLETED` — transport receiptだけではなく、限定verificationの後に成立する。
 
 ## Core responsibility states
 
 `PROPOSED`, `HUMAN_GATE`, `AUTHORIZED`, `DISPATCHING`, `EFFECT_UNKNOWN`, `VERIFIED`, `REPAIR_REQUIRED`, `READY_TO_RESUME`, `COMPLETED`, `DENIED`, `ABORTED`。
+
+Machine state名は英語のまま保持します。日本語の説明では、「なぜ今その状態なのか」「次に何を確認すればよいか」が分かることを優先します。
 
 ## 実行可能サンプル
 
@@ -169,7 +169,7 @@ python examples/adapter_exception_containment.py
 python examples/reconciliation_unresolved_human_return.py
 ```
 
-Human Gate承認/拒否、`EFFECT_UNKNOWN`、restart、reconciliation、repair、explicit resume authority、replay guard、adapter exception、Human Returnを確認できます。これは各限定scenarioについてのexecutable evidenceです。
+Human Gateでの確認・見送り、`EFFECT_UNKNOWN`、restart、reconciliation、repair、explicit resume authority、replay guard、adapter exception、Human Returnを確認できます。これは各限定scenarioについてのexecutable evidenceです。
 
 ## Production-grade operational demo suite
 
@@ -184,10 +184,10 @@ python examples/production_grade_demos/run_demo.py
 3つのscenarioがあります。
 
 - **仕入先支払の曖昧性** — 外部serviceが支払effectをcommitした直後にconnectionを切断し、RPOSは `EFFECT_UNKNOWN` を保持します。実際にPython processを再起動した後、独立readbackでeffectを確認し、重複dispatchなしで完了します。
-- **production deploymentの拒否・修復・再承認** — 外部controllerの拒否で `REPAIR_REQUIRED` に入り、修復後も明示的なhuman resume authorityを必要とします。fresh dispatch identityを使用し、receiptだけでは完了せず、独立readback後にcompletionへ進みます。
-- **特権access剥奪のHuman Gate拒否** — Human Gateがdenyした場合、外部side effect countが0のままであることを確認します。
+- **本番デプロイをいったん見送り、修復後に再確認** — 外部controllerが要求を受理しなかった場合は `REPAIR_REQUIRED` に入り、修復後も明示的なhuman resume authorityを確認します。fresh dispatch identityを使用し、receiptだけでは完了せず、独立readback後にcompletionへ進みます。
+- **特権アクセスの削除を、人の判断で見送るケース** — Human Gateで実行しない判断になった場合、external side effect countが0のままであることを確認します。
 
-localhost serviceは再現可能なintegration fixtureであり、実際の決済事業者、本番deployment controller、IAM providerではありません。これらのpassは宣言されたscenarioをtested environmentで確認するもので、production readinessや任意外部systemの正しさを確立しません。
+localhost serviceは再現可能なintegration fixtureであり、実際の決済事業者、本番deployment controller、IAM providerではありません。これらのpassは宣言されたscenarioをtested environmentで確認するもので、production readinessや任意external systemの正しさを確立しません。
 
 ## Lean 4 Formal Assurance Surface
 
@@ -213,7 +213,7 @@ Formal Assurance Viewerはexact site commitから生成され、Lean projectのm
 
 `templates/catalog.json`にはoperation proposal、Human Gate decision、verification contract、repair plan、resume authorization、dependency evidence、external evaluation evidence、Human Returnのtemplateがあります。
 
-すべてのEnvelopeは `authority_effect: "none"` を持ちます。**Envelopeの作成やvalidation自体はauthorize、dispatch、verify、complete、resumeを行いません。**
+すべてのEnvelopeは `authority_effect: "none"` を持ちます。**Envelopeの作成やvalidationだけで、authorize、dispatch、verify、complete、resumeが成立するわけではありません。**
 
 ## Verification route
 
@@ -233,7 +233,7 @@ Release routeには次が含まれます。
 
 current-mainのproduction-grade demo suiteは、その追加後のrepository test/CI routeでも実行されます。
 
-これらのpassは宣言されたscope内のengineering evidenceです。production readiness、法令compliance、universal safety、組織authority、任意外部systemの正しさ、implementation-wide formal correctnessを自動的に確立しません。
+これらのpassは宣言されたscope内のengineering evidenceです。production readiness、法令compliance、universal safety、組織authority、任意external systemの正しさ、implementation-wide formal correctnessまで自動的に広げて扱うものではありません。
 
 ## Claim boundary と promotion
 
@@ -244,13 +244,15 @@ RPOSは次を分離します。
 
 Evidence-limited claimにはproduction readiness、より広いplatform support、implementation-wide formal conformance、software-supply-chain trust、公開scenarioを超えるdomain effectivenessがあります。
 
-Permanent boundaryには、法的/規制authority、任意外部systemの正しさ、verification contractなしのreceipt→effect proof、softwareへの最終組織責任移転、必要なcontractを持たない任意systemに対するuniversal exactly-once guaranteeがあります。
+Permanent boundaryには、法的/規制authority、任意external systemの正しさ、verification contractなしのreceipt→effect proof、softwareへの最終組織責任移転、必要なcontractを持たない任意systemに対するuniversal exactly-once guaranteeがあります。
+
+責任境界は明確に保ちつつ、利用者には「現在どこまで確認できていて、どこから先に追加の確認が必要か」が分かるように説明します。
 
 詳細は `docs/ja/claim-boundary-promotion.md` を参照してください。
 
 ## 目標
 
-長期目標は現在のalphaより大きいものです。AIを含む現実のworkflowで、責任を伴うoperational stateをより実行しやすく、検査しやすく、testしやすく、形式的に考察しやすく、修復しやすくし、責任を持つ人間・組織へ確実にreturnできるようにすることを目指します。
+長期目標は現在のalphaより大きいものです。AIを含む現実のworkflowで、責任を伴うoperational stateをより実行しやすく、確認しやすく、testしやすく、形式的に考察しやすく、修復しやすくし、責任を持つ人間・組織へ確実にreturnできるようにすることを目指します。
 
 これは目標であり、達成済みという断定ではありません。より強いpublic claimは、実装、証拠、reviewを通じて昇格させます。
 
