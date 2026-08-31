@@ -13,43 +13,41 @@
 [![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
 [![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
 
-AIエージェントが外部APIを実行した直後に、通信が切れた。
+AIエージェントが外部APIを実行した直後に通信が切れた場合、外部処理が完了しているかどうかを即座に判断できないことがあります。
 
-**このまま、もう一度実行しても大丈夫でしょうか。**
+この状態で再実行すると、二重決済、二重deploy、二重通知、権限変更の重複につながる可能性があります。一方で、単純に「失敗」と判断すると、実際には発生済みの変更を見失う可能性があります。
 
-最初の要求で、外部systemはすでに変わっているかもしれません。すぐ再実行すると二重決済、二重deploy、二重通知、権限変更の重複につながることがあります。反対に、すぐ「失敗」と決めると、すでに起きた現実の変更を見失うかもしれません。
+RPOSは、こうした**外部処理の不確実性を責任状態として保持し、承認・実行・確認・修復・再開・Human Returnを一つの責任経路として扱う**Open SourceのPython/SQLite runtimeです。
 
-RPOSは、そんな**「まだ分からない」状態を無理に成功・失敗へ決めず、必要な確認や人への引き継ぎまで責任経路をつないだまま扱う**Open SourceのPython/SQLite runtimeです。
-
-> **分からないときは、いったん分からないまま扱う。そのうえで、確認してから次へ進む。**
+> **確認できないものを、確認済みとして扱わない。そのうえで、次に必要な判断へつなげる。**
 
 この考え方を **Responsibility Pathway Operating System（責任経路OS / RPOS）** と呼んでいます。責任を一つの承認フラグやログではなく、判断から現実の作用まで続く「経路」として扱うための仕組みです。
 
-## まず試してみる
+## Quick Start
 
-公開済みPublic Alphaは、次のコマンドで試せます。
+公開済みPublic Alphaは、次のコマンドで評価できます。
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
 rpos --db rpos.db boot
 ```
 
-- **まず触ってみる:** [PyPI 0.1.0a2](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
-- **ブラウザで状態の流れを見る:** [Product site](https://yutorikomeiji.github.io/responsibility-pathway-os/)
-- **source・test・Lean・CI・最新demoを見る:** このrepository
-- **問題設定から読む:** [Zenn — RPOS 0.1.0a2公開記事](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
+- **PyPI 0.1.0a2:** [公開済みpackage](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
+- **Product Site:** [状態遷移と製品概要](https://yutorikomeiji.github.io/responsibility-pathway-os/)
+- **Repository:** source・test・Lean・CI・current demo
+- **背景記事:** [Zenn — RPOS 0.1.0a2公開記事](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
 
 PyPI `0.1.0a2` には公開済みruntimeが入っています。3本のproduction-grade integration demoは、そのrelease後にcurrent `main`へ追加したものなので、demoを動かす場合はsource checkoutを使ってください。
 
-## RPOSで大切にしていること
+## RPOSの基本原則
 
-AI agent / automationでは、別々の出来事が一つの「成功」にまとめられやすくなります。RPOSは、その間を丁寧に分けて保持します。
+AI agent / automationでは、別々の出来事が一つの「成功」にまとめられやすくなります。RPOSは、その間を明示的に分離して保持します。
 
 - **人間の承認と実行権限は同じではない** — 修復準備ができても、そのまま古い許可で自動再開しません
 - **実行要求と現実の作用は同じではない** — dispatchしただけでは外部systemが変わったとは判断しません
 - **成功応答と外部作用の確認は同じではない** — receiptだけを現実の証明にはしません
-- **分からないときは分からないまま残す** — `EFFECT_UNKNOWN` で結果不明を保持し、確認なしの自動retryやfalse completionへ進めません
-- **途中で止まっても、責任の引受先を残す** — restart、reconciliation、repair、明示的再開、Human Returnを同じ責任経路へ接続します
+- **不確実性は不確実性として保持する** — `EFFECT_UNKNOWN` で結果不明を保持し、確認なしの自動retryやfalse completionへ進めません
+- **停止後も責任の引受先を保持する** — restart、reconciliation、repair、明示的再開、Human Returnを同じ責任経路へ接続します
 
 実行可能な経路は次の形です。
 
@@ -248,7 +246,7 @@ Evidence-limited claimにはproduction readiness、より広いplatform support�
 
 Permanent boundaryには、法的/規制authority、任意external systemの正しさ、verification contractなしのreceipt→effect proof、softwareへの最終組織責任移転、必要なcontractを持たない任意systemに対するuniversal exactly-once guaranteeがあります。
 
-ここは表現をやわらかくしても意味は変えません。責任境界は明確に保ちつつ、利用者には「今どこまで確認できていて、どこから先に追加の確認が必要か」が分かるように説明します。
+責任境界は明確に保ちつつ、利用者には「現在どこまで確認できていて、どこから先に追加の確認が必要か」が分かるように説明します。
 
 詳細は `docs/ja/claim-boundary-promotion.md` を参照してください。
 
