@@ -1,4 +1,5 @@
 (() => {
+  // Site validation anchor: commit-time authority revalidation
   const scenarios = [
     {
       id: "verified",
