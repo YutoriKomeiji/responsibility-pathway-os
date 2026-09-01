@@ -31,7 +31,7 @@ RPOS keeps those states separate instead of collapsing them into a single “suc
 
 ## Quick Start
 
-Current published release: `0.1.0a2`.
+Version: **0.1.0a2** — current published release.
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
