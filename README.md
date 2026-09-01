@@ -13,146 +13,67 @@
 [![Python](https://img.shields.io/pypi/pyversions/responsibility-pathway-os)](https://pypi.org/project/responsibility-pathway-os/)
 [![License](https://img.shields.io/github/license/YutoriKomeiji/responsibility-pathway-os)](LICENSE)
 
-An AI agent calls an external API. The connection drops before the result is known.
+**Keep uncertain external effects explicit until verification, repair, or a new authorization resolves them.**
 
-**Should it retry?**
+RPOS is an open-source Python/SQLite runtime for AI agents and automation that perform consequential external actions. It keeps authorization, dispatch, external effect, verification, repair, resumption, and Human Return connected as executable responsibility state.
 
-Maybe the first call already changed the external system. Retrying could duplicate a payment, deployment, message, permission change, or other real-world effect. Calling it a failure could be just as wrong if the effect already happened.
+## Why use RPOS?
 
-**RPOS keeps that uncertainty explicit instead of silently turning it into success, failure, or another dispatch.** It is an open-source Python/SQLite runtime for keeping authorization, execution, external effect, verification, repair, resumption, and Human Return connected as executable responsibility-bearing state.
+An agent can receive a timeout after an external system has already changed. A blind retry may duplicate a payment, deployment, message, permission change, or other real-world effect.
 
-> **If the effect is unknown, responsibility must not disappear.**
+RPOS keeps those states separate instead of collapsing them into a single “success” or “failure.”
 
-RPOS calls this approach the **Responsibility Pathway Operating System**: responsibility is treated as a path across decisions and real-world effects, not as a single approval flag or log entry.
+- **Human approval is not permanent execution authority.**
+- **Dispatch is not verified external effect.**
+- **A successful receipt is not proof of reality.**
+- **Unknown stays unknown.** `EFFECT_UNKNOWN` preserves unresolved post-dispatch state.
+- **Recovery keeps an owner.** Repair, reconciliation, resumption, and Human Return remain connected to the same responsibility pathway.
 
-## Quick start
+## Quick Start
 
-Install the published Public Alpha:
+Version: **0.1.0a2** — current published release.
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
 rpos --db rpos.db boot
 ```
 
-- **Try the published runtime:** [PyPI 0.1.0a2](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
-- **Inspect source, tests, Lean, CI, and current demos:** this repository
-- **See the product surface:** [GitHub Pages](https://yutorikomeiji.github.io/responsibility-pathway-os/)
-- **Read the Japanese launch article:** [Zenn — RPOS 0.1.0a2](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
+- [PyPI 0.1.0a2](https://pypi.org/project/responsibility-pathway-os/0.1.0a2/)
+- [Product site](https://yutorikomeiji.github.io/responsibility-pathway-os/)
+- [Japanese launch article](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
 
-The published PyPI `0.1.0a2` artifacts contain the released runtime. The three production-grade integration demos were added **after** that release and live on current `main`; use a source checkout for those demos.
-
-## What RPOS does
-
-RPOS keeps distinctions that are easy to collapse in agent and automation systems:
-
-- **human approval is not execution authority forever** — repair readiness does not silently restore permission to act;
-- **dispatch is not verified effect** — sending a request does not prove the outside world changed;
-- **a successful receipt is not external-effect verification** — API/tool success is not treated as proof of reality;
-- **unknown stays unknown** — `EFFECT_UNKNOWN` preserves post-dispatch ambiguity instead of triggering blind retry or false completion;
-- **recovery keeps an owner** — restart, reconciliation, repair, explicit resumption, and Human Return remain connected to the unresolved responsibility pathway.
-
-The executable path is:
-
-`proposal -> Human Gate -> authorization -> dispatch -> effect verification -> uncertainty -> repair -> explicit resumption -> completion / Human Return`
-
-Its core rule is simple: **authorization is not execution, an execution receipt is not proof of external effect, and failure or uncertainty must not erase responsibility.**
-
-## Project identity
-
-RPOS is independently developed within the Responsibility Pathway lineage by the `YutoriKomeiji/responsibility-pathway-os` project.
-
-RPOS is not a model wrapper, a policy document, or a logging layer. It owns operation, not intelligence: models remain replaceable proposal sources and do not become authority merely by proposing an action.
+`0.1.0a2` is an evolving 0.x release, but its documented public surfaces can be tried within their stated boundaries. The three production-grade integration demos on current `main` were added after the published release, so run those from a source checkout.
 
 ## What is implemented now
 
-The public alpha includes:
-
-- a Python/SQLite operational state machine with durable responsibility state;
+- durable responsibility state in Python/SQLite;
 - explicit Human Gate and operational-authority boundaries;
-- bounded dispatch attempts, restart/reconciliation, repair/resume, and Human Return;
+- bounded dispatch attempts, restart, reconciliation, repair, resume, and Human Return;
 - external-effect separation so a successful transport receipt does not silently become completion;
-- CLI and executable evaluation scenarios;
+- CLI and executable scenarios;
 - Responsibility State Envelope templates with `authority_effect: "none"`;
-- reproducible public-export, SBOM, and release-evidence generation;
-- Windows/Python field-portability checks; and
-- a reproducible Lean 4 project machine-checking selected responsibility invariants.
+- reproducible public export, SBOM, and release evidence;
+- Windows/Python field-portability checks;
+- selected responsibility invariants machine-checked in Lean 4.
 
-## Python × Lean 4 — executable responsibility with machine-checked invariants
+## Operational state model
 
-RPOS exposes a public theorem-to-runtime-test crosswalk in `formal/assurance-catalog.json`:
-
-`operational risk -> Lean theorem -> Python runtime test -> model scope -> proof ceiling`
-
-Current machine-checked assertions include:
-
-1. `RPOS.human_gate_cannot_dispatch_directly` — a Human Gate is not direct dispatch authority;
-2. `RPOS.only_verified_enters_completed` — only `VERIFIED` may directly enter `COMPLETED`;
-3. `RPOS.effect_unknown_is_not_completed` — unresolved external-effect uncertainty is not completion;
-4. `RPOS.ready_to_resume_is_not_authorized` — repair readiness is not execution authority;
-5. `RPOS.receipt_is_not_effect_verification` — a transport/API receipt is not external-effect verification;
-6. `RPOS.model_proposal_is_not_authority` — a model proposal is not operational authority.
-
-These are real Lean 4 theorems over declared bounded models. They do **not** imply that the entire Python runtime, deployment environment, legal responsibility, organizational authority, or arbitrary external system is formally proven.
-
-That boundary is deliberate: formal proof, executable implementation evidence, and real external-effect evidence are different evidence classes and must not impersonate one another.
-
-## Independent Responsibility Pathway lineage
-
-RPOS is independently engineered within the Responsibility Pathway lineage:
-
-```text
-Responsibility Pathway Model / Paper
-  -> Responsibility Pathway Design
-  -> Responsibility Pathway Engineering
-  -> Responsibility Pathway Runtime
-  -> RPOS — Responsibility Pathway Operating System
-  -> formal + executable + operational evidence
-  -> upstream revision
-```
-
-The lineage centers on responsibility continuity across judgment, authorization, execution, uncertainty, repair, return, resumption, and residual ownership. RPOS is the operating layer: **RPOS owns operation, not intelligence.** Models remain replaceable proposal sources; they do not become authority merely by proposing an action.
-
-## Public Alpha status
-
-Version: **0.1.0a2 — Early Public Alpha / Executable Preview**
-
-`responsibility-pathway-os==0.1.0a2` was published to PyPI on **2026-08-29** through PyPI Trusted Publishing and is the current public alpha release. Python 3.11+ is required.
-
-```bash
-python -m pip install responsibility-pathway-os==0.1.0a2
-rpos --db rpos.db boot
-```
-
-For evaluation from the current repository source:
-
-```bash
-python -m pip install -e .
-python examples/quick_start_end_to_end.py
-```
-
-This alpha is intended for engineering evaluation and bounded pilots, not unattended production operation.
-
-## Why RPOS exists
-
-Agent systems can receive a successful tool/API receipt while the real-world effect is absent, partial, duplicated, ambiguous, or unverifiable. They can also lose the human decision boundary during retry or recovery.
-
-RPOS keeps those cases explicit:
-
-- `AUTHORIZED` does not mean execution has started or succeeded.
-- `DISPATCHING` preserves an issued but unresolved attempt.
-- `EFFECT_UNKNOWN` preserves uncertainty instead of reporting false success.
-- `REPAIR_REQUIRED` makes recovery responsibility explicit.
-- `READY_TO_RESUME` means repair readiness, not permission to execute.
-- explicit resumption restores authority before a fresh dispatch attempt.
-- `COMPLETED` follows bounded verification, not merely a transport receipt.
-
-## Core responsibility states
+Core states:
 
 `PROPOSED`, `HUMAN_GATE`, `AUTHORIZED`, `DISPATCHING`, `EFFECT_UNKNOWN`, `VERIFIED`, `REPAIR_REQUIRED`, `READY_TO_RESUME`, `COMPLETED`, `DENIED`, `ABORTED`.
 
-## Executable examples
+Key distinctions:
 
-The repository includes eight compact executable scenarios:
+- `AUTHORIZED` means the conditions for action are present; it does not mean execution has started or succeeded.
+- `DISPATCHING` preserves an issued but unresolved attempt.
+- `EFFECT_UNKNOWN` preserves uncertainty instead of reporting false success.
+- `REPAIR_REQUIRED` means the pathway must be repaired or reviewed before continuing.
+- `READY_TO_RESUME` means repair readiness, not permission to execute.
+- `COMPLETED` follows bounded verification, not merely a transport receipt.
+
+A model proposal is not operational authority. Human approval also does not become unlimited retry or resume authority after failure.
+
+## Executable examples
 
 ```bash
 python examples/happy_path_verified.py
@@ -165,103 +86,73 @@ python examples/adapter_exception_containment.py
 python examples/reconciliation_unresolved_human_return.py
 ```
 
-They exercise bounded paths for approval/denial, `EFFECT_UNKNOWN`, restart, reconciliation, repair, explicit resume authority, replay protection, adapter exceptions, and Human Return. They are executable evidence for those scenarios only.
+These examples cover bounded paths for Human Gate decisions, `EFFECT_UNKNOWN`, restart, reconciliation, repair, explicit resume authority, replay protection, adapter exceptions, and Human Return.
 
-## Production-grade operational demo suite
+## Integration demo suite
 
-Current `main` also includes executable integration scenarios under `examples/production_grade_demos/`. These were added **after** the PyPI `0.1.0a2` artifacts were published, so the demo source itself is not claimed to be contained in the published `0.1.0a2` wheel/sdist. Run it from a current source checkout:
+Current `main` also includes `examples/production_grade_demos/`:
 
 ```bash
 python examples/production_grade_demos/run_demo.py
 ```
 
-The suite uses the shipped `RposService` and RPOS SQLite persistence/transition logic while a separate localhost HTTP process writes effects to a separate SQLite database. It does not copy or reimplement the RPOS state machine.
+Scenarios include:
 
-The three scenarios cover:
-
-- **supplier payment ambiguity** — the external service commits a payment and drops the connection; RPOS enters `EFFECT_UNKNOWN`, a real Python process restart occurs, independent readback confirms the effect, and no duplicate dispatch is required;
-- **production deployment rejection and repair** — external rejection enters `REPAIR_REQUIRED`, explicit human resume authority is required, a fresh dispatch identity is used, and completion follows independent readback rather than receipt alone;
+- **supplier payment ambiguity** — an external service commits the payment and drops the connection; RPOS enters `EFFECT_UNKNOWN`, survives process restart, verifies the effect through independent readback, and avoids duplicate dispatch;
+- **production deployment rejection and repair** — external rejection enters `REPAIR_REQUIRED`, a fresh human resume authorization is required, and completion follows readback rather than receipt alone;
 - **privileged-access revocation denial** — Human Gate denial leaves the external side-effect count at zero.
 
-The localhost service is a deterministic integration fixture, not a real payment processor, production controller, or IAM provider. Passing these demos verifies the declared paths in the tested environment; it does not establish production readiness or arbitrary external-system correctness.
+The localhost service is a deterministic integration fixture, not a real payment processor, production controller, or IAM provider. Passing these demos proves only the declared paths in the tested environment.
 
-## Lean 4 Formal Assurance Surface
+## Lean 4 assurance surface
 
-The formal project is pinned to **Lean 4.32.2**.
+RPOS publishes a theorem-to-runtime-test crosswalk in `formal/assurance-catalog.json`.
 
-```bash
-cd formal/lean
-lake build
-```
+Current machine-checked assertions include:
 
-Current modules include:
+1. a Human Gate cannot dispatch directly;
+2. only `VERIFIED` may directly enter `COMPLETED`;
+3. unresolved `EFFECT_UNKNOWN` is not completion;
+4. repair readiness is not execution authority;
+5. a transport/API receipt is not external-effect verification;
+6. a model proposal is not operational authority.
 
-- `RPOSState.lean` — state transitions, Human Gate, completion, uncertainty, resume authority;
-- `RPOSReachability.lean` — bounded multi-step reachability and no-direct-shortcut properties;
-- `RPOSEvidenceBoundary.lean` — separation among authorization, receipt, verification, evaluation, and dependency evidence;
-- `RPOSPacketBoundary.lean` — no-authority-effect properties for responsibility envelopes;
-- `RPOSOperationalBoundary.lean` — model proposal, human authorization, receipt, external observation, and operational responsibility;
-- `RPOSTransparencyBoundary.lean` — transparency/evidence distinctions.
+These are Lean 4 theorems over declared bounded models. They do not prove the entire Python runtime, deployment environment, legal responsibility, organizational authority, or arbitrary external systems.
 
-The public Formal Assurance Viewer is generated from the exact site commit after the Lean project is machine-checked and maps operational risks to theorem names, Python runtime tests, source identity, model scope, and proof ceiling.
+## Support status and known limits
 
-## Responsibility State Envelope
+RPOS can be used today for engineering evaluation and bounded integrations within its documented surfaces. The current release is not designed to be a self-contained control plane for unattended high-impact production operation.
 
-`templates/catalog.json` contains reusable neutral-role templates for operation proposal, Human Gate decision, verification contract, repair plan, resume authorization, dependency evidence, external evaluation evidence, and Human Return.
+RPOS does not by itself provide or guarantee:
 
-Every envelope has `authority_effect: "none"`: **creating or validating an envelope never authorizes, dispatches, verifies, completes, or resumes an operation.**
+- legal or organizational authority;
+- correctness of arbitrary external systems;
+- universal exactly-once behavior;
+- external-effect proof from a receipt alone;
+- compatibility with every production environment;
+- implementation-wide formal proof of the Python runtime.
 
-## Verification route
+When an environment, attack case, failure mode, or integration gap is discovered, the project treats it as input to the OSS improvement loop rather than as a reason to hide the software from use.
 
-The release route includes:
+- [Security](SECURITY.md)
+- [Support](SUPPORT.md)
+- [Contributing](CONTRIBUTING.md)
 
-- the complete Python test suite;
-- all eight compact source examples;
-- wheel and sdist build and clean-install checks;
-- installed CLI/API checks outside the repository working directory;
-- exact-HEAD public-export reconstruction;
-- source-bound CycloneDX SBOM and SHA-256 release evidence;
-- public-source likely-secret scanning;
-- Windows and Ubuntu checks on Python 3.11 and 3.12;
-- pinned Lean 4 `lake build`;
-- exact-head Formal Assurance manifest generation; and
-- GitHub Pages validation and deployment with machine-checked assurance and verified architecture visuals.
+## Claim boundaries
 
-The current-main production-grade demo suite is additionally exercised by the repository test/CI route after its introduction.
+RPOS separates evidence-limited claims that may improve from permanent responsibility boundaries that software should not cross by itself. See `docs/en/claim-boundary-promotion.md`.
 
-Passing those checks establishes the named engineering evidence within their declared scope. It does not automatically establish production readiness, legal compliance, universal safety, organizational authority, arbitrary external-system correctness, or implementation-wide formal correctness.
-
-## Claim boundary and promotion
-
-RPOS separates two different things:
-
-- **Current Evidence Boundaries** — claims that may advance when declared evidence is obtained and reviewed;
-- **Permanent Responsibility Boundaries** — authority or responsibility that software should not create by itself.
-
-Evidence-limited claims currently include production readiness, broader platform support, implementation-wide formal conformance, stronger software-supply-chain trust, and domain effectiveness beyond the published scenarios.
-
-Permanent boundaries include legal/regulatory authority, correctness of arbitrary external systems, receipt-as-effect proof without a verification contract, transfer of final organizational responsibility to software, and universal exactly-once guarantees for arbitrary systems lacking the required contract.
-
-See `docs/en/claim-boundary-promotion.md`.
-
-## Direction
-
-The long-term goal is larger than the current alpha: make responsibility-bearing operational state easier to execute, inspect, test, formally reason about, recover, and return to accountable humans or institutions across real AI-enabled workflows.
-
-That is a goal, not a claim of completion. Each stronger public claim must earn its promotion through implementation, evidence, and review.
+Version age alone does not promote a claim. Stronger claims require implementation, scoped evidence, and review.
 
 ## Project surfaces
 
 - PyPI: `responsibility-pathway-os==0.1.0a2`
 - GitHub Pages product site and architecture maps
-- Japanese launch article: https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2
 - `site/assurance.html` — Formal Assurance Viewer
-- `formal/assurance-catalog.json` — canonical theorem/runtime-test crosswalk
+- `formal/assurance-catalog.json` — theorem/runtime-test crosswalk
 - `product-status.json` — machine-readable release and claim state
-- `examples/production_grade_demos/` — current-main executable integration suite
-- `docs/en/public-alpha-evaluation-guide.md` — third-party evaluation route
+- `examples/production_grade_demos/` — current-main integration suite
 - `CHANGELOG.md` — release history
-- `SECURITY.md`, `SUPPORT.md`, `CONTRIBUTING.md`
 
 ## License
 
