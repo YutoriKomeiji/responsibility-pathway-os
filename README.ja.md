@@ -23,7 +23,7 @@ RPOSは、承認、実行要求、外部作用、確認、結果不明、修復�
 
 ## まず試す
 
-現在の公開版は `0.1.0a2` です。
+Version: **0.1.0a2** — 現在の公開版です。
 
 ```bash
 python -m pip install responsibility-pathway-os==0.1.0a2
