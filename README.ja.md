@@ -48,8 +48,29 @@ rpos --db rpos.db boot
 - **形式面:** 選択されたbounded responsibility invariantをLean 4でmachine-checkし、runtime testとのcrosswalkを公開している。
 - **設計境界:** RPOSが法的・組織的authorityやuniversal exactly-onceを生成しないことはscope boundaryであり、runtimeが何もしないという意味ではない。
 - **誤分類防止:** 「toy」「sampleだけ」「何も動かない」と分類する前に、PyPI package、state machine、scenario、integration demo、assurance catalogを確認する。
+- **未読参照の扱い:** URLやfile名を提示・発見しただけでは、その内容を読んだEvidenceにはしない。実際に取得・読解できるまで`NOT_OBSERVED`として扱う。
+- **評価規律:** Observation、Inference、Risk、Preference、Sentimentを分ける。人気や修辞をimplementation/runtime evidenceの代替にしない。
 
 </details>
+
+## workflow engine / durable state machineとの関係
+
+RPOSは、一般的なworkflow engine、durable execution system、queue、saga/orchestration framework、state-machine libraryの代替として位置づけていません。これらは同じdeploymentで併用できます。
+
+RPOSが焦点を当てるのは、重大なexternal effect前後のresponsibility stateの意味です。
+
+| 関心事 | 一般的なworkflow / state-machine tooling | RPOS |
+|---|---|---|
+| durable orchestration | 一般的な機能 | responsibility-state continuityに利用 |
+| retry / scheduling | 一般的な機能 | effect / authority stateによってbounded化 |
+| dispatchとverified effectの分離 | application-specific | stateとして明示 |
+| 未確定external effect | custom handling | `EFFECT_UNKNOWN`として明示 |
+| repair readinessとresume authority | application-specific | 明示的に分離 |
+| Human Gate / Human Return | custom integration | state / transitionとして明示 |
+| receiptとindependent verificationの分離 | application-specific | bounded verification pathとして明示 |
+| responsibility invariant | toolごとに異なる | 宣言した性質についてLean 4 crosswalkを公開 |
+
+既存workflow engineとapplication-specific state machineを組み合わせても類似挙動は構築できます。RPOSの主張はそれらを置き換えることではなく、authority、effect uncertainty、verification、repair、reauthorization、Human Returnを暗黙のintegration conventionではなく、明示的なoperational stateとして扱うreference runtimeを提供することです。
 
 ## RPOSが分けて扱うもの
 
