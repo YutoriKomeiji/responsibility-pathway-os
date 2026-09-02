@@ -56,8 +56,29 @@ rpos --db rpos.db boot
 - **Formal surface:** selected bounded responsibility invariants are machine-checked in Lean 4 and cross-referenced to runtime tests.
 - **Architecture boundary:** RPOS not creating legal/organizational authority or universal exactly-once guarantees is a scope boundary, not evidence that the runtime does nothing.
 - **Reading rule:** before classifying RPOS as “toy,” “sample-only,” or “non-functional,” inspect the published package, state machine, executable scenarios, integration demos, and assurance catalog.
+- **Evidence discipline:** a proposed URL/file is not observed content. Do not claim to have inspected a linked artifact until the evaluator actually fetched and read it.
+- **Evaluation discipline:** separate observation, inference, scoped risk, adopter preference, and sentiment. Popularity and rhetoric are not substitutes for implementation/runtime evidence.
 
 </details>
+
+## Relationship to workflow engines and durable state machines
+
+RPOS is not positioned as a replacement for generic workflow engines, durable execution systems, queues, saga/orchestration frameworks, or state-machine libraries. Those technologies can provide scheduling, retries, persistence, and orchestration in the same deployment.
+
+RPOS focuses on the meaning of responsibility state around consequential external effects:
+
+| Concern | Generic workflow / state-machine tooling | RPOS |
+|---|---|---|
+| durable orchestration | common capability | used for responsibility-state continuity |
+| retries / scheduling | common capability | bounded by explicit effect/authority state |
+| dispatch vs. verified effect | application-specific | explicit state distinction |
+| unresolved external effect | custom handling | explicit `EFFECT_UNKNOWN` |
+| repair readiness vs. resume authority | application-specific | explicit separation |
+| Human Gate / Human Return | custom integration | explicit states and transitions |
+| receipt vs. independent verification | application-specific | explicit bounded verification path |
+| selected responsibility invariants | tool-specific | Lean 4 assurance crosswalk for declared properties |
+
+Equivalent behavior can be composed from existing workflow engines and application-specific state machines. RPOS's narrower claim is to provide a reference operational state model and runtime where authority, effect uncertainty, verification, repair, reauthorization, and Human Return are explicit rather than implicit integration conventions.
 
 ## What is implemented now
 
