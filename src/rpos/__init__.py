@@ -23,6 +23,7 @@ from .provenance import (
     ProvenanceSourceClass,
 )
 from .provenance_review import ClaimReviewStatus, PublicClaimReviewRecord, build_provenance_review_report
+from .routing import ResponsibilityRoute, ResponsibilityRouteKind, classify_responsibility_route
 from .security import (
     AuthorityEnvelope,
     AuthorityValidation,
@@ -106,6 +107,8 @@ __all__ = [
     "ResponsibilityIntegritySnapshot",
     "ResponsibilityObservation",
     "ResponsibilityObservatory",
+    "ResponsibilityRoute",
+    "ResponsibilityRouteKind",
     "ResponsibilityStateEnvelope",
     "ResponsibilityPacket",
     "RposService",
@@ -118,6 +121,7 @@ __all__ = [
     "build_event_chain_checkpoint",
     "build_provenance_review_report",
     "classify_adapter_result",
+    "classify_responsibility_route",
     "disclosure_grants_authority",
     "evaluate_named_responsibility_dependencies",
     "evaluate_responsibility_degradation",
