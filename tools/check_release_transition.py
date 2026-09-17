@@ -70,15 +70,25 @@ def check_candidate(root: Path, candidate: str, latest_published: str) -> None:
         where="CHANGELOG.md",
     )
 
+    public_phrases = (
+        "current published release",
+        "現在の公開版",
+        "PyPI公開済み",
+        "published package",
+    )
     for path in ("README.md", "README.ja.md"):
         text = read_text(root, path)
         require(text, latest_published, where=path)
-        # In candidate mode, README may mention the candidate but must not call it the current published release.
-        reject(
-            text,
-            rf"{re.escape(candidate)}[^\n]{{0,100}}(?:current published release|現在の公開版|PyPI公開済み|published package)",
-            where=path,
-        )
+        for line in text.splitlines():
+            if candidate not in line:
+                continue
+            lowered = line.lower()
+            claims_public = any(phrase.lower() in lowered for phrase in public_phrases)
+            if claims_public and latest_published not in line:
+                fail(
+                    f"{path}: candidate line claims public/current status without naming "
+                    f"the actual latest published version {latest_published!r}: {line!r}"
+                )
 
 
 def check_post_publish(root: Path, published: str) -> None:
