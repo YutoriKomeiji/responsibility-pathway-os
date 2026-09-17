@@ -40,6 +40,22 @@ def write_fixture(
     (root / "CHANGELOG.md").write_text(changelog, encoding="utf-8")
 
 
+def candidate_readme(version: str) -> str:
+    return (
+        f"<!-- RPOS-DOC-VERSION: {version} -->\n"
+        f"Version: **{version}** — release candidate / not yet published.\n"
+        f"python -m pip install responsibility-pathway-os=={version}\n"
+    )
+
+
+def published_readme(version: str) -> str:
+    return (
+        f"<!-- RPOS-DOC-VERSION: {version} -->\n"
+        f"Version: **{version}** — current published release.\n"
+        f"python -m pip install responsibility-pathway-os=={version}\n"
+    )
+
+
 def run_check(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, str(SCRIPT), "--root", str(root), *args],
@@ -49,44 +65,66 @@ def run_check(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_candidate_accepts_previous_public_version(tmp_path: Path) -> None:
+def test_candidate_requires_future_version_identity_before_publication(tmp_path: Path) -> None:
     write_fixture(
         tmp_path,
-        version="0.1.0a3",
+        version="0.1.0a5",
         publication_state="not_published",
-        latest_published="0.1.0a2",
-        readme_current="candidate 0.1.0a3; current published release 0.1.0a2\n",
-        changelog="## [0.1.0a3] - candidate\nNot published.\n",
+        latest_published="0.1.0a4",
+        readme_current=candidate_readme("0.1.0a5"),
+        changelog="## [0.1.0a5] - candidate\nNot published.\n",
     )
     result = run_check(
         tmp_path,
         "--mode",
         "candidate",
         "--version",
-        "0.1.0a3",
+        "0.1.0a5",
         "--latest-published",
-        "0.1.0a2",
+        "0.1.0a4",
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_candidate_rejects_stale_previous_version_as_active_document_identity(tmp_path: Path) -> None:
+    write_fixture(
+        tmp_path,
+        version="0.1.0a5",
+        publication_state="not_published",
+        latest_published="0.1.0a4",
+        readme_current=published_readme("0.1.0a4"),
+        changelog="## [0.1.0a5] - candidate\nNot published.\n",
+    )
+    result = run_check(
+        tmp_path,
+        "--mode",
+        "candidate",
+        "--version",
+        "0.1.0a5",
+        "--latest-published",
+        "0.1.0a4",
+    )
+    assert result.returncode != 0
+    assert "missing required marker" in (result.stderr + result.stdout)
 
 
 def test_candidate_rejects_premature_publication_state(tmp_path: Path) -> None:
     write_fixture(
         tmp_path,
-        version="0.1.0a3",
+        version="0.1.0a5",
         publication_state="pypi_published",
-        latest_published="0.1.0a3",
-        readme_current="0.1.0a3\n",
-        changelog="0.1.0a3\n",
+        latest_published="0.1.0a5",
+        readme_current=candidate_readme("0.1.0a5"),
+        changelog="0.1.0a5\n",
     )
     result = run_check(
         tmp_path,
         "--mode",
         "candidate",
         "--version",
-        "0.1.0a3",
+        "0.1.0a5",
         "--latest-published",
-        "0.1.0a2",
+        "0.1.0a4",
     )
     assert result.returncode != 0
     assert "publication_state='not_published'" in (result.stderr + result.stdout)
@@ -95,20 +133,20 @@ def test_candidate_rejects_premature_publication_state(tmp_path: Path) -> None:
 def test_candidate_rejects_readme_that_claims_candidate_is_current_public(tmp_path: Path) -> None:
     write_fixture(
         tmp_path,
-        version="0.1.0a3",
+        version="0.1.0a5",
         publication_state="not_published",
-        latest_published="0.1.0a2",
-        readme_current="0.1.0a2 previous. 0.1.0a3 — current published release\n",
-        changelog="0.1.0a3 candidate; not published.\n",
+        latest_published="0.1.0a4",
+        readme_current=published_readme("0.1.0a5") + "candidate\n",
+        changelog="0.1.0a5 candidate; not published.\n",
     )
     result = run_check(
         tmp_path,
         "--mode",
         "candidate",
         "--version",
-        "0.1.0a3",
+        "0.1.0a5",
         "--latest-published",
-        "0.1.0a2",
+        "0.1.0a4",
     )
     assert result.returncode != 0
     assert "forbidden pre-publication claim" in (result.stderr + result.stdout)
@@ -117,17 +155,17 @@ def test_candidate_rejects_readme_that_claims_candidate_is_current_public(tmp_pa
 def test_post_publish_requires_public_state_to_match(tmp_path: Path) -> None:
     write_fixture(
         tmp_path,
-        version="0.1.0a3",
+        version="0.1.0a5",
         publication_state="pypi_published",
-        latest_published="0.1.0a3",
-        readme_current="current published release 0.1.0a3\n",
-        changelog="Published responsibility-pathway-os==0.1.0a3\n",
+        latest_published="0.1.0a5",
+        readme_current=published_readme("0.1.0a5"),
+        changelog="Published responsibility-pathway-os==0.1.0a5\n",
     )
     result = run_check(
         tmp_path,
         "--mode",
         "post-publish",
         "--version",
-        "0.1.0a3",
+        "0.1.0a5",
     )
     assert result.returncode == 0, result.stderr
