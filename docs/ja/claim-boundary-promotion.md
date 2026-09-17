@@ -11,7 +11,7 @@ RPOSでは、公開上の主張を永久的な免責事項として並べるの�
 
 ## Current Evidence Boundary
 
-RPOS 0.1.0a3 は現在PyPIへ公開されている Early Public Alpha です。現在のverified surfaceには、限定されたPython実行挙動、永続化と障害回復scenario、Responsibility Routing、clean package install、public-export再構築、SBOM/source-bound check、Ubuntu/Windows × Python 3.11/3.12 evidence、GitHub Pages validation、宣言された限定model上でmachine-checkされPython runtime testへcross-linkされた6件のLean 4責任不変条件が含まれます。
+RPOS 0.1.0a4 は現在PyPIへ公開されている Early Public Alpha です。現在のverified surfaceには、限定されたPython実行挙動、永続化と障害回復scenario、Responsibility Routing、clean package install、public-export再構築、SBOM/source-bound check、Ubuntu/Windows × Python 3.11/3.12 evidence、GitHub Pages validation、宣言された限定model上でmachine-checkされPython runtime testへcross-linkされた6件のLean 4責任不変条件が含まれます。
 
 このevidenceが支えるのは現在のPublic Alpha claimまでです。本番運用、法的判断、組織的権限、外部system全体、Python実装全体のformal correctnessまで同時に確認できたという意味ではありません。
 
