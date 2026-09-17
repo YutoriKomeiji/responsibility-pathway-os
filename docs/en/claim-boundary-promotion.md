@@ -11,7 +11,7 @@ These two cases must not be presented as if they were the same.
 
 ## Current evidence boundary
 
-RPOS 0.1.0a2 is an Early Public Alpha / Executable Preview release candidate. Its verified surface includes bounded executable Python behavior, persistence and recovery scenarios, clean package installation, public-export reconstruction, SBOM and source-bound checks, Ubuntu/Windows Python 3.11/3.12 evidence, GitHub Pages deployment checks, and six published Lean 4 responsibility invariants machine-checked in declared bounded models and cross-linked to Python runtime tests.
+RPOS 0.1.0a3 is the currently published Early Public Alpha. Its verified surface includes bounded executable Python behavior, persistence and recovery scenarios, Responsibility Routing, clean package installation, public-export reconstruction, SBOM and source-bound checks, Ubuntu/Windows Python 3.11/3.12 evidence, GitHub Pages validation, and six published Lean 4 responsibility invariants machine-checked in declared bounded models and cross-linked to Python runtime tests.
 
 That evidence supports the current Public Alpha claims only. It does not automatically support production, legal, organizational, external-system, or implementation-wide formal claims.
 
