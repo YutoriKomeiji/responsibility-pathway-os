@@ -67,6 +67,7 @@ jobs:
           from pathlib import Path
           data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'formal-assurance.json').read_text(encoding='utf-8'))
           assert data['source_commit'] == os.environ['GITHUB_SHA']
+          assert data['product_version'] == os.environ['RPOS_EXPECTED_VERSION']
           assert data['lean']['machine_checked'] is True
           assert data['evidence_role'] == 'public_assurance_not_runtime_authority'
           assert data['assertion_count'] >= 6
@@ -127,18 +128,11 @@ jobs:
           latest_published = status['latest_published_version']
           for readme in ('README.md', 'README.ja.md'):
               text = Path(readme).read_text(encoding='utf-8')
-              if publication_state == 'not_published':
-                  required = (
-                      f'RPOS-DOC-VERSION: {latest_published}',
-                      f'Version: **{latest_published}',
-                      f'responsibility-pathway-os=={latest_published}',
-                  )
-              else:
-                  required = (
-                      f'RPOS-DOC-VERSION: {actual}',
-                      f'Version: **{actual}',
-                      f'responsibility-pathway-os=={actual}',
-                  )
+              required = (
+                  f'RPOS-DOC-VERSION: {actual}',
+                  f'Version: **{actual}',
+                  f'responsibility-pathway-os=={actual}',
+              )
               missing = [marker for marker in required if marker not in text]
               if missing:
                   raise SystemExit(f'{readme} release-state markers missing: {missing}')
