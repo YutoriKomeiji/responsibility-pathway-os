@@ -6,7 +6,7 @@ on:
       expected_version:
         description: Exact version expected from pyproject.toml
         required: true
-        default: "0.1.0a2"
+        default: "0.1.0a3"
         type: string
       publish:
         description: Publish verified distributions to PyPI
@@ -20,6 +20,7 @@ on:
       - "README.md"
       - "README.ja.md"
       - "product-status.json"
+      - "CHANGELOG.md"
       - "formal/**"
       - "tests/**"
       - "site/assurance.html"
@@ -28,12 +29,13 @@ on:
       - "src/rpos/hash_bundle.py"
       - "tools/build_public_export_manifest.py"
       - "tools/build_formal_assurance_manifest.py"
+      - "tools/check_release_transition.py"
 
 permissions:
   contents: read
 
 env:
-  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a2' }}
+  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a3' }}
 
 jobs:
   formal-assurance:
@@ -108,17 +110,6 @@ jobs:
           if actual != expected:
               raise SystemExit(f'version mismatch: requested={expected!r}, project={actual!r}')
 
-          for readme in ('README.md', 'README.ja.md'):
-              text = Path(readme).read_text(encoding='utf-8')
-              required = (
-                  f'RPOS-DOC-VERSION: {actual}',
-                  f'Version: **{actual}',
-                  f'responsibility-pathway-os=={actual}',
-              )
-              missing = [marker for marker in required if marker not in text]
-              if missing:
-                  raise SystemExit(f'{readme} version markers missing: {missing}')
-
           status = json.loads(Path('product-status.json').read_text(encoding='utf-8'))
           if status['version'] != actual:
               raise SystemExit('product-status version mismatch')
@@ -132,10 +123,57 @@ jobs:
           if status['production_ready'] is not False:
               raise SystemExit('public alpha must not claim production readiness')
 
+          latest_published = status['latest_published_version']
+          for readme in ('README.md', 'README.ja.md'):
+              text = Path(readme).read_text(encoding='utf-8')
+              if publication_state == 'not_published':
+                  required = (
+                      f'RPOS-DOC-VERSION: {latest_published}',
+                      f'Version: **{latest_published}',
+                      f'responsibility-pathway-os=={latest_published}',
+                  )
+              else:
+                  required = (
+                      f'RPOS-DOC-VERSION: {actual}',
+                      f'Version: **{actual}',
+                      f'responsibility-pathway-os=={actual}',
+                  )
+              missing = [marker for marker in required if marker not in text]
+              if missing:
+                  raise SystemExit(f'{readme} release-state markers missing: {missing}')
+
           print(
               f'release identity verified for responsibility-pathway-os=={actual}; '
-              f'publication_state={publication_state}; publish_requested={publish_requested}'
+              f'publication_state={publication_state}; latest_published={latest_published}; '
+              f'publish_requested={publish_requested}'
           )
+          PY
+      - name: Verify release transition state
+        env:
+          EXPECTED_VERSION: ${{ env.RPOS_EXPECTED_VERSION }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess, sys
+          from pathlib import Path
+
+          expected = os.environ['EXPECTED_VERSION']
+          status = json.loads(Path('product-status.json').read_text(encoding='utf-8'))
+          if status['publication_state'] == 'not_published':
+              cmd = [
+                  sys.executable,
+                  'tools/check_release_transition.py',
+                  '--mode', 'candidate',
+                  '--version', expected,
+                  '--latest-published', status['latest_published_version'],
+              ]
+          else:
+              cmd = [
+                  sys.executable,
+                  'tools/check_release_transition.py',
+                  '--mode', 'post-publish',
+                  '--version', expected,
+              ]
+          subprocess.run(cmd, check=True)
           PY
       - name: Run standalone Python tests
         run: python -m pytest -q tests

@@ -1,9 +1,9 @@
 {
   "product": "RPOS — Responsibility Pathway Operating System",
   "package": "responsibility-pathway-os",
-  "version": "0.1.0a2",
-  "release_stage": "early_public_alpha_published",
-  "publication_state": "pypi_published",
+  "version": "0.1.0a3",
+  "release_stage": "early_public_alpha_candidate",
+  "publication_state": "not_published",
   "latest_published_version": "0.1.0a2",
   "production_ready": false,
   "release_claim": "engineering evaluation and bounded pilots",
