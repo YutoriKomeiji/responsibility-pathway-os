@@ -2,7 +2,7 @@
 
 ## Status
 
-Current source開発ノートです。Responsibility Routingは公開済み`0.1.0a3` lineに含まれています。この文書はResponsibility Pathway stack全体で引き続き揃えるsource-level semanticsを記録します。`0.1.0a4` candidateを公開済みに昇格させず、新releaseを作らず、production / enterprise readinessも主張しません。
+Current source開発ノートです。Responsibility Routingは公開済み`0.1.0a4` lineに含まれています。この文書はResponsibility Pathway stack全体で引き続き揃えるsource-level semanticsを記録します。`0.1.0a4`は`0.1.0a3`のruntime routing behaviorを維持しつつ、release metadata / public-surface整合修正を追加したreleaseです。production / enterprise readinessは主張しません。
 
 ## Core rule
 

@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: en -->
-<!-- RPOS-DOC-VERSION: 0.1.0a3 -->
+<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
 <!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: ../ja/current-scope-and-extension-surface.md -->
 
 # Current Scope and Extension Surface
 
-RPOS 0.1.0a3 is the currently published Early Public Alpha for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
+RPOS 0.1.0a4 is the currently published Early Public Alpha for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
 
 ## What works today
 
@@ -28,7 +28,7 @@ RPOS currently provides at least:
 - six published Lean 4 responsibility invariants machine-checked in declared bounded models and cross-linked to Python runtime tests; and
 - production-grade operational demos using the RPOS service, a separate localhost HTTP process, a separate external-effect SQLite store, real process restart, reconciliation, repair/resume, and Human Gate denial paths.
 
-The `0.1.0a3` release line contains the Responsibility Routing implementation. Repository examples and integration demos are executable source evidence; installed-package contents, repository source, and public documentation remain distinct release surfaces and must not be treated as interchangeable evidence.
+The `0.1.0a4` release line contains the Responsibility Routing implementation and the release-metadata/public-surface corrections introduced after `0.1.0a3`. Repository examples and integration demos are executable source evidence; installed-package contents, repository source, and public documentation remain distinct release surfaces and must not be treated as interchangeable evidence.
 
 ## Current constraints are extension surfaces
 

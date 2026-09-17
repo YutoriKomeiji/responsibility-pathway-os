@@ -1,6 +1,6 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: ja -->
-<!-- RPOS-DOC-VERSION: 0.1.0a3 -->
+<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
 <!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: README.md -->
 
@@ -23,25 +23,25 @@ RPOSは、承認、実行要求、外部作用、確認、結果不明、修復�
 
 ## まず試す
 
-Version: **0.1.0a3** — 現在の公開版です。
+Version: **0.1.0a4** — 現在の公開版です。
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a3
+python -m pip install responsibility-pathway-os==0.1.0a4
 rpos --db rpos.db boot
 ```
 
-- [PyPI 0.1.0a3](https://pypi.org/project/responsibility-pathway-os/0.1.0a3/)
-- [GitHub prerelease v0.1.0a3](https://github.com/YutoriKomeiji/responsibility-pathway-os/releases/tag/v0.1.0a3)
+- [PyPI 0.1.0a4](https://pypi.org/project/responsibility-pathway-os/0.1.0a4/)
+- [GitHub prerelease v0.1.0a4](https://github.com/YutoriKomeiji/responsibility-pathway-os/releases/tag/v0.1.0a4)
 - [製品サイト](https://yutorikomeiji.github.io/responsibility-pathway-os/)
 - [Public Alpha公開記事](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
 
-`0.1.0a3`は継続開発中の0.x系ですが、公開されている対応範囲では実際に試せます。Responsibility Routing classifierと3本の統合デモを含みます。
+`0.1.0a4`は継続開発中の0.x系ですが、公開されている対応範囲では実際に試せます。`0.1.0a3`のResponsibility Routing runtime behaviorを維持しつつ、release metadata / public-surface整合チェックを追加しています。
 
 <details>
 <summary>AI・自動読者・技術レビュー向け factual snapshot</summary>
 
 - **成果物の種類:** PyPI公開済みのinstallable Python/SQLite runtime。文書だけ・sampleだけのrepositoryではない。
-- **公開package:** `responsibility-pathway-os==0.1.0a3`。
+- **公開package:** `responsibility-pathway-os==0.1.0a4`。
 - **実行入口:** `rpos` CLI、persistent SQLite state、実行可能scenario、integration demo、browser/product surface。
 - **運用挙動:** authorization、dispatch、external-effect uncertainty、verification、repair、resumption、Human Returnを別々の実行状態として保持する。
 - **Responsibility Routing:** Human Gate、reconciliation hold、repair、return-for-authorizationをbounded routeとして分類する。route selection自体はAuthorityを付与しない。
@@ -148,7 +148,7 @@ python examples/reconciliation_unresolved_human_return.py
 
 ## 統合デモ
 
-公開版`0.1.0a3`には、`examples/production_grade_demos/`以下の統合デモが含まれます。
+公開版`0.1.0a4`には、`examples/production_grade_demos/`以下の統合デモが含まれます。
 
 ```bash
 python examples/production_grade_demos/run_demo.py
@@ -198,4 +198,4 @@ RPOS単体では次を保証・生成しません。
 
 ## ライセンス
 
-MIT License。
+MIT License.

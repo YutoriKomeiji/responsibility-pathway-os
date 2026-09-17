@@ -4,19 +4,31 @@ All notable public-alpha changes to RPOS are recorded here.
 
 RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work and preserve historical release provenance.
 
-## [0.1.0a4] - candidate / not published
+## [0.1.0a4] - 2026-09-18
 
-Hotfix candidate for the PyPI long-description version mismatch discovered immediately after `0.1.0a3` publication.
+Published as GitHub prerelease `v0.1.0a4` and to PyPI as `responsibility-pathway-os==0.1.0a4` after exact-head validation and explicit Human Gates.
 
 ### Changed
-- Package long description now uses a publication-neutral `PYPI_README.md` instead of the GitHub README's mutable "current published release" surface.
-- Release tests fail closed if the PyPI long description does not contain the candidate version and exact install command.
+- Package long description now uses a publication-neutral `PYPI_README.md` instead of the GitHub README's mutable current-public surface.
+- Release tests fail closed if the PyPI long description does not contain the release version and exact install command.
 - Wheel and sdist metadata validation now checks the rendered long description, not only package name and version fields.
+- Active/current public surfaces are lifecycle-checked separately from historical release records so old evidence remains immutable while current readers see the current published version.
+- Repository README, product site, current-scope, claim-boundary, Responsibility Routing, and demo surfaces are reconciled only after public readback.
 
-### Candidate boundary
-- Runtime behavior is unchanged from `0.1.0a3`; this candidate repairs package metadata / release-surface consistency.
-- Current published PyPI version remains `0.1.0a3` until explicit Human Gates and exact-head validation complete for `0.1.0a4`.
-- `0.1.0a3` remains in release history as the published artifact that exposed the metadata mismatch.
+### Runtime scope
+- No intentional runtime behavior change from `0.1.0a3`.
+- Responsibility Routing semantics from `0.1.0a3` remain in force, including bounded Human Gate routing, reconciliation hold, repair, return-for-authorization, explicit uncertain external-effect handling, and `route_selection != authority_grant`.
+
+### Published artifacts
+- Wheel: `responsibility_pathway_os-0.1.0a4-py3-none-any.whl` — SHA256 `941ba5e99124e16c427a8c875f34dd2d6ee02402eccfcc9ebb023285a8812910`.
+- Source distribution: `responsibility_pathway_os-0.1.0a4.tar.gz` — SHA256 `a8022db1f735ec00abc82180159658c6c0501268421dbd20da0b5c10dfe8819c`.
+- GitHub prerelease tag `v0.1.0a4` points to exact validated commit `6ee7f6d24820b738b527df4e13700316f357f3ee`.
+- PyPI publication used Trusted Publishing with digital attestations enabled; both wheel and sdist uploads returned `200 OK`.
+
+### Release boundary
+- `0.1.0a4` remains an Early Public Alpha for engineering evaluation and bounded pilots.
+- GitHub prerelease publication and PyPI package publication are separate release surfaces; neither creates production readiness or Authority.
+- No version bump creates legal or organizational Authority, universal safety, third-party correctness, production readiness, or implementation-wide formal correctness.
 
 ## [0.1.0a3] - 2026-09-18
 
