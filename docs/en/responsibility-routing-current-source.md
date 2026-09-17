@@ -2,7 +2,7 @@
 
 ## Status
 
-Current-source development note. This file describes source-level semantics being aligned across the Responsibility Pathway stack. It does not change the published `0.1.0a2` package contract, create a new release, or claim production/enterprise readiness.
+Current-source development note. Responsibility Routing is included in the published `0.1.0a3` line; this file records source-level semantics that continue to be aligned across the Responsibility Pathway stack. It does not promote the `0.1.0a4` candidate, create a new release, or claim production/enterprise readiness.
 
 ## Core rule
 
