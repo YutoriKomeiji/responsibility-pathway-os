@@ -1,6 +1,6 @@
 # Production-Grade Operational Demos
 
-> Executable integration scenarios for RPOS `0.1.0a2`.
+> Executable integration scenarios for the published RPOS `0.1.0a3` release line and current source.
 >
 > These demos do not reimplement the RPOS state machine. They invoke the shipped `RposService`, use its SQLite persistence and transition rules, and communicate with a separate localhost HTTP service backed by its own SQLite database.
 
