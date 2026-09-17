@@ -4,6 +4,20 @@ All notable public-alpha changes to RPOS are recorded here.
 
 RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work and preserve historical release provenance.
 
+## [0.1.0a4] - candidate / not published
+
+Hotfix candidate for the PyPI long-description version mismatch discovered immediately after `0.1.0a3` publication.
+
+### Changed
+- Package long description now uses a publication-neutral `PYPI_README.md` instead of the GitHub README's mutable "current published release" surface.
+- Release tests fail closed if the PyPI long description does not contain the candidate version and exact install command.
+- Wheel and sdist metadata validation now checks the rendered long description, not only package name and version fields.
+
+### Candidate boundary
+- Runtime behavior is unchanged from `0.1.0a3`; this candidate repairs package metadata / release-surface consistency.
+- Current published PyPI version remains `0.1.0a3` until explicit Human Gates and exact-head validation complete for `0.1.0a4`.
+- `0.1.0a3` remains in release history as the published artifact that exposed the metadata mismatch.
+
 ## [0.1.0a3] - 2026-09-18
 
 Published as GitHub prerelease `v0.1.0a3` and to PyPI as `responsibility-pathway-os==0.1.0a3` after exact-head validation and explicit Human Gates.
