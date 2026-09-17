@@ -63,7 +63,6 @@ def check_candidate(root: Path, candidate: str, latest_published: str) -> None:
         fail("candidate mode requires explicit_human_gate_required=true")
 
     changelog = read_text(root, "CHANGELOG.md")
-    # Candidate may be documented, but it must not be described as already published.
     reject(
         changelog,
         rf"(?:published|released)\s+(?:to\s+PyPI\s+)?(?:as\s+)?`?responsibility-pathway-os=={re.escape(candidate)}`?",
@@ -88,16 +87,12 @@ def check_candidate(root: Path, candidate: str, latest_published: str) -> None:
                 phrase_pos = lowered.find(phrase.lower(), candidate_pos + len(candidate))
                 if phrase_pos < 0:
                     continue
-                # A line may contrast an unpublished candidate with the actual public
-                # release, but the public label must itself be followed by that public
-                # version. Mentioning the old version somewhere earlier on the line is
-                # not enough to make a candidate-publication claim safe.
                 suffix = line[phrase_pos + len(phrase) : phrase_pos + len(phrase) + 100]
                 if latest_published not in suffix:
                     fail(
-                        f"{path}: candidate {candidate!r} is associated with public/current "
-                        f"status without the actual published version {latest_published!r} "
-                        f"after that label: {line!r}"
+                        f"{path}: forbidden pre-publication claim: candidate {candidate!r} "
+                        f"is associated with public/current status without the actual "
+                        f"published version {latest_published!r} after that label: {line!r}"
                     )
 
 
