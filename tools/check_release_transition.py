@@ -80,15 +80,25 @@ def check_candidate(root: Path, candidate: str, latest_published: str) -> None:
         text = read_text(root, path)
         require(text, latest_published, where=path)
         for line in text.splitlines():
-            if candidate not in line:
+            candidate_pos = line.find(candidate)
+            if candidate_pos < 0:
                 continue
             lowered = line.lower()
-            claims_public = any(phrase.lower() in lowered for phrase in public_phrases)
-            if claims_public and latest_published not in line:
-                fail(
-                    f"{path}: candidate line claims public/current status without naming "
-                    f"the actual latest published version {latest_published!r}: {line!r}"
-                )
+            for phrase in public_phrases:
+                phrase_pos = lowered.find(phrase.lower(), candidate_pos + len(candidate))
+                if phrase_pos < 0:
+                    continue
+                # A line may contrast an unpublished candidate with the actual public
+                # release, but the public label must itself be followed by that public
+                # version. Mentioning the old version somewhere earlier on the line is
+                # not enough to make a candidate-publication claim safe.
+                suffix = line[phrase_pos + len(phrase) : phrase_pos + len(phrase) + 100]
+                if latest_published not in suffix:
+                    fail(
+                        f"{path}: candidate {candidate!r} is associated with public/current "
+                        f"status without the actual published version {latest_published!r} "
+                        f"after that label: {line!r}"
+                    )
 
 
 def check_post_publish(root: Path, published: str) -> None:
