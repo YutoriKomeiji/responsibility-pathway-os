@@ -75,9 +75,14 @@ def check_candidate(root: Path, candidate: str, latest_published: str) -> None:
         "PyPI公開済み",
         "published package",
     )
+    candidate_markers = ("release candidate", "candidate", "not yet published", "未公開")
     for path in ("README.md", "README.ja.md"):
         text = read_text(root, path)
-        require(text, latest_published, where=path)
+        require(text, f"RPOS-DOC-VERSION: {candidate}", where=path)
+        require(text, f"Version: **{candidate}", where=path)
+        require(text, f"responsibility-pathway-os=={candidate}", where=path)
+        if not any(marker.lower() in text.lower() for marker in candidate_markers):
+            fail(f"{path}: candidate version must be explicitly marked as candidate/not-yet-published")
         for line in text.splitlines():
             candidate_pos = line.find(candidate)
             if candidate_pos < 0:
@@ -85,14 +90,10 @@ def check_candidate(root: Path, candidate: str, latest_published: str) -> None:
             lowered = line.lower()
             for phrase in public_phrases:
                 phrase_pos = lowered.find(phrase.lower(), candidate_pos + len(candidate))
-                if phrase_pos < 0:
-                    continue
-                suffix = line[phrase_pos + len(phrase) : phrase_pos + len(phrase) + 100]
-                if latest_published not in suffix:
+                if phrase_pos >= 0:
                     fail(
                         f"{path}: forbidden pre-publication claim: candidate {candidate!r} "
-                        f"is associated with public/current status without the actual "
-                        f"published version {latest_published!r} after that label: {line!r}"
+                        f"is associated with published/current status: {line!r}"
                     )
 
 
