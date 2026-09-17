@@ -4,6 +4,26 @@ All notable public-alpha changes to RPOS are recorded here.
 
 RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work and preserve historical release provenance.
 
+## [0.1.0a3] - candidate / not published
+
+This candidate has **not** been published to PyPI. The current public package remains `responsibility-pathway-os==0.1.0a2` until an explicit Human Gate, successful publication, public readback, and post-release reconciliation complete.
+
+### Added
+- Additive Responsibility Routing classification through `ResponsibilityRoute`, `ResponsibilityRouteKind`, and `classify_responsibility_route` without replacing the existing v0.1 operation-state contract.
+- Bounded route distinctions for Human Gate, reconciliation hold, repair, and return-for-authorization while preserving `route_selection != authority_grant`.
+- Deterministic production-grade integration demos for supplier-payment ambiguity, deployment repair/resumption, and privileged-access denial.
+- Release-transition preflight checks that fail closed on candidate/publication-state drift.
+
+### Changed
+- Strengthened current-source responsibility semantics so unresolved external effects are not automatically rounded into Human Return.
+- Refined public/support surfaces and maturity wording while retaining existing proof, authority, and production-readiness ceilings.
+- Preserved the distinction between repair readiness and resume Authority, receipt and verified external effect, evidence transfer and Authority transfer, and fail-closed behavior and Human Gate.
+
+### Candidate boundary
+- `0.1.0a3` is an unpublished Early Public Alpha candidate for engineering evaluation and bounded pilots.
+- The current published package remains `0.1.0a2` until external publication is explicitly authorized and verified by readback.
+- No version bump creates legal or organizational Authority, universal safety, third-party correctness, production readiness, or implementation-wide formal correctness.
+
 ## [0.1.0a2] - 2026-08-29
 
 Published to PyPI as `responsibility-pathway-os==0.1.0a2` via GitHub Actions Trusted Publishing.
