@@ -1,6 +1,6 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: en -->
-<!-- RPOS-DOC-VERSION: 0.1.0a3 -->
+<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
 <!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: README.ja.md -->
 
@@ -31,25 +31,25 @@ RPOS keeps those states separate instead of collapsing them into a single “suc
 
 ## Quick Start
 
-Version: **0.1.0a3** — current published release.
+Version: **0.1.0a4** — current published release.
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a3
+python -m pip install responsibility-pathway-os==0.1.0a4
 rpos --db rpos.db boot
 ```
 
-- [PyPI 0.1.0a3](https://pypi.org/project/responsibility-pathway-os/0.1.0a3/)
-- [GitHub prerelease v0.1.0a3](https://github.com/YutoriKomeiji/responsibility-pathway-os/releases/tag/v0.1.0a3)
+- [PyPI 0.1.0a4](https://pypi.org/project/responsibility-pathway-os/0.1.0a4/)
+- [GitHub prerelease v0.1.0a4](https://github.com/YutoriKomeiji/responsibility-pathway-os/releases/tag/v0.1.0a4)
 - [Product site](https://yutorikomeiji.github.io/responsibility-pathway-os/)
 - [Japanese launch article for the public-alpha line](https://zenn.dev/dantarg/articles/rpos-public-alpha-010a2)
 
-`0.1.0a3` is an evolving 0.x release, but its documented public surfaces can be tried within their stated boundaries. It includes the Responsibility Routing classifier and the current production-grade integration demo suite.
+`0.1.0a4` is an evolving 0.x release, but its documented public surfaces can be tried within their stated boundaries. It preserves the Responsibility Routing runtime behavior from `0.1.0a3` and adds release-metadata/public-surface consistency checks.
 
 <details>
 <summary>Repository facts for automated readers and technical review</summary>
 
 - **Artifact type:** published, installable Python/SQLite runtime; not documentation-only and not sample-only.
-- **Published package:** `responsibility-pathway-os==0.1.0a3` on PyPI.
+- **Published package:** `responsibility-pathway-os==0.1.0a4` on PyPI.
 - **Executable surface:** `rpos` CLI, persistent SQLite state, executable scenarios, current-main integration demo suite, and public browser/product surfaces.
 - **Operational behavior:** authorization, dispatch, external-effect uncertainty, verification, repair, resumption, and Human Return are represented as distinct executable states.
 - **Failure behavior:** unresolved post-dispatch outcomes can remain `EFFECT_UNKNOWN` rather than becoming false completion or blind retry.
@@ -128,7 +128,7 @@ These examples cover bounded paths for Human Gate decisions, `EFFECT_UNKNOWN`, r
 
 ## Integration demo suite
 
-The published `0.1.0a3` source includes `examples/production_grade_demos/`:
+The published `0.1.0a4` source includes `examples/production_grade_demos/`:
 
 ```bash
 python examples/production_grade_demos/run_demo.py
@@ -184,13 +184,13 @@ Version age alone does not promote a claim. Stronger claims require implementati
 
 ## Project surfaces
 
-- PyPI: `responsibility-pathway-os==0.1.0a3`
-- GitHub prerelease: `v0.1.0a3`
+- PyPI: `responsibility-pathway-os==0.1.0a4`
+- GitHub prerelease: `v0.1.0a4`
 - GitHub Pages product site and architecture maps
 - `site/assurance.html` — Formal Assurance Viewer
 - `formal/assurance-catalog.json` — theorem/runtime-test crosswalk
 - `product-status.json` — machine-readable release and claim state
-- `examples/production_grade_demos/` — integration suite included in `0.1.0a3`
+- `examples/production_grade_demos/` — integration suite included in `0.1.0a4`
 - `CHANGELOG.md` — release history
 
 ## License
