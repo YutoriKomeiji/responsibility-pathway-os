@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: ja -->
-<!-- RPOS-DOC-VERSION: 0.1.0a2 -->
+<!-- RPOS-DOC-VERSION: 0.1.0a3 -->
 <!-- RPOS-DOC-STATUS: public-alpha-published -->
 <!-- RPOS-DOC-COUNTERPART: ../en/current-scope-and-extension-surface.md -->
 
 # 現在の対応範囲と拡張面
 
-RPOS 0.1.0a2 は、責任経路を実行可能な形で保持するために公開済みの Early Public Alpha / Executable Preview です。ここでは、**今すぐ試せること**と、**これから拡張していくこと**を分けて紹介します。
+RPOS 0.1.0a3 は、責任経路を実行可能な形で保持するために現在PyPIへ公開されている Early Public Alpha です。ここでは、**今すぐ試せること**と、**これから拡張していくこと**を分けて紹介します。
 
 未対応領域を単純な「できないこと」で終わらせず、要件と証拠を確認しながら、どの形なら安全に広げられるかを見るのがRPOSの方針です。
 
@@ -21,15 +21,16 @@ RPOS は現在、少なくとも次の機能を提供します。
 - observation-only reconciliation
 - `REPAIR_REQUIRED -> READY_TO_RESUME` と明示的 resume authorization
 - Residual Owner / Human Return Point
+- Human Gate、reconciliation hold、repair、return-for-authorizationを分けるadditiveなResponsibility Routing。ただし`route_selection != authority_grant`
 - bounded evidence import と provenance
 - authority effectを持たないResponsibility State Envelope template
 - CLI と実行可能サンプル
 - wheel / sdist build と clean-install verification
 - CycloneDX 1.6 SBOM、artifact hash bundle、dependency audit、secret scan
 - 宣言された限定model上でmachine-checkされ、Python runtime testへcross-linkされた6件のLean 4責任不変条件
-- shipped RPOS service、別localhost HTTP process、別external-effect SQLite、実process restart、reconciliation、repair/resume、Human Gate確認を使うcurrent-mainのproduction-grade operational demo suite
+- RPOS service、別localhost HTTP process、別external-effect SQLite、実process restart、reconciliation、repair/resume、Human Gate確認を使うproduction-grade operational demo suite
 
-production-grade demo suiteは、公開済み`0.1.0a2` wheel/sdistの公開後に`main`へ追加されました。したがってcurrent source treeのexecutable evidenceであり、既に公開済みのpackage artifactへ遡及的に含まれるとは扱いません。
+`0.1.0a3` release lineにはResponsibility Routing実装が含まれます。repository上のexample / integration demoは実行可能なsource evidenceですが、installed packageの内容、repository source、public documentationは別々のrelease surfaceです。同じEvidenceとして混同しません。
 
 ## 現在の制約は拡張面として扱う
 

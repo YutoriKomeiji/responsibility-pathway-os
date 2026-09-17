@@ -6,7 +6,7 @@ on:
       expected_version:
         description: Exact version expected from pyproject.toml
         required: true
-        default: "0.1.0a3"
+        default: "0.1.0a4"
         type: string
       publish:
         description: Publish verified distributions to PyPI
@@ -17,6 +17,7 @@ on:
     paths:
       - ".github/workflows/release.yml"
       - "pyproject.toml"
+      - "PYPI_README.md"
       - "README.md"
       - "README.ja.md"
       - "product-status.json"
@@ -35,7 +36,7 @@ permissions:
   contents: read
 
 env:
-  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a3' }}
+  RPOS_EXPECTED_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.expected_version || '0.1.0a4' }}
 
 jobs:
   formal-assurance:
@@ -203,6 +204,9 @@ jobs:
               metadata = email.message_from_bytes(zf.read(metadata_name))
           if metadata['Name'] != expected_name or metadata['Version'] != expected_version:
               raise SystemExit(f'wheel metadata mismatch: Name={metadata["Name"]!r}, Version={metadata["Version"]!r}')
+          wheel_body = metadata.get_payload()
+          if expected_version not in wheel_body or f'responsibility-pathway-os=={expected_version}' not in wheel_body:
+              raise SystemExit('wheel long description does not match requested release identity')
 
           with tarfile.open(sdists[0], 'r:gz') as tf:
               pkg_info_name = next(name for name in tf.getnames() if name.endswith('/PKG-INFO'))
@@ -212,7 +216,10 @@ jobs:
               metadata = email.message_from_bytes(member.read())
           if metadata['Name'] != expected_name or metadata['Version'] != expected_version:
               raise SystemExit(f'sdist metadata mismatch: Name={metadata["Name"]!r}, Version={metadata["Version"]!r}')
-          print('wheel and sdist metadata agree with requested release identity')
+          sdist_body = metadata.get_payload()
+          if expected_version not in sdist_body or f'responsibility-pathway-os=={expected_version}' not in sdist_body:
+              raise SystemExit('sdist long description does not match requested release identity')
+          print('wheel and sdist metadata, including long description, agree with requested release identity')
           PY
       - name: Download exact-head formal assurance evidence
         uses: actions/download-artifact@v4

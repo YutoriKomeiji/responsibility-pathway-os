@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "responsibility-pathway-os"
-version = "0.1.0a3"
+version = "0.1.0a4"
 description = "Executable Responsibility Pathway OS in Python with Lean 4 machine-checked responsibility invariants"
-readme = "README.md"
+readme = "PYPI_README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "Akihisa Ono" }]

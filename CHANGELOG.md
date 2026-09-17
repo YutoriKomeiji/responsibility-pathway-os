@@ -4,9 +4,23 @@ All notable public-alpha changes to RPOS are recorded here.
 
 RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work and preserve historical release provenance.
 
-## [0.1.0a3] - candidate / not published
+## [0.1.0a4] - candidate / not published
 
-This candidate has **not** been published to PyPI. The current public package remains `responsibility-pathway-os==0.1.0a2` until an explicit Human Gate, successful publication, public readback, and post-release reconciliation complete.
+Hotfix candidate for the PyPI long-description version mismatch discovered immediately after `0.1.0a3` publication.
+
+### Changed
+- Package long description now uses a publication-neutral `PYPI_README.md` instead of the GitHub README's mutable "current published release" surface.
+- Release tests fail closed if the PyPI long description does not contain the candidate version and exact install command.
+- Wheel and sdist metadata validation now checks the rendered long description, not only package name and version fields.
+
+### Candidate boundary
+- Runtime behavior is unchanged from `0.1.0a3`; this candidate repairs package metadata / release-surface consistency.
+- Current published PyPI version remains `0.1.0a3` until explicit Human Gates and exact-head validation complete for `0.1.0a4`.
+- `0.1.0a3` remains in release history as the published artifact that exposed the metadata mismatch.
+
+## [0.1.0a3] - 2026-09-18
+
+Published as GitHub prerelease `v0.1.0a3` and to PyPI as `responsibility-pathway-os==0.1.0a3` after exact-head validation and explicit Human Gates.
 
 ### Added
 - Additive Responsibility Routing classification through `ResponsibilityRoute`, `ResponsibilityRouteKind`, and `classify_responsibility_route` without replacing the existing v0.1 operation-state contract.
@@ -18,10 +32,17 @@ This candidate has **not** been published to PyPI. The current public package re
 - Strengthened current-source responsibility semantics so unresolved external effects are not automatically rounded into Human Return.
 - Refined public/support surfaces and maturity wording while retaining existing proof, authority, and production-readiness ceilings.
 - Preserved the distinction between repair readiness and resume Authority, receipt and verified external effect, evidence transfer and Authority transfer, and fail-closed behavior and Human Gate.
+- Aligned RPOS release surfaces with the RPR public-alpha pattern: GitHub prerelease/tag carries source release identity and release notes; PyPI remains the package-distribution surface.
 
-### Candidate boundary
-- `0.1.0a3` is an unpublished Early Public Alpha candidate for engineering evaluation and bounded pilots.
-- The current published package remains `0.1.0a2` until external publication is explicitly authorized and verified by readback.
+### Published artifacts
+- Wheel: `responsibility_pathway_os-0.1.0a3-py3-none-any.whl` — SHA256 `64e497a5d5e1b280e8b1fcb14b0241cc0a6e17f5f429a4fbf3ab4e5799d8c159`.
+- Source distribution: `responsibility_pathway_os-0.1.0a3.tar.gz` — SHA256 `1df85977f0d8170ec45e831b1a96e0a426d866e958909d1d1ea025008c877b76`.
+- GitHub prerelease tag `v0.1.0a3` points to exact validated commit `7814959c7e42599b1824bc5101bb96f331d762ad`.
+- PyPI publication used Trusted Publishing with digital attestations enabled.
+
+### Release boundary
+- `0.1.0a3` remains an Early Public Alpha for engineering evaluation and bounded pilots.
+- GitHub prerelease publication and PyPI package publication are separate release surfaces; neither creates production readiness or Authority.
 - No version bump creates legal or organizational Authority, universal safety, third-party correctness, production readiness, or implementation-wide formal correctness.
 
 ## [0.1.0a2] - 2026-08-29
@@ -69,7 +90,7 @@ Published to PyPI as `responsibility-pathway-os==0.1.0a1` via GitHub Actions Tru
 - Deterministic public-export verification, wheel/sdist clean-install checks, SBOM generation, and release workflow.
 
 ### Release boundary
-- This version is an Early Public Alpha / Executable Preview for engineering evaluation and bounded pilots.
+- This version remains an Early Public Alpha / Executable Preview for engineering evaluation and bounded pilots.
 - The named Lean 4 invariants are machine-checked in their declared abstract models; this does not by itself establish full Python implementation conformance.
 - It does not claim unattended production readiness, legal/compliance certification, universal safety, or implementation-wide formal correctness.
 
