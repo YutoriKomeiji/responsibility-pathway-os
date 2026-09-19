@@ -97,15 +97,8 @@ Changes to provenance semantics require review of:
 
 Any deferred propagation must preserve an issue, Residual Owner, reason, affected artifact, and Human Return Point.
 
-## Not Proven
+## Scope and qualified review boundary
 
-This specification does not prove:
+This specification records engineering provenance and replaceable implementation boundaries. It is designed to support later qualified review, not to replace that review.
 
-- patent non-infringement
-- patent invalidity
-- freedom to operate
-- prior-art sufficiency
-- novelty or inventive step
-- legal meaning of a publication date
-- completeness of engineering provenance
-- that a named modular boundary will provide an effective design-around
+Questions of patent non-infringement, patent validity, freedom to operate, prior-art sufficiency, novelty or inventive step, and the legal effect of a publication date remain outside this engineering specification. The record also does not establish that provenance is complete or that a named modular boundary will provide an effective design-around.
