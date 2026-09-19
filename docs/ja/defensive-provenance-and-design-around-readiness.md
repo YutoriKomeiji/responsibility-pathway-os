@@ -97,15 +97,8 @@ RPOSは、Responsibility Pathwayの独自系譜、内部要件、公的な標準
 
 横展を延期する場合は、Issue、Residual Owner、理由、影響artifact、Human Return Pointを保存する。
 
-## Not Proven
+## 適用範囲と専門家レビューの境界
 
-この仕様は次を証明しない。
+この仕様が扱うのは、工学プロヴェナンスと交換可能な実装境界の記録である。将来の専門家レビューを支援するための資料であり、そのレビュー自体を代替するものではない。
 
-- 特許非侵害
-- 特許無効
-- Freedom to Operate
-- 先行技術としての十分性
-- 新規性または進歩性
-- 公開日の法的意味
-- 工学プロヴェナンスの完全性
-- 指定したmodular boundaryが有効なdesign-aroundになること
+特許非侵害、特許有効性、Freedom to Operate、先行技術としての十分性、新規性・進歩性、公開日の法的効果は、この工学仕様の範囲外である。また、この記録だけでプロヴェナンスの完全性や、指定したmodular boundaryによる有効なdesign-aroundが成立することを示すものでもない。
