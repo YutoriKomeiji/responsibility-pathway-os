@@ -47,6 +47,14 @@ def _identity_markers(version: str) -> dict[str, tuple[str, ...]]:
         ),
         "docs/en/claim-boundary-promotion.md": (f"RPOS {version}",),
         "docs/ja/claim-boundary-promotion.md": (f"RPOS {version}",),
+        "docs/en/public-alpha-evaluation-guide.md": (
+            f"RPOS {version}",
+            f"responsibility-pathway-os=={version}",
+        ),
+        "docs/ja/public-alpha-evaluation-guide.md": (
+            f"RPOS {version}",
+            f"responsibility-pathway-os=={version}",
+        ),
         "docs/en/responsibility-routing-current-source.md": (version,),
         "docs/ja/responsibility-routing-current-source.md": (version,),
         "examples/production_grade_demos/README.md": (version,),
