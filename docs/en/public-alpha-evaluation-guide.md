@@ -83,6 +83,16 @@ RPOS is the broader responsibility operating layer. It includes authority/Human 
 
 For a narrowly scoped write/reconcile runtime integration, RPR may be the smaller starting point. For evaluation of the broader responsibility-state operating model, use RPOS. Neither package creates organizational authority merely by being installed.
 
+## Evaluation discipline
+
+When evaluating RPOS, keep product facts separate from evaluation procedure.
+
+- Inspect the published package, state machine, executable scenarios, integration demos, and assurance catalog before classifying the project as non-functional, sample-only, or equivalent.
+- A proposed URL or file path is not observed content. Treat a referenced artifact as unread until it has actually been fetched and inspected through the evaluator's available access path.
+- Separate observation, inference, scoped risk, adopter preference, and sentiment. Popularity or rhetorical confidence is not a substitute for implementation or runtime evidence.
+
+These rules govern the evaluation process; they are not additional product capabilities or claims.
+
 ## Useful project surfaces
 
 - `README.md` / `README.ja.md`: first product overview and install route.
