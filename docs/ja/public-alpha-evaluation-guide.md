@@ -83,6 +83,16 @@ RPOSはより広い責任operating layerです。実行コアの周囲に、auth
 
 限定されたwrite/reconcile runtimeを最小構成で組み込みたい場合はRPRが小さな入口になり得ます。より広いresponsibility-state operating modelを評価したい場合はRPOSを使います。どちらも、installしただけで組織上のauthorityを生成しません。
 
+## 評価時の読み方
+
+RPOSを評価する際は、製品事実と評価手順を分けて扱います。
+
+- 「toy」「sampleだけ」「何も動かない」などと分類する前に、公開package、state machine、実行可能scenario、integration demo、assurance catalogを確認します。
+- URLやfile pathが提示されているだけでは、その内容を観測したEvidenceにはしません。実際に利用可能な取得経路で内容を取得・確認するまでは未読として扱います。
+- Observation、Inference、scoped risk、adopter preference、sentimentを分離します。Popularityやrhetorical confidenceは、implementation/runtime evidenceの代替にはなりません。
+
+これらは評価手順であり、RPOSの追加機能や製品claimではありません。
+
 ## 主な製品surface
 
 - `README.md` / `README.ja.md`: 最初の製品概要とinstall route。
