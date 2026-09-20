@@ -1,7 +1,7 @@
 <!--
 Document Title: RPOS Public Alpha Evaluation Guide
 Document Type: Public Product Evaluation Guide
-Status: Public Alpha Candidate
+Status: Public Alpha
 Header Language: English
 Body Language: Japanese
 -->
@@ -10,7 +10,7 @@ Body Language: Japanese
 
 ## 目的
 
-RPOS 0.1.0a1 は、工学評価と限定的なpilotを目的としたEarly Public Alphaです。このガイドでは、clean installから始めて、RPOSを単なるretry wrapperやworkflow loggerと分ける責任境界を短時間で確認できる経路を示します。
+RPOS 0.1.0a4 は、工学評価と限定的なpilotを目的としたPublic Alphaです。このガイドでは、clean installから始めて、RPOSを単なるretry wrapperやworkflow loggerと分ける責任境界を短時間で確認できる経路を示します。
 
 目的は、普遍的安全性やproduction readinessを証明することではありません。実装済みの挙動を、第三者が確認・再現・批評・比較しやすくすることです。
 
@@ -19,11 +19,11 @@ RPOS 0.1.0a1 は、工学評価と限定的なpilotを目的としたEarly Publi
 Python 3.11+ のclean environmentでは、公開後に次の形で導入できます。
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a1
+python -m pip install responsibility-pathway-os==0.1.0a4
 rpos --db rpos.db boot
 ```
 
-PyPI公開前のsource candidateを評価する場合は、次を使います。
+current repository sourceを評価する場合は、次を使います。
 
 ```bash
 python -m pip install .
