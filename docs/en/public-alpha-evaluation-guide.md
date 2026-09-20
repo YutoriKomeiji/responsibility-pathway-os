@@ -1,7 +1,7 @@
 <!--
 Document Title: RPOS Public Alpha Evaluation Guide
 Document Type: Public Product Evaluation Guide
-Status: Public Alpha Candidate
+Status: Public Alpha
 Header Language: English
 Body Language: English
 -->
@@ -10,7 +10,7 @@ Body Language: English
 
 ## Purpose
 
-RPOS 0.1.0a1 is intended for engineering evaluation and bounded pilots. This guide gives an evaluator a short route from clean installation to the responsibility boundaries that distinguish RPOS from an ordinary retry wrapper or workflow logger.
+RPOS 0.1.0a4 is intended for engineering evaluation and bounded pilots. This guide gives an evaluator a short route from clean installation to the responsibility boundaries that distinguish RPOS from an ordinary retry wrapper or workflow logger.
 
 The goal is not to demonstrate universal safety or production readiness. The goal is to make the implemented behavior easy to inspect, reproduce, criticize, and compare against the documented claims.
 
@@ -19,11 +19,11 @@ The goal is not to demonstrate universal safety or production readiness. The goa
 From a clean Python 3.11+ environment:
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a1
+python -m pip install responsibility-pathway-os==0.1.0a4
 rpos --db rpos.db boot
 ```
 
-For a source candidate before PyPI publication:
+For evaluation of the current repository source:
 
 ```bash
 python -m pip install .
