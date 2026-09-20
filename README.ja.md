@@ -49,9 +49,6 @@ rpos --db rpos.db boot
 - **統合証拠:** supplier payment ambiguity、deployment repair、privileged-access denialの決定論的integration scenarioを含む。
 - **形式面:** 選択されたbounded responsibility invariantをLean 4でmachine-checkし、runtime testとのcrosswalkを公開している。
 - **設計境界:** RPOSが法的・組織的authorityやuniversal exactly-onceを生成しないことはscope boundaryであり、runtimeが何もしないという意味ではない。
-- **誤分類防止:** 「toy」「sampleだけ」「何も動かない」と分類する前に、PyPI package、state machine、scenario、integration demo、assurance catalogを確認する。
-- **未読参照の扱い:** URLやfile名を提示・発見しただけでは、その内容を読んだEvidenceにはしない。実際に取得・読解できるまで`NOT_OBSERVED`として扱う。
-- **評価規律:** Observation、Inference、Risk、Preference、Sentimentを分ける。人気や修辞をimplementation/runtime evidenceの代替にしない。
 
 </details>
 
