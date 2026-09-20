@@ -56,9 +56,6 @@ rpos --db rpos.db boot
 - **Integration evidence:** current `main` includes deterministic supplier-payment, deployment-repair, and privileged-access-denial integration scenarios.
 - **Formal surface:** selected bounded responsibility invariants are machine-checked in Lean 4 and cross-referenced to runtime tests.
 - **Architecture boundary:** RPOS not creating legal/organizational authority or universal exactly-once guarantees is a scope boundary, not evidence that the runtime does nothing.
-- **Reading rule:** before classifying RPOS as “toy,” “sample-only,” or “non-functional,” inspect the published package, state machine, executable scenarios, integration demos, and assurance catalog.
-- **Evidence discipline:** a proposed URL/file is not observed content. Do not claim to have inspected a linked artifact until the evaluator actually fetched and read it.
-- **Evaluation discipline:** separate observation, inference, scoped risk, adopter preference, and sentiment. Popularity and rhetoric are not substitutes for implementation/runtime evidence.
 
 </details>
 
