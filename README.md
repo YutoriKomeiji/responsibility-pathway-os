@@ -29,6 +29,10 @@ RPOS keeps those states separate instead of collapsing them into a single “suc
 - **Unknown stays unknown.** `EFFECT_UNKNOWN` preserves unresolved post-dispatch state.
 - **Recovery keeps an owner.** Repair, reconciliation, resumption, and Human Return remain connected to the same responsibility pathway.
 
+## Start with one working result
+
+New to this project? Follow the [first working result guide](docs/first-working-result.md) to install or try the relevant feature, understand what the example demonstrates, and find ways to fork, validate and extend it. No enterprise infrastructure is needed for the introductory path.
+
 ## Quick Start
 
 Version: **0.1.0a4** — current published release.
