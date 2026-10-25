@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: MIT
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from rpos.models import OperationState
 from rpos.routing import ResponsibilityRoute, ResponsibilityRouteKind
 from rpos.route_eligibility import ReceiverEligibility, assess_route_receiver
@@ -72,3 +74,27 @@ def test_route_selection_must_not_grant_authority():
     import pytest
     with pytest.raises(ValueError, match="must not create Authority"):
         _assess(bad)
+
+
+def test_expired_route_evidence_does_not_allow_transfer():
+    now = datetime(2026, 10, 25, tzinfo=timezone.utc)
+    result = _assess(assessed_at=now, evidence_expires_at=now)
+    assert result.eligibility is ReceiverEligibility.INELIGIBLE
+    assert result.permitted_to_transfer is False
+    assert result.effective_route is ResponsibilityRouteKind.NEUTRAL_HOLD
+
+
+def test_unexpired_route_evidence_keeps_existing_eligibility_logic():
+    now = datetime(2026, 10, 25, tzinfo=timezone.utc)
+    result = _assess(assessed_at=now, evidence_expires_at=now + timedelta(minutes=5))
+    assert result.eligibility is ReceiverEligibility.ELIGIBLE
+    assert result.evidence_expires_at == now + timedelta(minutes=5)
+
+
+def test_partial_or_naive_expiry_inputs_are_rejected():
+    import pytest
+    now = datetime(2026, 10, 25, tzinfo=timezone.utc)
+    with pytest.raises(ValueError, match="supplied together"):
+        _assess(assessed_at=now)
+    with pytest.raises(ValueError, match="timezone-aware"):
+        _assess(assessed_at=now, evidence_expires_at=datetime(2026, 10, 26))
