@@ -8,6 +8,7 @@ verified delegation/authority and evidence checks. Missing facts stay unknown.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
 
 from .routing import ResponsibilityRoute, ResponsibilityRouteKind
@@ -27,6 +28,7 @@ class RouteEligibilityAssessment:
     permitted_to_transfer: bool
     eligibility_basis: str
     residual_owner: str | None
+    evidence_expires_at: datetime | None = None
 
 
 def assess_route_receiver(
@@ -39,6 +41,8 @@ def assess_route_receiver(
     timing_verified: bool | None,
     eligibility_basis: str = "",
     residual_owner: str | None = None,
+    assessed_at: datetime | None = None,
+    evidence_expires_at: datetime | None = None,
 ) -> RouteEligibilityAssessment:
     """Assess independently established facts; never infer Authority from names.
 
@@ -54,9 +58,16 @@ def assess_route_receiver(
         intervention_capacity_verified,
         timing_verified,
     )
+    if (assessed_at is None) != (evidence_expires_at is None):
+        raise ValueError("assessed_at and evidence_expires_at must be supplied together")
+    if assessed_at is not None:
+        if assessed_at.tzinfo is None or evidence_expires_at.tzinfo is None:
+            raise ValueError("evidence timestamps must be timezone-aware")
     if route.authority_effect != "none":
         raise ValueError("route selection must not create Authority")
-    if any(v is False for v in checks):
+    if assessed_at is not None and assessed_at >= evidence_expires_at:
+        eligibility = ReceiverEligibility.INELIGIBLE
+    elif any(v is False for v in checks):
         eligibility = ReceiverEligibility.INELIGIBLE
     elif (route.receiver and all(v is True for v in checks)
           and eligibility_basis.strip()):
@@ -72,4 +83,5 @@ def assess_route_receiver(
         permitted_to_transfer=eligibility is ReceiverEligibility.ELIGIBLE,
         eligibility_basis=eligibility_basis,
         residual_owner=residual_owner,
+        evidence_expires_at=evidence_expires_at,
     )
