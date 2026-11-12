@@ -1,6 +1,6 @@
 # RPOS — Responsibility Pathway Operating System
 
-Version: **0.1.0a5** — release candidate, not yet published
+Version: **0.1.0a5**
 
 RPOS is an open-source Python/SQLite runtime for AI agents and automation that perform consequential external actions. It keeps authorization, dispatch, external-effect uncertainty, verification, repair, resumption, Human Return, and Responsibility Routing connected as explicit responsibility state.
 
