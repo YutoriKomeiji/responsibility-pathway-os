@@ -98,3 +98,25 @@ def test_partial_or_naive_expiry_inputs_are_rejected():
         _assess(assessed_at=now)
     with pytest.raises(ValueError, match="timezone-aware"):
         _assess(assessed_at=now, evidence_expires_at=datetime(2026, 10, 26))
+
+
+def test_explicit_ineligibility_outweighs_unknown_fact():
+    result = _assess(delegation_verified=None, evidence_access_verified=False)
+    assert result.eligibility is ReceiverEligibility.INELIGIBLE
+    assert result.effective_route is ResponsibilityRouteKind.NEUTRAL_HOLD
+    assert result.permitted_to_transfer is False
+
+
+def test_whitespace_only_evidence_basis_does_not_allow_transfer():
+    result = _assess(eligibility_basis=" \t\n ")
+    assert result.eligibility is ReceiverEligibility.UNKNOWN
+    assert result.permitted_to_transfer is False
+    assert result.effective_route is ResponsibilityRouteKind.NEUTRAL_HOLD
+
+
+def test_expiry_boundary_is_exclusive_and_rejects_earlier_deadline():
+    now = datetime(2026, 10, 25, tzinfo=timezone.utc)
+    expired = _assess(assessed_at=now, evidence_expires_at=now - timedelta(microseconds=1))
+    assert expired.eligibility is ReceiverEligibility.INELIGIBLE
+    assert expired.permitted_to_transfer is False
+    assert expired.effective_route is ResponsibilityRouteKind.NEUTRAL_HOLD
