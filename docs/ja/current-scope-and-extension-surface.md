@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: ja -->
-<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
-<!-- RPOS-DOC-STATUS: public-alpha-published -->
+<!-- RPOS-DOC-VERSION: 0.1.0a5 -->
+<!-- RPOS-DOC-STATUS: release-candidate-not-published -->
 <!-- RPOS-DOC-COUNTERPART: ../en/current-scope-and-extension-surface.md -->
 
 # 現在の対応範囲と拡張面
 
-RPOS 0.1.0a4 は、責任経路を実行可能な形で保持するために現在PyPIへ公開されている Early Public Alpha です。ここでは、**今すぐ試せること**と、**これから拡張していくこと**を分けて紹介します。
+RPOS 0.1.0a5 は未公開のリリース候補です（現在PyPIに公開されている版は0.1.0a4）。ここでは、**今すぐ試せること**と、**これから拡張していくこと**を分けて紹介します。
 
 未対応領域を単純な「できないこと」で終わらせず、要件と証拠を確認しながら、どの形なら安全に広げられるかを見るのがRPOSの方針です。
 

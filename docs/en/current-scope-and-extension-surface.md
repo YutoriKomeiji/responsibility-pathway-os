@@ -1,12 +1,12 @@
 <!-- RPOS-DOC-ID: RPOS-CURRENT-SCOPE-001 -->
 <!-- RPOS-DOC-LANG: en -->
-<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
-<!-- RPOS-DOC-STATUS: public-alpha-published -->
+<!-- RPOS-DOC-VERSION: 0.1.0a5 -->
+<!-- RPOS-DOC-STATUS: release-candidate-not-published -->
 <!-- RPOS-DOC-COUNTERPART: ../ja/current-scope-and-extension-surface.md -->
 
 # Current Scope and Extension Surface
 
-RPOS 0.1.0a4 is the currently published Early Public Alpha for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
+RPOS 0.1.0a5 is an unpublished release candidate (latest published PyPI version: 0.1.0a4) for preserving responsibility pathways in executable form. It states what works today while treating unsupported areas as reviewable extension surfaces rather than as permanently closed limitations.
 
 ## What works today
 

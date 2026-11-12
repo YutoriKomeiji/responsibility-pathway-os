@@ -1,7 +1,7 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: ja -->
-<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
-<!-- RPOS-DOC-STATUS: public-alpha-published -->
+<!-- RPOS-DOC-VERSION: 0.1.0a5 -->
+<!-- RPOS-DOC-STATUS: release-candidate-not-published -->
 <!-- RPOS-DOC-COUNTERPART: README.md -->
 
 # RPOS — Responsibility Pathway Operating System
@@ -23,10 +23,12 @@ RPOSは、承認、実行要求、外部作用、確認、結果不明、修復�
 
 ## まず試す
 
-Version: **0.1.0a4** — 現在の公開版です。
+以下のa5指定は**公開前の候補パッケージ識別子**であり、現時点でPyPIからインストールできるという意味ではありません。候補ソースのcheckoutからは `python -m pip install .`、現在のPyPI公開版を使う場合は `responsibility-pathway-os==0.1.0a4` を指定してください。
+
+Version: **0.1.0a5** — 未公開のリリース候補です（現在のPyPI公開版は0.1.0a4）。
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a4
+python -m pip install responsibility-pathway-os==0.1.0a5
 rpos --db rpos.db boot
 ```
 

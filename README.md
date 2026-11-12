@@ -1,7 +1,7 @@
 <!-- RPOS-DOC-ID: RPOS-PUBLIC-README-001 -->
 <!-- RPOS-DOC-LANG: en -->
-<!-- RPOS-DOC-VERSION: 0.1.0a4 -->
-<!-- RPOS-DOC-STATUS: public-alpha-published -->
+<!-- RPOS-DOC-VERSION: 0.1.0a5 -->
+<!-- RPOS-DOC-STATUS: release-candidate-not-published -->
 <!-- RPOS-DOC-COUNTERPART: README.ja.md -->
 
 # RPOS — Responsibility Pathway Operating System
@@ -31,10 +31,12 @@ RPOS keeps those states separate instead of collapsing them into a single “suc
 
 ## Quick Start
 
-Version: **0.1.0a4** — current published release.
+The command below is the **future candidate package identity**, not a working PyPI installation until a5 is published. To evaluate this candidate from a checked-out source tree, use `python -m pip install .`; to use the actual PyPI distribution, install `responsibility-pathway-os==0.1.0a4`.
+
+Version: **0.1.0a5** — release candidate; not yet published on PyPI (latest published: 0.1.0a4).
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a4
+python -m pip install responsibility-pathway-os==0.1.0a5
 rpos --db rpos.db boot
 ```
 

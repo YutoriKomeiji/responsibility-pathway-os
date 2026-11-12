@@ -18,9 +18,16 @@ def test_product_status_matches_package_identity_and_release_boundary() -> None:
 
     assert status["package"] == project["name"]
     assert status["version"] == project["version"]
-    assert status["release_stage"] == "early_public_alpha_published"
-    assert status["publication_state"] == "pypi_published"
-    assert status["latest_published_version"] == project["version"]
+    # Candidate identity and publicly published identity have different lifecycles.
+    # Never force a new package version to claim PyPI publication before readback.
+    if status["publication_state"] == "not_published":
+        assert status["release_stage"] == "early_public_alpha_candidate"
+        assert status["latest_published_version"] != project["version"]
+        assert status["release_gate"]["explicit_human_gate_required"] is True
+    else:
+        assert status["publication_state"] == "pypi_published"
+        assert status["release_stage"] == "early_public_alpha_published"
+        assert status["latest_published_version"] == project["version"]
     assert status["production_ready"] is False
     assert status["release_gate"]["publishable_freeze"] is False
     assert status["release_gate"]["public_repository_migration_complete"] is True

@@ -4,6 +4,19 @@ All notable public-alpha changes to RPOS are recorded here.
 
 RPOS uses pre-release versions while the public API and operational contracts are still being field-tested. Entries distinguish shipped behavior from deferred work and preserve historical release provenance.
 
+## [0.1.0a5] - Release candidate / NOT PUBLISHED
+
+### Source changes under verification
+- Add independently supplied receiver eligibility checks and expiring evidence windows.
+- Add scoped route-assessment history and a bounded RPR-to-RPOS semantic crosswalk.
+- Expand regression checks for mixed unknown/false receiver facts, missing evidence basis, and expired assessment time.
+- Preserve positive documented value: executable SQLite responsibility state, unknown external effects, verification/reconciliation and bounded Lean assertions.
+
+### Candidate boundary and acceptance
+- This is a source-tree release candidate, not a PyPI or GitHub Release. Published version remains 0.1.0a4 until explicit Human Gate and public readback.
+- Exact-head wheel/sdist metadata, public-site EN/JA parity, source and restart tests, formal assurance catalog, and publication-neutral package description must be verified.
+- Responsibility route selection is not authorization; formal-model checks are not implementation-wide external-world correctness.
+
 ## [0.1.0a4] - 2026-09-18
 
 Published as GitHub prerelease `v0.1.0a4` and to PyPI as `responsibility-pathway-os==0.1.0a4` after exact-head validation and explicit Human Gates.

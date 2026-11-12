@@ -10,7 +10,7 @@ Body Language: English
 
 ## Purpose
 
-RPOS 0.1.0a4 is intended for engineering evaluation and bounded pilots. This guide gives an evaluator a short route from clean installation to the responsibility boundaries that distinguish RPOS from an ordinary retry wrapper or workflow logger.
+RPOS 0.1.0a5 is an unpublished release candidate intended for engineering evaluation and bounded pilots (PyPI latest: 0.1.0a4). This guide gives an evaluator a short route from clean installation to the responsibility boundaries that distinguish RPOS from an ordinary retry wrapper or workflow logger.
 
 The goal is not to demonstrate universal safety or production readiness. The goal is to make the implemented behavior easy to inspect, reproduce, criticize, and compare against the documented claims.
 
@@ -19,7 +19,7 @@ The goal is not to demonstrate universal safety or production readiness. The goa
 From a clean Python 3.11+ environment:
 
 ```bash
-python -m pip install responsibility-pathway-os==0.1.0a4
+python -m pip install responsibility-pathway-os==0.1.0a5
 rpos --db rpos.db boot
 ```
 
