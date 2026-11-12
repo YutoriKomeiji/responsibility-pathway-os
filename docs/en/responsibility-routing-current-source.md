@@ -2,7 +2,7 @@
 
 ## Status
 
-Current-source development note. Responsibility Routing is included in the published `0.1.0a4` line; this file records source-level semantics that continue to be aligned across the Responsibility Pathway stack. The `0.1.0a4` release keeps the `0.1.0a3` runtime routing behavior and adds release-metadata/public-surface corrections. It does not claim production/enterprise readiness.
+Current-source development note for RPOS 0.1.0a5 (unpublished release candidate; PyPI latest 0.1.0a4). Responsibility Routing is included in the published `0.1.0a4` line; this file records source-level semantics that continue to be aligned across the Responsibility Pathway stack. The `0.1.0a4` release keeps the `0.1.0a3` runtime routing behavior and adds release-metadata/public-surface corrections. It does not claim production/enterprise readiness.
 
 ## Core rule
 
